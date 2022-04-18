@@ -6,24 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define __htfh_lock_lock_handled(lock) ({ \
-    int _lock_result = 0; \
-    if (__htfh_lock_lock(lock) == EINVAL) { \
-        set_alloc_errno_msg(MUTEX_LOCK_LOCK, strerror(EINVAL)); \
-        _lock_result = -1; \
-    } \
-    _lock_result; \
-})
-
-#define __htfh_lock_unlock_handled(lock) ({ \
-    int _unlock_result = 0; \
-    if ((_unlock_result = __htfh_lock_unlock(lock)) != 0) { \
-        set_alloc_errno_msg(MUTEX_LOCK_UNLOCK, strerror(_unlock_result)); \
-        _unlock_result = -1; \
-    } \
-    _unlock_result; \
-})
-
 static size_t adjust_request_size(size_t size, size_t align) {
     size_t adjust = 0;
     if (!size) {

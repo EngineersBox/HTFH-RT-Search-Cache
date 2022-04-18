@@ -28,6 +28,24 @@ typedef pthread_mutex_t __htfh_lock_t;
 #define __htfh_lock_lock(lock) pthread_mutex_lock(lock)
 #define __htfh_lock_unlock(lock) pthread_mutex_unlock(lock)
 
+#define __htfh_lock_lock_handled(lock) ({ \
+    int _lock_result = 0; \
+    if (__htfh_lock_lock(lock) == EINVAL) { \
+        set_alloc_errno_msg(MUTEX_LOCK_LOCK, strerror(EINVAL)); \
+        _lock_result = -1; \
+    } \
+    _lock_result; \
+})
+
+#define __htfh_lock_unlock_handled(lock) ({ \
+    int _unlock_result = 0; \
+    if ((_unlock_result = __htfh_lock_unlock(lock)) != 0) { \
+        set_alloc_errno_msg(MUTEX_LOCK_UNLOCK, strerror(_unlock_result)); \
+        _unlock_result = -1; \
+    } \
+    _unlock_result; \
+})
+
 #ifdef __cplusplus
 };
 #endif
