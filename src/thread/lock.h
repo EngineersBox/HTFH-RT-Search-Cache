@@ -10,6 +10,8 @@ extern "C" {
 #include <pthread.h>
 #include <sys/errno.h>
 
+// ==== MUTEX ====
+
 typedef pthread_mutex_t __htfh_lock_t;
 
 #define __htfh_lock_init(lock, type) ({ \
@@ -41,6 +43,54 @@ typedef pthread_mutex_t __htfh_lock_t;
     int _unlock_result = 0; \
     if ((_unlock_result = __htfh_lock_unlock(lock)) != 0) { \
         set_alloc_errno_msg(MUTEX_LOCK_UNLOCK, strerror(_unlock_result)); \
+        _unlock_result = -1; \
+    } \
+    _unlock_result; \
+})
+
+// ==== RWLOCK ====
+
+typedef pthread_rwlock_t __htfh_rwlock_t;
+
+#define __htfh_rwlock_init(lock, pshared) ({ \
+    int result = 0; \
+    pthread_rwlockattr_t attr; \
+    if ((result = pthread_rwlockattr_init(&attr)) == 0) { \
+        if ((result = pthread_rwlockattr_setpshared(&attr, pshared)) == 0) { \
+            if ((result = pthread_rwlock_init(lock, &attr)) == 0) { \
+                result = pthread_rwlockattr_destroy(&attr) == EINVAL ? EINVAL : 0; \
+            } \
+        } \
+    } \
+    result; \
+})
+
+#define __htfh_rwlock_rdlock(lock) pthread_rwlock_rdlock(lock)
+#define __htfh_rwlock_wrlock(lock) pthread_rwlock_wrlock(lock)
+#define __htfh_rwlock_unlock(lock) pthread_rwlock_unlock(lock)
+
+#define __htfh_rwlock_rdlock_handled(lock) ({ \
+    int _lock_result = 0; \
+    if (__htfh_rwlock_rdlock(lock) == EINVAL) { \
+        set_alloc_errno_msg(RWLOCK_WRLOCK_LOCK, strerror(EINVAL)); \
+        _lock_result = -1; \
+    } \
+    _lock_result; \
+})
+
+#define __htfh_rwlock_wrlock_handled(lock) ({ \
+    int _lock_result = 0; \
+    if (__htfh_rwlock_wrlock(lock) == EINVAL) { \
+        set_alloc_errno_msg(RWLOCK_RDLOCK_LOCK, strerror(EINVAL)); \
+        _lock_result = -1; \
+    } \
+    _lock_result; \
+})
+
+#define __htfh_rwlock_unlock_handled(lock) ({ \
+    int _unlock_result = 0; \
+    if ((_unlock_result = __htfh_rwlock_unlock(lock)) != 0) { \
+        set_alloc_errno_msg(RWLOCK_LOCK_UNLOCK, strerror(_unlock_result)); \
         _unlock_result = -1; \
     } \
     _unlock_result; \

@@ -11,7 +11,7 @@ extern "C" {
 #include "../thread/lock.h"
 
 typedef struct Cache {
-    __htfh_lock_t mutex;
+    __htfh_rwlock_t rwlock;
     Allocator* alloc;
 } Cache;
 

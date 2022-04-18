@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "allocator/htfh.h"
+#include "cache/cache.h"
 #include "error/allocator_errno.h"
 
 struct TestStruct {
@@ -17,14 +17,14 @@ struct TestStruct {
 #define HEAP_SIZE (16 * 10000)
 
 int main(int argc, char* argv[]) {
-    Allocator* alloc = htfh_create(HEAP_SIZE);
-    if (alloc == NULL) {
-        alloc_perror("Initialisation failed for heap size 16*10000 bytes: ");
+    Cache* cache = cache_new(HEAP_SIZE);
+    if (cache == NULL) {
+        alloc_perror("Initialisation of cache failed for heap size 16*10000 bytes: ");
         return 1;
     }
 
 
-    if (htfh_destroy(alloc) != 0) {
+    if (cache_destroy(cache) != 0) {
         alloc_perror("");
         return 1;
     }
