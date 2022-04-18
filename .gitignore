@@ -1,0 +1,10 @@
+/cmake-build-debug
+CMakeFiles/
+/.idea
+
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+
+htfh_rt_search_cache
+run
