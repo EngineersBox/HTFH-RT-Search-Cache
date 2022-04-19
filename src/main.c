@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     }
 
 
+
     if (cache_destroy(cache) != 0) {
         alloc_perror("");
         return 1;

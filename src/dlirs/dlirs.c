@@ -1,4 +1,4 @@
-#include "cache.h"
+#include "dlirs.h"
 
 #include <stddef.h>
 #include <sys/mman.h>
@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-void* cache_new(size_t heap_size) {
-    Cache* cache = malloc(sizeof(*cache));
+void* dlirs_new(size_t heap_size) {
+    DLIRS* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
@@ -24,7 +24,7 @@ void* cache_new(size_t heap_size) {
     return cache;
 }
 
-int cache_destroy(Cache* cache) {
+int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {
         return 0;
     } else if (__htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
