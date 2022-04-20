@@ -105,13 +105,6 @@ size_t htfh_block_size_max(void);
 size_t htfh_pool_overhead(void);
 size_t htfh_alloc_overhead(void);
 
-/* Debugging. */
-typedef void (*htfh_walker)(void* ptr, size_t size, int used, void* user);
-void htfh_walk_pool(void* pool, htfh_walker walker, void* user);
-/* Returns nonzero if any internal consistency check fails. */
-int htfh_check(Allocator* htfh);
-int htfh_check_pool(void* pool);
-
 #ifdef __cplusplus
 };
 #endif

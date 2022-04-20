@@ -1,10 +1,12 @@
 #include "controller.h"
 
+#define largest_bit_class(index) (~0U << (index))
+
 BlockHeader* controller_search_suitable_block(Controller* control, int* fli, int* sli) {
-    unsigned int sl_map = control->sl_bitmap[*fli] & (~0U << (*sli));
+    unsigned int sl_map = control->sl_bitmap[*fli] & largest_bit_class(*sli);
     if (!sl_map) {
         /* No block exists. Search in the next largest first-level list. */
-        const unsigned int fl_map = control->fl_bitmap & (~0U << ((*fli) + 1));
+        const unsigned int fl_map = control->fl_bitmap & largest_bit_class((*fli) + 1);
         if (!fl_map) {
             /* No free blocks available, memory has been exhausted. */
             set_alloc_errno(HEAP_FULL);
