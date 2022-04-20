@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-#include "../htfh/htfh.h"
-#include "../thread/lock.h"
+#include "../allocator/htfh/htfh.h"
+#include "../allocator/thread/lock.h"
 
 typedef struct Cache {
     __htfh_rwlock_t rwlock;
