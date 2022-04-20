@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#include "../allocator/htfh.h"
+#include "../htfh/htfh.h"
 #include "../thread/lock.h"
 
 typedef struct DLIRS {

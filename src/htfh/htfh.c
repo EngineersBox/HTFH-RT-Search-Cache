@@ -191,12 +191,12 @@ void* htfh_malloc(Allocator* alloc, size_t size) {
         return NULL;
     }
     const size_t adjust = adjust_request_size(size, ALIGN_SIZE);
-    BlockHeader* block = controller_block_locate_free(alloc->controller, adjust);
+    BlockHeader* block = controller_block_find_free(alloc->controller, adjust);
     if (block == NULL) {
         __htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
-    void* ptr = controller_block_prepare_used(alloc->controller, block, adjust);
+    void* ptr = controller_block_mark_used(alloc->controller, block, adjust);
     return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
 }
 
@@ -274,7 +274,7 @@ void* htfh_memalign(Allocator* alloc, size_t align, size_t size) {
     */
     const size_t aligned_size = (adjust && align > ALIGN_SIZE) ? size_with_gap : adjust;
 
-    BlockHeader* block = controller_block_locate_free(alloc->controller, aligned_size);
+    BlockHeader* block = controller_block_find_free(alloc->controller, aligned_size);
     if (sizeof(BlockHeader) != block_size_min + block_header_overhead) {
         set_alloc_errno(BLOCK_SIZE_MISMATCH);
         __htfh_lock_unlock_handled(&alloc->mutex);
@@ -304,7 +304,7 @@ void* htfh_memalign(Allocator* alloc, size_t align, size_t size) {
         }
     }
 
-    void* ptr = controller_block_prepare_used(alloc->controller, block, adjust);
+    void* ptr = controller_block_mark_used(alloc->controller, block, adjust);
     return ptr != NULL && __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
 }
 

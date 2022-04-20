@@ -1,10 +1,6 @@
 #include "controller.h"
 
 BlockHeader* controller_search_suitable_block(Controller* control, int* fli, int* sli) {
-    /*
-    ** First, search for a block in the list associated with the given
-    ** fl/sl index.
-    */
     unsigned int sl_map = control->sl_bitmap[*fli] & (~0U << (*sli));
     if (!sl_map) {
         /* No block exists. Search in the next largest first-level list. */
@@ -191,7 +187,7 @@ BlockHeader* controller_block_trim_free_leading(Controller* control, BlockHeader
     return remaining_block;
 }
 
-BlockHeader* controller_block_locate_free(Controller* control, size_t size) {
+BlockHeader* controller_block_find_free(Controller* control, size_t size) {
     if (control == NULL) {
         set_alloc_errno(NULL_CONTROLLER_INSTANCE);
         return NULL;
@@ -201,12 +197,6 @@ BlockHeader* controller_block_locate_free(Controller* control, size_t size) {
     int fl = 0;
     int sl = 0;
     mapping_search(size, &fl, &sl);
-    /*
-    ** mapping_search can futz with the size, so for excessively large sizes it can sometimes wind up
-    ** with indices that are off the end of the block array.
-    ** So, we protect against that here, since this is the only callsite of mapping_search.
-    ** Note that we don't need to check sl, since it comes from a modulo operation that guarantees it's always in range.
-    */
     if (fl >= FL_INDEX_COUNT) {
         return NULL;
     }
@@ -220,7 +210,7 @@ BlockHeader* controller_block_locate_free(Controller* control, size_t size) {
     return controller_remove_free_block(control, block, fl, sl) == 0 ? block : NULL;
 }
 
-void* controller_block_prepare_used(Controller* control, BlockHeader* block, size_t size) {
+void* controller_block_mark_used(Controller* control, BlockHeader* block, size_t size) {
     if (control == NULL) {
         set_alloc_errno(NULL_CONTROLLER_INSTANCE);
         return NULL;

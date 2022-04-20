@@ -21,13 +21,8 @@ extern "C" {
 ** - The next_free / prev_free fields are only valid if the block is free.
 */
 typedef struct BlockHeader {
-    /* Points to the previous physical block. */
     struct BlockHeader* prev_phys_block;
-
-    /* The size of this block, excluding the block header. */
     size_t size;
-
-    /* Next and previous free blocks. */
     struct BlockHeader* next_free;
     struct BlockHeader* prev_free;
 } BlockHeader;

@@ -9,16 +9,11 @@ extern "C" {
 
 #include "block.h"
 
-/* The TLSF control structure. */
 typedef struct Controller {
     /* Empty lists point at this block to indicate they are free. */
     BlockHeader block_null;
-
-    /* Bitmaps for free lists. */
     unsigned int fl_bitmap;
     unsigned int sl_bitmap[FL_INDEX_COUNT];
-
-    /* Head of free lists. */
     BlockHeader* blocks[FL_INDEX_COUNT][SL_INDEX_COUNT];
 } Controller;
 
@@ -40,8 +35,8 @@ int controller_block_trim_free(Controller* control, BlockHeader* block, size_t s
 /* Trim any trailing block space off the end of a used block, return to pool. */
 int controller_block_trim_used(Controller* control, BlockHeader* block, size_t size);
 BlockHeader* controller_block_trim_free_leading(Controller* control, BlockHeader* block, size_t size);
-BlockHeader* controller_block_locate_free(Controller* control, size_t size);
-void* controller_block_prepare_used(Controller* control, BlockHeader* block, size_t size);
+BlockHeader* controller_block_find_free(Controller* control, size_t size);
+void* controller_block_mark_used(Controller* control, BlockHeader* block, size_t size);
 /* Clear structure and point all empty lists at the null block. */
 int controller_new(Controller* control);
 
