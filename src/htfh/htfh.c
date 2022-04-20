@@ -7,15 +7,14 @@
 #include <string.h>
 
 static size_t adjust_request_size(size_t size, size_t align) {
-    size_t adjust = 0;
     if (!size) {
         return 0;
     }
     const size_t aligned = align_up(size, align);
     if (aligned < block_size_max) {
-        adjust = htfh_max(aligned, block_size_min);
+        return htfh_max(aligned, block_size_min);
     }
-    return adjust;
+    return 0;
 }
 
 inline size_t htfh_size(void) {
@@ -83,10 +82,7 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
     block_set_used(next);
     block_set_prev_free(next);
 
-    if (__htfh_lock_unlock_handled(&alloc->mutex) != 0) {
-        return NULL;
-    }
-    return mem;
+    return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? mem : NULL;
 }
 
 #if _DEBUG
