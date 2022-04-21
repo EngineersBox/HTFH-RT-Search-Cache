@@ -1,13 +1,14 @@
 #include "cache_hashtable.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include "hashing.h"
 
 HashTable* ht_create(size_t size) {
     HashTable* ht = malloc(sizeof(*ht));
     ht->size = size;
     ht->count = 0;
-    ht->items = calloc(ht->size, sizeof(HTEntry*));
+    ht->items = calloc(ht->size, sizeof(DQHTEntry*));
     return ht;
 }
 
@@ -16,23 +17,17 @@ void ht_destroy(HashTable* ht) {
         return;
     }
     for (int i = 0; i < ht->size; i++) {
-        HTEntry* entry = ht->items[i];
+        DQHTEntry* entry = ht->items[i];
         if (entry != NULL) {
-            htentry_destroy(entry);
+            dqhtentry_destroy(entry);
         }
     }
     free(ht->items);
     free(ht);
 }
 
-void* ht_insert(HashTable* ht, const char* key, void* value) {
-    if (ht == NULL) {
-        return NULL;
-    } else if (value == NULL) {
-        return NULL;
-    } else if (value == NULL) {
-        return NULL;
-    } else if (ht->count >= (ht->size / 2) && ht_resize(ht) != 0) {
+DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
+    if (ht == NULL || value == NULL || ht->count >= (ht->size / 2) && ht_resize(ht) != 0) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
@@ -40,21 +35,20 @@ void* ht_insert(HashTable* ht, const char* key, void* value) {
 
     while(ht->items[index] != NULL) {
         if (strcmp(key, ht->items[index]->key) == 0) {
-            void* current_value = ht->items[index]->ptr;
             ht->items[index]->ptr = value;
-            return current_value;
+            return ht->items[index];
         }
         index = (index + 1) % ht->size;
     }
-    ht->items[index] = htentry_create(key, value);
+    ht->items[index] = dqhtentry_create(key, value);
     if (ht->items[index] == NULL) {
         return NULL;
     }
     ht->count++;
-    return value;
+    return ht->items[index];
 }
 
-inline int ht_resize_insert(HTEntry** items, size_t size, HTEntry* entry, size_t index) {
+inline int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {
     while(items[index] != NULL) {
         if (strcmp(entry->key, items[index]->key) == 0) {
             return -1;
@@ -78,7 +72,7 @@ int ht_resize(HashTable* ht) {
     if (new_size < ht->size) {
         return -1;
     }
-    HTEntry** new_items = calloc(new_size, sizeof(HTEntry*));
+    DQHTEntry** new_items = calloc(new_size, sizeof(DQHTEntry*));
     if (new_items == NULL) {
         return -1;
     }
@@ -101,9 +95,7 @@ int ht_resize(HashTable* ht) {
 }
 
 void* ht_get(HashTable* ht, const char* key) {
-    if (ht == NULL) {
-        return NULL;
-    } else if (key == NULL) {
+    if (ht == NULL || key == NULL) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
@@ -118,10 +110,8 @@ void* ht_get(HashTable* ht, const char* key) {
     return NULL;
 }
 
-void* ht_delete(HashTable* ht, const char* key) {
-    if (ht == NULL) {
-        return NULL;
-    } else if (key == NULL) {
+DQHTEntry* ht_delete(HashTable* ht, const char* key) {
+    if (ht == NULL || key == NULL) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
@@ -129,9 +119,8 @@ void* ht_delete(HashTable* ht, const char* key) {
 
     for (int i = 0; i < ht->size; i++) {
         if (ht->items[index] != NULL && strcmp(key, ht->items[index]->key) == 0) {
-            void* current_value = ht->items[index]->ptr;
-            htentry_destroy(ht->items[index]);
-            return current_value;
+            dqhtentry_destroy(ht->items[index]);
+            return ht->items[index];
         }
         index = (index + 1) % ht->size;
     }

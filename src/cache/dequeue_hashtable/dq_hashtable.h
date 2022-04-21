@@ -8,32 +8,33 @@ extern "C" {
 #endif
 
 #include <stddef.h>
-#include "dq_ht_entry.h"
+
+#include "../hashtable/cache_hashtable.h"
+#include "../hashtable/dq_ht_entry.h"
 
 typedef struct DequeueHashTable {
-    int size;
-    int count;
-
     DQHTEntry* head;
     DQHTEntry* tail;
 
-    DQHTEntry** items;
+    HashTable* ht;
 } DequeueHashTable;
 
 DequeueHashTable* dqht_create(size_t size);
 void dqht_destroy(DequeueHashTable* dqht);
-int dqht_resize(DequeueHashTable* dqht);
 
 void* dqht_get(DequeueHashTable* dqht, const char* key);
-int dqht_set(DequeueHashTable* dqht, const char* key, void* value);
+int dqht_insert(DequeueHashTable* dqht, const char* key, void* value);
 int dqht_remove(DequeueHashTable* dqht, const char* key);
 
-void* dqht_first(DequeueHashTable* dqht);
-int dqht_push_first(DequeueHashTable* dqht, const char* key, void* value);
-void* dqht_pop_first(DequeueHashTable* dqht);
+void* dqht_get_front(DequeueHashTable* dqht);
+int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value);
+void* dqht_pop_front(DequeueHashTable* dqht);
 
-void* dqht_last(DequeueHashTable* dqht);
+void* dqht_get_last(DequeueHashTable* dqht);
+int dqht_push_last(DequeueHashTable* dqht, const char* key, void* value);
 void* dqht_pop_last(DequeueHashTable* dqht);
+
+void dqht_print_table(DequeueHashTable* dqht);
 
 #ifdef __cplusplus
 };

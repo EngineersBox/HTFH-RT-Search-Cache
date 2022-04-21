@@ -48,7 +48,6 @@ int main(int argc, char* argv[]) {
         957357,
         64526
     };
-
     for (int i = 0; i < 10; i++) {
         if (dqht_set(table, to_store[i], &values[i]) != 0) {
             printf("Could not insert entry: [%s: %d]\n", to_store[i], values[i]);
@@ -56,6 +55,7 @@ int main(int argc, char* argv[]) {
         }
         printf("=> Inserted entry %d\n", i);
     }
+    dqht_print_table(table);
     printf("== Inserted entries ==\n");
     for (int i = 0; i < 10; i++) {
         int* value;
