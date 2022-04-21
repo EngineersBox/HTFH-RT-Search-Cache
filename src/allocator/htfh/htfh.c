@@ -85,36 +85,7 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
     return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? mem : NULL;
 }
 
-#if _DEBUG
-int test_ffs_fls() {
-	/* Verify ffs/fls work properly. */
-	int rv = 0;
-	rv += (htfh_ffs(0) == -1) ? 0 : 0x1;
-	rv += (htfh_fls(0) == -1) ? 0 : 0x2;
-	rv += (htfh_ffs(1) == 0) ? 0 : 0x4;
-	rv += (htfh_fls(1) == 0) ? 0 : 0x8;
-	rv += (htfh_ffs(0x80000000) == 31) ? 0 : 0x10;
-	rv += (htfh_ffs(0x80008000) == 15) ? 0 : 0x20;
-	rv += (htfh_fls(0x80000008) == 31) ? 0 : 0x40;
-	rv += (htfh_fls(0x7FFFFFFF) == 30) ? 0 : 0x80;
-#if defined (ARCH_64_BIT)
-	rv += (htfh_fls_sizet(0x80000000) == 31) ? 0 : 0x100;
-	rv += (htfh_fls_sizet(0x100000000) == 32) ? 0 : 0x200;
-	rv += (htfh_fls_sizet(0xffffffffffffffff) == 63) ? 0 : 0x400;
-#endif
-	if (rv) {
-		printf("test_ffs_fls: %x ffs/fls tests failed.\n", rv);
-	}
-	return rv;
-}
-#endif
-
 Allocator* htfh_create(size_t bytes) {
-#if _DEBUG
-    if (test_ffs_fls()) {
-		return 0;
-	}
-#endif
     if ((bytes % ALIGN_SIZE) != 0) {
         char msg[100];
         sprintf(msg, "Memory must be aligned to %u bytes", (unsigned int) ALIGN_SIZE);

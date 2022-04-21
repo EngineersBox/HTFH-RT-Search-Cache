@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "cache/dlirs/dlirs.h"
 #include "allocator/error/allocator_errno.h"
-#include "cache/hashtable/cache_hashtable.h"
+#include "cache/dequeue_hashtable/dq_hashtable.h"
 
 struct TestStruct {
     int value;
@@ -18,7 +18,7 @@ struct TestStruct {
 #define HEAP_SIZE (16 * 10000)
 
 int main(int argc, char* argv[]) {
-    HashTable* table = ht_create(10);
+    DequeueHashTable * table = dqht_create(10);
     if (table == NULL) {
         printf("Could not create table with size 10 and max_jumps 5\n");
         return 1;
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     };
 
     for (int i = 0; i < 10; i++) {
-        if (ht_insert(table, to_store[i], &values[i]) == NULL) {
+        if (dqht_set(table, to_store[i], &values[i]) != 0) {
             printf("Could not insert entry: [%s: %d]\n", to_store[i], values[i]);
             return 1;
         }
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
     printf("== Inserted entries ==\n");
     for (int i = 0; i < 10; i++) {
         int* value;
-        if ((value = ht_get(table, to_store[i])) == NULL) {
+        if ((value = dqht_get(table, to_store[i])) == NULL) {
             printf("Could not get entry: [%s]\n", to_store[i]);
             return 1;
         } else if (*value != values[i]) {
@@ -70,14 +70,14 @@ int main(int argc, char* argv[]) {
     }
     printf("== Retrieved entries ==\n");
     for (int i = 0; i < 10; i++) {
-        if (ht_delete(table, to_store[i]) == NULL) {
+        if (dqht_remove(table, to_store[i])  != 0) {
             printf("Could not delete entry: [%s]\n", to_store[i]);
             return 1;
         }
         printf("=> Deleted entry %d\n", i);
     }
     printf("== Deleted entries ==\n");
-    ht_destroy(table);
+    dqht_destroy(table);
 
     return 0;
 }
