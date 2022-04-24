@@ -49,11 +49,38 @@ int main(int argc, char* argv[]) {
         64526
     };
     for (int i = 0; i < 10; i++) {
-        if (dqht_push_last(table, to_store[i], &values[i]) != 0) {
+        if (dqht_push_front(table, to_store[i], &values[i]) != 0) {
             printf("Could not insert entry: [%s: %d]\n", to_store[i], values[i]);
             return 1;
         }
+        if (table->head == NULL && table->tail == NULL) {
+            printf("Head: (nil), Tail: (nil)\n");
+        } else {
+            printf("Head: %d, Tail: %d\n", *((int*)table->head->ptr), *((int*)table->tail->ptr));
+        }
+        if (i == 0) {
+            if (table->tail->prev != NULL) {
+                printf("Initial previous at tail should be null\n");
+                return 1;
+            } else if (table->head->next != NULL) {
+                printf("Initial next at head should be null\n");
+                return 1;
+            }
+        } else {
+            if (*((int*)table->tail->ptr) != values[0]) {
+                printf("Tail was not equal to first element: %d != %d\n", *((int*)table->tail->ptr), values[0]);
+                return 1;
+            } else if (*((int*)table->head->ptr) != values[i]) {
+                printf("Head was not equal to current element: %d != %d\n", *((int*)table->head->ptr), values[i]);
+                return 1;
+            }
+            return 1;
+        }
         printf("=> Inserted entry %d\n", i);
+    }
+    if (table->ht->count != 10) {
+        printf("Count was not 10: %d\n", table->ht->count);
+        return 1;
     }
     dqht_print_table(table);
     printf("== Inserted entries ==\n");
@@ -76,8 +103,12 @@ int main(int argc, char* argv[]) {
         }
         printf("=> Deleted entry %d\n", i);
     }
+    if (table->ht->count != 0) {
+        printf("Count was not 0: %d\n", table->ht->count);
+        return 1;
+    }
     printf("== Deleted entries ==\n");
+    dqht_print_table(table);
     dqht_destroy(table);
-
     return 0;
 }

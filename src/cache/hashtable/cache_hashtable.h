@@ -21,7 +21,7 @@ HashTable* ht_create(size_t size);
 void ht_destroy(HashTable* ht);
 int ht_resize(HashTable* ht);
 
-void* ht_get(HashTable* ht, const char* key);
+DQHTEntry* ht_get(HashTable* ht, const char* key);
 DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value);
 DQHTEntry* ht_delete(HashTable* ht, const char* key);
 

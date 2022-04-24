@@ -13,28 +13,25 @@ HashTable* ht_create(size_t size) {
 }
 
 void ht_destroy(HashTable* ht) {
-    if (ht == NULL) {
+    if (ht == NULL || ht->items == NULL) {
         return;
-    }
-    for (int i = 0; i < ht->size; i++) {
-        DQHTEntry* entry = ht->items[i];
-        if (entry != NULL) {
-            dqhtentry_destroy(entry);
-        }
     }
     free(ht->items);
     free(ht);
 }
 
 DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
-    if (ht == NULL || value == NULL || ht->count >= (ht->size / 2) && ht_resize(ht) != 0) {
+    if (ht == NULL
+        || ht->items == NULL
+        || value == NULL
+        || ht->count >= (ht->size / 2) && ht_resize(ht) != 0) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
     size_t index = (size_t)(hash % ((uint64_t)(ht->size - 1)));
 
     while(ht->items[index] != NULL) {
-        if (strcmp(key, ht->items[index]->key) == 0) {
+        if (ht->items[index]->key != NULL && strcmp(key, ht->items[index]->key) == 0) {
             ht->items[index]->ptr = value;
             return ht->items[index];
         }
@@ -94,16 +91,20 @@ int ht_resize(HashTable* ht) {
     return 0;
 }
 
-void* ht_get(HashTable* ht, const char* key) {
-    if (ht == NULL || key == NULL) {
+DQHTEntry* ht_get(HashTable* ht, const char* key) {
+    if (ht == NULL
+        || ht->items == NULL
+        || key == NULL) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
     size_t index = (size_t)(hash & (uint64_t)(ht->size - 1));
 
     for (int i = 0; i < ht->size; i++) {
-        if (ht->items[index] != NULL && strcmp(key, ht->items[index]->key) == 0) {
-            return ht->items[index]->ptr;
+        if (ht->items[index] != NULL
+            && ht->items[index]->key != NULL
+            && strcmp(key, ht->items[index]->key) == 0) {
+            return ht->items[index];
         }
         index = (index + 1) % ht->size;
     }
@@ -111,15 +112,20 @@ void* ht_get(HashTable* ht, const char* key) {
 }
 
 DQHTEntry* ht_delete(HashTable* ht, const char* key) {
-    if (ht == NULL || key == NULL) {
+    if (ht == NULL
+        || ht->items == NULL
+        || key == NULL) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
     size_t index = (size_t)(hash & (uint64_t)(ht->size - 1));
 
     for (int i = 0; i < ht->size; i++) {
-        if (ht->items[index] != NULL && strcmp(key, ht->items[index]->key) == 0) {
+        if (ht->items[index] != NULL
+            && ht->items[index]->key != NULL
+            && strcmp(key, ht->items[index]->key) == 0) {
             dqhtentry_destroy(ht->items[index]);
+            ht->count--;
             return ht->items[index];
         }
         index = (index + 1) % ht->size;

@@ -9,8 +9,14 @@ DQHTEntry* dqhtentry_create(const char* key, void* ptr) {
 
 DQHTEntry* dqhtentry_create_full(const char* key, void* ptr, DQHTEntry* prev, DQHTEntry* next) {
     DQHTEntry* entry = malloc(sizeof(*entry));
+    if (entry == NULL) {
+        return NULL;
+    }
     entry->length = strlen(key);
-    entry->key = malloc(entry->length + 1);
+    entry->key = calloc(entry->length + 1, sizeof(char));
+    if (entry->key == NULL) {
+        return NULL;
+    }
     strncpy(entry->key, key, entry->length);
     entry->ptr = ptr;
     entry->prev = prev;
@@ -19,9 +25,11 @@ DQHTEntry* dqhtentry_create_full(const char* key, void* ptr, DQHTEntry* prev, DQ
 }
 
 void dqhtentry_destroy(DQHTEntry* entry) {
-    if (entry == NULL) {
+    if (entry == NULL || entry->key == NULL) {
         return;
     }
     free(entry->key);
+    entry->key = NULL;
     free(entry);
+    entry = NULL;
 }

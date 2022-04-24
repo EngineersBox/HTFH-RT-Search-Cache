@@ -7,7 +7,9 @@
 #include <stdio.h>
 #include <string.h>
 
-void* dlirs_new(size_t heap_size) {
+#include "../../math_utils.h"
+
+void* dlirs_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio) {
     DLIRS* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
@@ -21,6 +23,33 @@ void* dlirs_new(size_t heap_size) {
     if (cache->alloc == NULL) {
         return NULL;
     }
+    cache->cache_size = cache_size;
+    cache->window_size = window_size;
+
+    cache->hirs_ratio = 0.01f;
+    cache->hirs_limit = math_max(1.0f, (int)((cache_size * cache->hirs_ratio) + 0.5f));
+    cache->lirs_limit = cache_size - cache->hirs_limit;
+
+    cache->hirs_count = 0;
+    cache->lirs_count = 0;
+    cache->demoted = 0;
+    cache->non_resident = 0;
+
+    cache->lirs = dqht_create(ht_size);
+    if (cache->lirs == NULL) {
+        return NULL;
+    }
+    cache->hirs = dqht_create(ht_size);
+    if (cache->hirs == NULL) {
+        return NULL;
+    }
+    cache->q = dqht_create(ht_size);
+    if (cache->q == NULL) {
+        return NULL;
+    }
+
+    cache->time = 0;
+
     return cache;
 }
 
