@@ -148,15 +148,68 @@ void dlirs_prune(DLIRS* cache) {
     }
 }
 
-void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
-
-void dlirs_eject_lir(DLIRS* cache) {
+void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir) {
     if (cache == NULL) {
         return;
     }
+    if (hit_nonresident_hir) {
+        cache->hirs_limit = math_min(
+            cache->cache_size - 1,
+            cache->hirs_limit +  math_max(
+                1,
+                (int)((((float) cache->demoted) / ((float) cache->non_resident)) + 0.5)
+            )
+        );
+        cache->lirs_limit = cache->cache_size - cache->hirs_limit;
+    } else {
+        cache->lirs_limit = math_min(
+            cache->cache_size - 1,
+            cache->lirs_limit + math_max(
+                1,
+                (int)((((float) cache->non_resident) / ((float) cache->demoted)) + 0.5)
+            )
+        );
+        cache->hirs_limit = cache->cache_size - cache->lirs_limit;
+    }
 }
 
-DLIRSEntry* dlirs_eject_hir(DLIRS* cache);
+void dlirs_eject_lir(DLIRS* cache) {
+    if (cache == NULL || cache->q == NULL || cache->lirs == NULL) {
+        return;
+    }
+    DLIRSEntry* lru = dqht_pop_front(cache->q);
+    if (lru == NULL) {
+        return NULL;
+    }
+    cache->lirs_count--;
+    lru->is_LIR = false;
+    lru->is_demoted = true;
+    cache->demoted++;
+    if (dqht_insert(cache->q, lru->key, lru->value) != 0) {
+        return NULL;
+    }
+    cache->hirs_count++;
+    dlirs_prune(cache);
+}
+
+DLIRSEntry* dlirs_eject_hir(DLIRS* cache) {
+    if (cache == NULL || cache->lirs == NULL) {
+        return NULL;
+    }
+    DLIRSEntry* lru = dqht_pop_front(cache->q);
+    if (lru == NULL) {
+        return NULL;
+    }
+    if (dqht_get(cache->lirs, lru->key) != NULL) {
+        lru->in_cache = false;
+        cache->non_resident++;
+    }
+    if (lru->is_demoted) {
+        cache->demoted--;
+    }
+    cache->hirs_count--;
+    return lru;
+}
 
 int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {
