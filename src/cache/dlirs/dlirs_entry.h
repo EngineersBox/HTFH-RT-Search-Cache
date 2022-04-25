@@ -13,11 +13,13 @@ typedef struct DLIRSEntry {
     bool is_LIR;
     bool is_demoted;
     bool in_cache;
+    size_t length;
+    char* key;
     void* value;
 } DLIRSEntry;
 
-DLIRSEntry* dlirs_entry_create_full(void* value, bool is_LIR, bool in_cache);
-DLIRSEntry* dlirs_entry_create(void* value);
+DLIRSEntry* dlirs_entry_create_full(const char* key, void* value, bool is_LIR, bool in_cache);
+DLIRSEntry* dlirs_entry_create(const char* key, void* value);
 void dlirs_entry_destroy(DLIRSEntry* entry);
 
 #ifdef __cplusplus

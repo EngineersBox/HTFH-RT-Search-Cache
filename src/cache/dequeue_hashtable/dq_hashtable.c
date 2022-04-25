@@ -34,7 +34,7 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
     if (dqht == NULL || key == NULL) {
         return NULL;
     }
-    DQHTEntry * entry = ht_get(dqht->ht, key);
+    DQHTEntry* entry = ht_get(dqht->ht, key);
     return entry != NULL ? entry->ptr : NULL;
 }
 

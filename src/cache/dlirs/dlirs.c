@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "../../math_utils.h"
 
@@ -52,6 +53,110 @@ void* dlirs_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t wind
 
     return cache;
 }
+
+int dlirs_contains(DLIRS* cache, const char* key) {
+    if (cache == NULL || cache->lirs || cache->q || key == NULL) {
+        return -1;
+    }
+    DLIRSEntry* value;
+    if ((value = dqht_get(cache->lirs, key)) != NULL) {
+        return value->in_cache ? 0 : -1;
+    }
+    return dqht_get(cache->q, key) != NULL ? 0 : -1
+}
+
+int dlirs_is_full(DLIRS* cache) {
+    if (cache == NULL) {
+        return -1;
+    }
+    return (cache->hirs_count + cache->lirs_count) == cache->cache_size ? 0 : -1;
+}
+
+void dlirs_hit_lir(DLIRS* cache, const char* key) {
+    if (cache == NULL || key == NULL) {
+        return;
+    }
+    DLIRSEntry* lru_lir = dqht_get_front(cache->lirs);
+    if (lru_lir != NULL) {
+        return;
+    }
+    DLIRSEntry* value = dqht_get(cache->lirs, key);
+    if (value == NULL) {
+        return;
+    }
+    if (dqht_insert(cache->lirs, key, value) != 0) {
+        return;
+    }
+    if ((uintptr_t) lru_lir == (uintptr_t) value) {
+        dlirs_prune(cache);
+    }
+}
+
+// -1 = failure, 0 = in cache, 1 = not in cache
+int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted) {
+    if (cache == NULL || key == NULL || cache->lirs == NULL || cache->hirs == NULL || cache->q == NULL) {
+        return -1;
+    }
+    DLIRSEntry* entry = dqht_get(cache->lirs, key);
+    if (entry == NULL) {
+        return 1;
+    }
+    bool in_cache = entry.in_cache;
+    entry->is_LIR = true;
+    if (dqht_remove(cache->lirs, key) != 0
+        || dqht_remove(cache->hirs, key) != 0) {
+        return -1;
+    }
+    if (in_cache) {
+        if (dqht_remove(cache->q, key) != 0) {
+            return -1;
+        }
+        cache->hirs_count--;
+    } else {
+        dlirs_adjust_size(cache, true);
+        entry->in_cache = true;
+        cache->non_resident--;
+    }
+    while (cache->lirs_count >= (size_t) cache->lirs_limit) {
+        dlirs_eject_lir(cache);
+    }
+    while ((cache->hirs_count + cache->lirs_count) >= (size_t) cache->cache_size) {
+        evicted = dlirs_eject_hir(cache);
+    }
+    DLIRSEntry* next_entry = dqht_get(cache->lirs, key);
+    memcpy(entry, next_entry, sizeof(DLIRSEntry));
+    cache->lirs_count++;
+    return !in_cache;
+}
+
+void dlirs_prune(DLIRS* cache) {
+    if (cache == NULL || dqht->lirs == NULL) {
+        return;
+    }
+    DLIRSEntry* entry;
+    while ((entry = dqht_get_front(cache->lirs)) != NULL) {
+        if (entry->is_LIR) {
+            break;
+        }
+        if (dqht_remove(cache->lirs, entry->key) != 0
+            || dqht_remove(cache->hirs, entry->key) != 0) {
+            break;
+        }
+        if (!entry->in_cache) {
+            cache->non_resident--;
+        }
+    }
+}
+
+void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
+
+void dlirs_eject_lir(DLIRS* cache) {
+    if (cache == NULL) {
+        return;
+    }
+}
+
+DLIRSEntry* dlirs_eject_hir(DLIRS* cache);
 
 int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {

@@ -10,6 +10,7 @@ extern "C" {
 #include "../../allocator/htfh/htfh.h"
 #include "../dequeue_hashtable/dq_hashtable.h"
 #include "../../allocator/thread/lock.h"
+#include "dlirs_entry.h"
 
 typedef struct DLIRS {
     __htfh_rwlock_t rwlock;
@@ -37,6 +38,17 @@ typedef struct DLIRS {
 
 void* dlirs_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t window_size, float hirs_limit);
 int dlirs_destroy(DLIRS* cache);
+
+int dlirs_contains(DLIRS* cache, const char* key);
+int dlirs_is_full(DLIRS* cache);
+
+void dlirs_hit_lir(DLIRS* cache, const char* key);
+// -1 = failure, 0 = in cache, 1 = not in cache
+int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted);
+void dlirs_prune(DLIRS* cache);
+void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
+void dlirs_eject_lir(DLIRS* cache);
+DLIRSEntry* dlirs_eject_hir(DLIRS* cache);
 
 #ifdef __cplusplus
 };
