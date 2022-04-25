@@ -12,9 +12,8 @@ DequeueHashTable* dqht_create(size_t size) {
     if (dqht == NULL) {
         return NULL;
     }
-    printf("Null Entry: %p\n", &dqht->null_entry);
-    dqht->head = &dqht->null_entry;
-    dqht->tail = &dqht->null_entry;
+    dqht->head = NULL;
+    dqht->tail = NULL;
     dqht->ht = ht;
     return dqht;
 }
@@ -32,18 +31,18 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
         return NULL;
     }
     DQHTEntry * entry = ht_get(dqht->ht, key);
-    return entry != NULL && entry != &dqht->null_entry ? entry->ptr : NULL;
+    return entry != NULL ? entry->ptr : NULL;
 }
 
 void __dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     DQHTEntry* prev_entry = entry->prev;
     DQHTEntry* next_entry = entry->next;
-    if (prev_entry != NULL && prev_entry != &dqht->null_entry) {
+    if (prev_entry != NULL) {
         prev_entry->next = next_entry;
     } else {
         dqht->tail = next_entry;
     }
-    if (next_entry != NULL && next_entry != &dqht->null_entry) {
+    if (next_entry != NULL) {
         next_entry->prev = prev_entry;
     } else {
         dqht->head = prev_entry;
@@ -58,8 +57,7 @@ int dqht_insert(DequeueHashTable* dqht, const char* key, void* value) {
     if (entry == NULL) {
         return -1;
     }
-    __dqht_unlink(dqht, entry);
-    if (dqht->tail != NULL && dqht->tail != &dqht->null_entry) {
+    if (dqht->tail != NULL) {
         dqht->tail->next = entry;
         entry->prev = dqht->tail;
     } else {
@@ -86,7 +84,7 @@ int dqht_remove(DequeueHashTable* dqht, const char* key) {
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
             __dqht_unlink(dqht, dqht->ht->items[index]);
             dqhtentry_destroy(dqht->ht->items[index]);
-            dqht->ht->items[index] = &dqht->null_entry;
+            dqht->ht->items[index] = NULL;
             dqht->ht->count--;
             return 0;
         }
@@ -107,16 +105,13 @@ int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value) {
     if (entry == NULL) {
         return -1;
     }
-    __dqht_unlink(dqht, entry);
-    printf("0Head: %p, tail: %p\n", dqht->head, dqht->tail);
-    if (dqht->head != NULL || dqht->head == &dqht->null_entry) {
+    if (dqht->head != NULL) {
         dqht->head->prev = entry;
         entry->next = dqht->head;
     } else {
         dqht->tail = entry;
     }
     dqht->head = entry;
-    printf("0Head: %p, tail: %p\n", dqht->head, dqht->tail);
     return 0;
 }
 
@@ -125,11 +120,11 @@ void* dqht_pop_front(DequeueHashTable* dqht) {
         return NULL;
     }
     DQHTEntry* front = dqht->head;
-    if (front == NULL || front == &dqht->null_entry) {
+    if (front == NULL) {
         return NULL;
-    } else if (front->prev != NULL && front->prev != &dqht->null_entry) {
-        front->prev->next = &dqht->null_entry;
-        front->prev = &dqht->null_entry;
+    } else if (front->prev != NULL) {
+        front->prev->next = NULL;
+        front->prev = NULL;
     }
     void* value = front->ptr;
     dqhtentry_destroy(front);
@@ -138,7 +133,7 @@ void* dqht_pop_front(DequeueHashTable* dqht) {
 }
 
 void* dqht_get_last(DequeueHashTable* dqht) {
-    return dqht != NULL ? (dqht->tail == &dqht->null_entry ? NULL : dqht->tail) : NULL;
+    return dqht != NULL ? dqht->tail : NULL;
 }
 
 int dqht_push_last(DequeueHashTable* dqht, const char* key, void* value) {
@@ -150,11 +145,11 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
         return NULL;
     }
     DQHTEntry* back = dqht->tail;
-    if (back == NULL || back == &dqht->null_entry) {
+    if (back == NULL) {
         return NULL;
-    } else if (back->next != NULL && back->next != &dqht->null_entry) {
-        back->next->prev = &dqht->null_entry;
-        back->next = &dqht->null_entry;
+    } else if (back->next != NULL) {
+        back->next->prev = NULL;
+        back->next = NULL;
     }
     void* value = back->ptr;
     dqhtentry_destroy(back);
@@ -162,12 +157,10 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
     return value;
 }
 
-#include <stdio.h>
-
 void dqht_print_table(DequeueHashTable* dqht) {
     for (int i = 0; i < dqht->ht->size; i++) {
         DQHTEntry * entry = dqht->ht->items[i];
-        if (entry != NULL && entry != &dqht->null_entry) {
+        if (entry != NULL) {
             printf(
                 "Entry %d: [K: %s, V: %p]\n",
                 i,

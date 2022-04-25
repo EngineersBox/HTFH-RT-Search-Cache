@@ -74,7 +74,6 @@ int main(int argc, char* argv[]) {
                 printf("Head was not equal to current element: %d != %d\n", *((int*)table->head->ptr), values[i]);
                 return 1;
             }
-            return 1;
         }
         printf("=> Inserted entry %d\n", i);
     }
@@ -86,11 +85,11 @@ int main(int argc, char* argv[]) {
     printf("== Inserted entries ==\n");
     for (int i = 0; i < 10; i++) {
         int* value;
-        if ((value = dqht_get(table, to_store[i])) == NULL) {
+        if ((value = dqht_pop_last(table)) == NULL) {
             printf("Could not get entry: [%s]\n", to_store[i]);
             return 1;
         } else if (*value != values[i]) {
-            printf("Value %d did not match expected: %d", *value, values[i]);
+            printf("Value %d did not match expected: %d\n", *value, values[i]);
             return 1;
         }
         printf("=> Retrieved entry %d: %d\n", i, *value);

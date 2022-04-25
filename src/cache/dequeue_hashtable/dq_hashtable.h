@@ -13,7 +13,6 @@ extern "C" {
 #include "../hashtable/dq_ht_entry.h"
 
 typedef struct DequeueHashTable {
-    DQHTEntry null_entry;
     DQHTEntry* head;
     DQHTEntry* tail;
 
