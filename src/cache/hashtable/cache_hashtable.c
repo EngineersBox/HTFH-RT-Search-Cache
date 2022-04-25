@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "hashing.h"
 
 HashTable* ht_create(size_t size) {
@@ -19,7 +20,7 @@ void ht_destroy(HashTable* ht) {
     free(ht->items);
     free(ht);
 }
-#include <stdio.h>
+
 DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
     if (ht == NULL
         || ht->items == NULL

@@ -5,6 +5,7 @@
 #include <inttypes.h>
 #include <string.h>
 
+#include "../../math_utils.h"
 #include "../hashtable/hashing.h"
 
 DequeueHashTable* dqht_create(size_t size) {
@@ -146,22 +147,24 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
     dqhtentry_destroy(back);
     dqht->ht->items[back->index] = NULL;
     dqht->ht->count--;
-    printf("Count: %d\n", dqht->ht->count);
     return value;
 }
 
 void dqht_print_table(DequeueHashTable* dqht) {
-    for (int i = 0; i < dqht->ht->size; i++) {
-        DQHTEntry * entry = dqht->ht->items[i];
-        if (entry != NULL) {
-            printf(
-                "Entry %d: [K: %s, V: %p]\n",
-                i,
-                dqht->ht->items[i]->key,
-                dqht->ht->items[i]->ptr
-            );
-            continue;
-        }
-        printf("Entry %d: (nil)\n", i);
+    if (dqht == NULL) {
+        return;
     }
+    printf("{");
+    DQHTEntry* entry = dqht->head;
+    while (entry != NULL) {
+        printf(
+            " [%zu] %s: %p%s",
+            entry->index,
+            entry->key,
+            entry->ptr,
+            entry->next != NULL ? "," : " "
+        );
+        entry = entry->next;
+    }
+    printf("}\n");
 }
