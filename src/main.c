@@ -20,7 +20,7 @@ struct TestStruct {
 int main(int argc, char* argv[]) {
     DequeueHashTable * table = dqht_create(10);
     if (table == NULL) {
-        printf("Could not create table with size 10 and max_jumps 5\n");
+        printf("Could not create table with size 10\n");
         return 1;
     }
 

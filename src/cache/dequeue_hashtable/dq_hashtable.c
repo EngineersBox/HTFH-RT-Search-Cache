@@ -5,7 +5,6 @@
 #include <inttypes.h>
 #include <string.h>
 
-#include "../../math_utils.h"
 #include "../hashtable/hashing.h"
 
 DequeueHashTable* dqht_create(size_t size) {
