@@ -90,7 +90,7 @@ int dqht_remove(DequeueHashTable* dqht, const char* key) {
         }
         index = (index + 1) % dqht->ht->size;
     }
-    return 0;
+    return -1;
 }
 
 void* dqht_get_front(DequeueHashTable* dqht) {
@@ -116,7 +116,7 @@ int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value) {
 }
 
 void* dqht_pop_front(DequeueHashTable* dqht) {
-    if (dqht == NULL) {
+    if (dqht == NULL || dqht->head == NULL) {
         return NULL;
     }
     DQHTEntry* front = dqht->head;
@@ -137,7 +137,7 @@ int dqht_push_last(DequeueHashTable* dqht, const char* key, void* value) {
 }
 
 void* dqht_pop_last(DequeueHashTable* dqht) {
-    if (dqht == NULL) {
+    if (dqht == NULL || dqht->tail == NULL) {
         return NULL;
     }
     DQHTEntry* back = dqht->tail;

@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     printf("== Inserted entries ==\n");
     for (int i = 0; i < 10; i++) {
         int* value;
-        if ((value = dqht_pop_last(table)) == NULL) {
+        if ((value = dqht_get(table, to_store[i])) == NULL) {
             printf("Could not get entry: [%s]\n", to_store[i]);
             return 1;
         } else if (*value != values[i]) {
@@ -94,9 +94,10 @@ int main(int argc, char* argv[]) {
         }
         printf("=> Retrieved entry %d: %d\n", i, *value);
     }
+    dqht_print_table(table);
     printf("== Retrieved entries ==\n");
     for (int i = 0; i < 10; i++) {
-        if (dqht_remove(table, to_store[i])  != 0) {
+        if (dqht_pop_last(table)  == NULL) {
             printf("Could not delete entry: [%s]\n", to_store[i]);
             return 1;
         }

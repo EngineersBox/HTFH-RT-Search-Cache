@@ -19,7 +19,7 @@ void ht_destroy(HashTable* ht) {
     free(ht->items);
     free(ht);
 }
-
+#include <stdio.h>
 DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
     if (ht == NULL
         || ht->items == NULL
@@ -54,10 +54,9 @@ inline int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, si
         index = index + 1 % size;
     }
     items[index] = entry;
+    items[index]->index = index;
     return 0;
 }
-
-#include <stdio.h>
 
 void print_table(HashTable* ht) {
     for (int i = 0; i < ht->size; i++) {
@@ -127,7 +126,9 @@ DQHTEntry* ht_delete(HashTable* ht, const char* key) {
             && strcmp(key, ht->items[index]->key) == 0) {
             dqhtentry_destroy(ht->items[index]);
             ht->count--;
-            return ht->items[index];
+            DQHTEntry* entry = ht->items[index];
+            ht->items[index] = NULL;
+            return entry;
         }
         index = (index + 1) % ht->size;
     }
