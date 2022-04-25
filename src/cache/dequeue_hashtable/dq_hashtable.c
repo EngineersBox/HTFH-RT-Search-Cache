@@ -122,8 +122,8 @@ void* dqht_pop_front(DequeueHashTable* dqht) {
     DQHTEntry* front = dqht->head;
     void* value = front->ptr;
     __dqht_unlink(dqht, dqht->head);
-    dqhtentry_destroy(front);
     dqht->ht->items[front->index] = NULL;
+    dqhtentry_destroy(front);
     dqht->ht->count--;
     return value;
 }
@@ -143,8 +143,8 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
     DQHTEntry* back = dqht->tail;
     void* value = back->ptr;
     __dqht_unlink(dqht, dqht->tail);
-    dqhtentry_destroy(back);
     dqht->ht->items[back->index] = NULL;
+    dqhtentry_destroy(back);
     dqht->ht->count--;
     return value;
 }
