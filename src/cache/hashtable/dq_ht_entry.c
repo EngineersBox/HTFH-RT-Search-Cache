@@ -21,6 +21,7 @@ DQHTEntry* dqhtentry_create_full(const char* key, void* ptr, DQHTEntry* prev, DQ
     entry->ptr = ptr;
     entry->prev = prev;
     entry->next = next;
+    entry->index = 0;
     return entry;
 }
 

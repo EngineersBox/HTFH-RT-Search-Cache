@@ -2,6 +2,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
+
+#include "../hashtable/hashing.h"
 
 DequeueHashTable* dqht_create(size_t size) {
     HashTable* ht = ht_create(size);
@@ -40,12 +44,12 @@ void __dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     if (prev_entry != NULL) {
         prev_entry->next = next_entry;
     } else {
-        dqht->tail = next_entry;
+        dqht->head = next_entry;
     }
     if (next_entry != NULL) {
         next_entry->prev = prev_entry;
     } else {
-        dqht->head = prev_entry;
+        dqht->tail = prev_entry;
     }
 }
 
@@ -66,10 +70,6 @@ int dqht_insert(DequeueHashTable* dqht, const char* key, void* value) {
     dqht->tail = entry;
     return 0;
 }
-
-#include <inttypes.h>
-#include <string.h>
-#include "../hashtable/hashing.h"
 
 int dqht_remove(DequeueHashTable* dqht, const char* key) {
     if (dqht == NULL || dqht->ht == NULL || key == NULL) {
@@ -120,14 +120,10 @@ void* dqht_pop_front(DequeueHashTable* dqht) {
         return NULL;
     }
     DQHTEntry* front = dqht->head;
-    if (front == NULL) {
-        return NULL;
-    } else if (front->prev != NULL) {
-        front->prev->next = NULL;
-        front->prev = NULL;
-    }
     void* value = front->ptr;
+    __dqht_unlink(dqht, dqht->head);
     dqhtentry_destroy(front);
+    dqht->ht->items[front->index] = NULL;
     dqht->ht->count--;
     return value;
 }
@@ -145,15 +141,12 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
         return NULL;
     }
     DQHTEntry* back = dqht->tail;
-    if (back == NULL) {
-        return NULL;
-    } else if (back->next != NULL) {
-        back->next->prev = NULL;
-        back->next = NULL;
-    }
     void* value = back->ptr;
+    __dqht_unlink(dqht, dqht->tail);
     dqhtentry_destroy(back);
+    dqht->ht->items[back->index] = NULL;
     dqht->ht->count--;
+    printf("Count: %d\n", dqht->ht->count);
     return value;
 }
 

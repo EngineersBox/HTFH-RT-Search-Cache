@@ -33,7 +33,7 @@ DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
     while(ht->items[index] != NULL) {
         if (ht->items[index]->key != NULL && strcmp(key, ht->items[index]->key) == 0) {
             ht->items[index]->ptr = value;
-            return *(ht->items + index);
+            return ht->items[index];
         }
         index = (index + 1) % ht->size;
     }
@@ -41,8 +41,9 @@ DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
     if (ht->items[index] == NULL) {
         return NULL;
     }
+    ht->items[index]->index = index;
     ht->count++;
-    return *(ht->items + index);
+    return ht->items[index];
 }
 
 inline int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {

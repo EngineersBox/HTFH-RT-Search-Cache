@@ -13,6 +13,7 @@ typedef struct DQHTEntry {
     char* key;
     size_t length;
     void* ptr;
+    size_t index;
     struct DQHTEntry* prev;
     struct DQHTEntry* next;
 } DQHTEntry;
