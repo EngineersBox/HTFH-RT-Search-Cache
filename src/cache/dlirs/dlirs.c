@@ -249,9 +249,40 @@ void dlirs_limit_stack(DLIRS* cache) {
     }
 }
 
-DLIRS* miss(DLIRS* cache, const char* key) {
-    DLIRSEntry* evicted = NULL;
-    
+int miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) {
+    if (cache == NULL || key == NULL) {
+        return -1;
+    }
+    if (cache->lirs_count < cache->lirs_limit && cache->hirs_count == 0) {
+        DLIRSEntry* entry = dlirs_entry_create(key, value);
+        if (entry == NULL) {
+            return -1;
+        }
+        entry->is_LIR = true;
+        if (dqht_insert(cache->lirs, key, entry) != 0) {
+            return -1;
+        }
+        cache->lirs_count++;
+        evicted = NULL;
+        return 0;
+    }
+    while ((cache->hirs_count + cache->lirs_count) >= cache->cache_size) {
+        while (cache->lirs_count > cache->lirs_limit) {
+            dlirs_eject_lir(cache);
+        }
+        evicted = dlirs_eject_hir(cache);
+    }
+    DLIRSEntry* entry = dlirs_entry_create(key, value);
+    if (entry == NULL) {
+        return -1;
+    } else if (dqht_insert(cache->q, key, entry) != 0
+        || dqht_insert(cache->lirs, key, entry) != 0
+        || dqht_insert(cache->hirs, key, entry) != 0) {
+        return -1;
+    }
+    cache->hirs_count++;
+    dlirs_limit_stack(cache);
+    return 0;
 }
 
 int dlirs_destroy(DLIRS* cache) {

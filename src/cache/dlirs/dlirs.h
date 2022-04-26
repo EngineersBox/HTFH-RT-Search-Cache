@@ -52,7 +52,7 @@ DLIRSEntry* dlirs_eject_hir(DLIRS* cache);
 void dlirs_hit_hir_in_q(DLIRS* cache, const char* key);
 void dlirs_limit_stack(DLIRS* cache);
 
-DLIRSEntry* miss(DLIRS* cache, const char* key);
+int miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted);
 
 #ifdef __cplusplus
 };
