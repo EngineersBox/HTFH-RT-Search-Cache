@@ -38,6 +38,7 @@ int cache_destroy(Cache* cache) {
     } else if (__htfh_rwlock_unlock_handled(&cache->rwlock) != 0) {
         return -1;
     }
+    dlirs_destroy(cache->dlirs);
     free(cache);
     return 0;
 }
