@@ -15,7 +15,7 @@ struct TestStruct {
 
 #define HEAP_SIZE (16 * 10000)
 
-int main(int argc, char* argv[]) {
+int dqht_test_main(int argc, char* argv[]) {
     DequeueHashTable * table = dqht_create(10);
     if (table == NULL) {
         printf("Could not create table with size 10\n");

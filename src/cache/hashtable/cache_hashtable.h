@@ -23,7 +23,7 @@ int ht_resize(HashTable* ht);
 
 DQHTEntry* ht_get(HashTable* ht, const char* key);
 DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value);
-DQHTEntry* ht_delete(HashTable* ht, const char* key);
+void* ht_delete(HashTable* ht, const char* key);
 
 #ifdef __cplusplus
 };

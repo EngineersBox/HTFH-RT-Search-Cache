@@ -112,7 +112,7 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
     return NULL;
 }
 
-DQHTEntry* ht_delete(HashTable* ht, const char* key) {
+void* ht_delete(HashTable* ht, const char* key) {
     if (ht == NULL
         || ht->items == NULL
         || key == NULL) {
@@ -127,9 +127,9 @@ DQHTEntry* ht_delete(HashTable* ht, const char* key) {
             && strcmp(key, ht->items[index]->key) == 0) {
             dqhtentry_destroy(ht->items[index]);
             ht->count--;
-            DQHTEntry* entry = ht->items[index];
+            void* value = ht->items[index]->ptr;
             ht->items[index] = NULL;
-            return entry;
+            return value;
         }
         index = (index + 1) % ht->size;
     }
