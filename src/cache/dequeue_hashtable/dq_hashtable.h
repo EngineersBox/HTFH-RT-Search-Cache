@@ -24,7 +24,7 @@ void dqht_destroy(DequeueHashTable* dqht);
 
 void* dqht_get(DequeueHashTable* dqht, const char* key);
 int dqht_insert(DequeueHashTable* dqht, const char* key, void* value);
-int dqht_remove(DequeueHashTable* dqht, const char* key);
+void* dqht_remove(DequeueHashTable* dqht, const char* key);
 
 void* dqht_get_front(DequeueHashTable* dqht);
 int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value);

@@ -71,9 +71,9 @@ int dqht_insert(DequeueHashTable* dqht, const char* key, void* value) {
     return 0;
 }
 
-int dqht_remove(DequeueHashTable* dqht, const char* key) {
+void* dqht_remove(DequeueHashTable* dqht, const char* key) {
     if (dqht == NULL || dqht->ht == NULL || key == NULL) {
-        return -1;
+        return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
     size_t index = (size_t)(hash & (uint64_t)(dqht->ht->size - 1));
@@ -83,14 +83,15 @@ int dqht_remove(DequeueHashTable* dqht, const char* key) {
             && dqht->ht->items[index]->key != NULL
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
             __dqht_unlink(dqht, dqht->ht->items[index]);
+            void* value = dqht->ht->items[index]->ptr;
             dqhtentry_destroy(dqht->ht->items[index]);
             dqht->ht->items[index] = NULL;
             dqht->ht->count--;
-            return 0;
+            return value;
         }
         index = (index + 1) % dqht->ht->size;
     }
-    return -1;
+    return NULL;
 }
 
 void* dqht_get_front(DequeueHashTable* dqht) {

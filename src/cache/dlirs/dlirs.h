@@ -49,6 +49,10 @@ void dlirs_prune(DLIRS* cache);
 void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
 void dlirs_eject_lir(DLIRS* cache);
 DLIRSEntry* dlirs_eject_hir(DLIRS* cache);
+void dlirs_hit_hir_in_q(DLIRS* cache, const char* key);
+void dlirs_limit_stack(DLIRS* cache);
+
+DLIRSEntry* miss(DLIRS* cache, const char* key);
 
 #ifdef __cplusplus
 };
