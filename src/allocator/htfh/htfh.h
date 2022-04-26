@@ -81,22 +81,22 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes);
 /* malloc/memalign/realloc/free replacements. */
 int htfh_free(Allocator* alloc, void* ptr);
 __attribute__((malloc
-#if gnu_version_10
+#ifdef gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2))) void* htfh_malloc(Allocator* alloc, size_t bytes);
 __attribute__((malloc
-#if gnu_version_10
+#ifdef gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2,3))) void* htfh_calloc(Allocator* alloc, size_t count, size_t bytes);
 __attribute__((malloc
-#if gnu_version_10
+#ifdef gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2,3))) void* htfh_memalign(Allocator* alloc, size_t align, size_t bytes);
 __attribute__((malloc
-#if gnu_version_10
+#ifdef gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(3))) void* htfh_realloc(Allocator* alloc, void* ptr, size_t size);
