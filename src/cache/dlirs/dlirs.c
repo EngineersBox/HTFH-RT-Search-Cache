@@ -293,7 +293,6 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicte
     int miss = 0;
     evicted = NULL;
 
-    cache->time++;
     DLIRSEntry* entry = dqht_get(cache->lirs, key);
     if (entry != NULL) {
         if (entry->is_LIR) {

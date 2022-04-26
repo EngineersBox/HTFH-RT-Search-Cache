@@ -31,8 +31,6 @@ typedef struct DLIRS {
     DequeueHashTable* hirs;
     DequeueHashTable* q;
 
-    size_t time;
-
     Allocator* alloc;
 } DLIRS;
 
