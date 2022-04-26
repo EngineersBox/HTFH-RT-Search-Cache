@@ -10,6 +10,8 @@ extern "C" {
 #include <stddef.h>
 #include "constants.h"
 #include "utils.h"
+#include "../preprocessor/checks.h"
+
 /*
 ** Block header structure.
 **
