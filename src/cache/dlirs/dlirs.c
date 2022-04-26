@@ -49,8 +49,6 @@ void* dlirs_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t wind
         return NULL;
     }
 
-    cache->time = 0;
-
     return cache;
 }
 
@@ -62,7 +60,7 @@ int dlirs_contains(DLIRS* cache, const char* key) {
     if ((value = dqht_get(cache->lirs, key)) != NULL) {
         return value->in_cache ? 0 : -1;
     }
-    return dqht_get(cache->q, key) != NULL ? 0 : -1
+    return dqht_get(cache->q, key) != NULL ? 0 : -1;
 }
 
 int dlirs_is_full(DLIRS* cache) {
@@ -101,7 +99,7 @@ int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted) {
     if (entry == NULL) {
         return 1;
     }
-    bool in_cache = entry.in_cache;
+    bool in_cache = entry->in_cache;
     entry->is_LIR = true;
     if (dqht_remove(cache->lirs, key) != 0
         || dqht_remove(cache->hirs, key) != 0) {
@@ -130,7 +128,7 @@ int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted) {
 }
 
 void dlirs_prune(DLIRS* cache) {
-    if (cache == NULL || dqht->lirs == NULL) {
+    if (cache == NULL || cache->lirs == NULL) {
         return;
     }
     DLIRSEntry* entry;
@@ -179,14 +177,14 @@ void dlirs_eject_lir(DLIRS* cache) {
     }
     DLIRSEntry* lru = dqht_pop_front(cache->q);
     if (lru == NULL) {
-        return NULL;
+        return;
     }
     cache->lirs_count--;
     lru->is_LIR = false;
     lru->is_demoted = true;
     cache->demoted++;
     if (dqht_insert(cache->q, lru->key, lru->value) != 0) {
-        return NULL;
+        return;
     }
     cache->hirs_count++;
     dlirs_prune(cache);
@@ -219,9 +217,9 @@ void dlirs_hit_hir_in_q(DLIRS* cache, const char* key) {
     if (entry == NULL) {
         return;
     }
-    if (entry.is_demoted) {
+    if (entry->is_demoted) {
         dlirs_adjust_size(cache, false);
-        entry.is_demoted = true;
+        entry->is_demoted = true;
         cache->demoted--;
     }
     if (dqht_insert(cache->q, key, entry) != 0
@@ -240,7 +238,7 @@ void dlirs_limit_stack(DLIRS* cache) {
         DLIRSEntry* lru = dqht_pop_front(cache->hirs);
         if (lru == NULL) {
             break;
-        } else if (dqht_remove(cache->lirs, key) != NULL) {
+        } else if (dqht_remove(cache->lirs, lru->key) != NULL) {
             break;
         }
         if (!lru->in_cache) {

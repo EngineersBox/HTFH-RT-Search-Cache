@@ -26,8 +26,7 @@ DLIRSEntry* dlirs_entry_create(const char* key, void* value) {
 }
 
 void dlirs_entry_destroy(DLIRSEntry* entry) {
-    if (entry == NULL) {
-        return NULL;
+    if (entry != NULL) {
+        free(entry);
     }
-    free(entry);
 }

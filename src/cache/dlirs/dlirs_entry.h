@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+#include <inttypes.h>
 #include <stdbool.h>
 
 typedef struct DLIRSEntry {
