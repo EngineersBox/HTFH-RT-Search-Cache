@@ -10,24 +10,15 @@
 
 #include "../../math_utils.h"
 
-void* dlirs_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio) {
+DLIRS* dlirs_create(size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio) {
     DLIRS* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
-        return NULL;
-    }
-    int lock_result;
-    if ((lock_result = __htfh_rwlock_init(&cache->rwlock, PTHREAD_PROCESS_PRIVATE)) != 0) {
-        set_alloc_errno_msg(RWLOCK_LOCK_INIT, strerror(lock_result));
-        return NULL;
-    }
-    cache->alloc = htfh_create(heap_size);
-    if (cache->alloc == NULL) {
         return NULL;
     }
     cache->cache_size = cache_size;
     cache->window_size = window_size;
 
-    cache->hirs_ratio = 0.01f;
+    cache->hirs_ratio = hirs_ratio; // 0.01f;
     cache->hirs_limit = math_max(1.0f, (int)((cache_size * cache->hirs_ratio) + 0.5f));
     cache->lirs_limit = cache_size - cache->hirs_limit;
 
@@ -312,13 +303,10 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicte
 int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {
         return 0;
-    } else if (__htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
-        return -1;
-    } else if (htfh_destroy(cache->alloc) != 0) {
-        return -1;
-    } else if (__htfh_rwlock_unlock_handled(&cache->rwlock) != 0) {
-        return -1;
     }
+    dqht_destroy(cache->lirs);
+    dqht_destroy(cache->hirs);
+    dqht_destroy(cache->q);
     free(cache);
     return 0;
 }

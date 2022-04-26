@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void* cache_new(size_t heap_size) {
+Cache* cache_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio) {
     Cache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
@@ -19,6 +19,10 @@ void* cache_new(size_t heap_size) {
     }
     cache->alloc = htfh_create(heap_size);
     if (cache->alloc == NULL) {
+        return NULL;
+    }
+    cache->dlirs = dlirs_create(ht_size, cache_size, window_size, hirs_ratio);
+    if (cache->dlirs == NULL) {
         return NULL;
     }
     return cache;

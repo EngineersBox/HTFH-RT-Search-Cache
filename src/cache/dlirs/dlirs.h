@@ -13,7 +13,6 @@ extern "C" {
 #include "dlirs_entry.h"
 
 typedef struct DLIRS {
-    __htfh_rwlock_t rwlock;
     size_t cache_size;
     size_t window_size;
 
@@ -30,11 +29,9 @@ typedef struct DLIRS {
     DequeueHashTable* lirs;
     DequeueHashTable* hirs;
     DequeueHashTable* q;
-
-    Allocator* alloc;
 } DLIRS;
 
-void* dlirs_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t window_size, float hirs_limit);
+DLIRS* dlirs_create(size_t ht_size, size_t cache_size, size_t window_size, float hirs_limit);
 int dlirs_destroy(DLIRS* cache);
 
 int dlirs_contains(DLIRS* cache, const char* key);
