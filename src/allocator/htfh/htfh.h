@@ -71,40 +71,39 @@ int htfh_destroy(Allocator* alloc);
 /* Add/remove memory pools. */
 void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes);
 
-/* malloc/memalign/realloc/free replacements. */
-int htfh_free(Allocator* alloc, void* ptr);
-__attribute__((malloc
 #if defined(__GNUC__) \
     && __GNUC__ >= 10    \
     && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
     && defined(__GNUC_PATCHLEVEL__)
+#define gnu_version_10
+#endif
+
+/* malloc/memalign/realloc/free replacements. */
+int htfh_free(Allocator* alloc, void* ptr);
+__attribute__((malloc
+#if gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2))) void* htfh_malloc(Allocator* alloc, size_t bytes);
 __attribute__((malloc
-#if defined(__GNUC__) \
-    && __GNUC__ >= 10    \
-    && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
-    && defined(__GNUC_PATCHLEVEL__)
+#if gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2,3))) void* htfh_calloc(Allocator* alloc, size_t count, size_t bytes);
 __attribute__((malloc
-#if defined(__GNUC__) \
-    && __GNUC__ >= 10    \
-    && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
-    && defined(__GNUC_PATCHLEVEL__)
+#if gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2,3))) void* htfh_memalign(Allocator* alloc, size_t align, size_t bytes);
 __attribute__((malloc
-#if defined(__GNUC__) \
-    && __GNUC__ >= 10    \
-    && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
-    && defined(__GNUC_PATCHLEVEL__)
+#if gnu_version_10
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(3))) void* htfh_realloc(Allocator* alloc, void* ptr, size_t size);
+
+#ifdef gnu_version_10
+#undef gnu_version_10
+#endif
 
 /* Returns internal block size, not original request size */
 size_t htfh_block_size(void* ptr);
