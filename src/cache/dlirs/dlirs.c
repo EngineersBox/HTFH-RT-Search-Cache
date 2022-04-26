@@ -249,7 +249,7 @@ void dlirs_limit_stack(DLIRS* cache) {
     }
 }
 
-int miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) {
+int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) {
     if (cache == NULL || key == NULL) {
         return -1;
     }
@@ -283,6 +283,33 @@ int miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) {
     cache->hirs_count++;
     dlirs_limit_stack(cache);
     return 0;
+}
+
+// -1 = failure, 0 = miss, 1 = hit
+int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) {
+    if (cache == NULL || key == NULL) {
+        return -1;
+    }
+    int miss = 0;
+    evicted = NULL;
+
+    cache->time++;
+    DLIRSEntry* entry = dqht_get(cache->lirs, key);
+    if (entry != NULL) {
+        if (entry->is_LIR) {
+            dlirs_hit_lir(cache, key);
+        } else {
+            miss = dlirs_hir_in_lirs(cache, key, evicted);
+        }
+    } else if (dqht_get(cache->q, key) != NULL) {
+        dlirs_hit_hir_in_q(cache, key);
+    } else {
+        miss = 1;
+        if (dlirs_miss(cache, key, value, evicted) != 0) {
+            return -1;
+        }
+    }
+    return miss;
 }
 
 int dlirs_destroy(DLIRS* cache) {
