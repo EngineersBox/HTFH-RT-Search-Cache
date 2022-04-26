@@ -74,22 +74,34 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes);
 /* malloc/memalign/realloc/free replacements. */
 int htfh_free(Allocator* alloc, void* ptr);
 __attribute__((malloc
-#if __GNUC__ >= 10
+#if defined(__GNUC__) \
+    && __GNUC__ >= 10    \
+    && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
+    && defined(__GNUC_PATCHLEVEL__)
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2))) void* htfh_malloc(Allocator* alloc, size_t bytes);
 __attribute__((malloc
-#if __GNUC__ >= 10
+#if defined(__GNUC__) \
+    && __GNUC__ >= 10    \
+    && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
+    && defined(__GNUC_PATCHLEVEL__)
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2,3))) void* htfh_calloc(Allocator* alloc, size_t count, size_t bytes);
 __attribute__((malloc
-#if __GNUC__ >= 10
+#if defined(__GNUC__) \
+    && __GNUC__ >= 10    \
+    && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
+    && defined(__GNUC_PATCHLEVEL__)
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(2,3))) void* htfh_memalign(Allocator* alloc, size_t align, size_t bytes);
 __attribute__((malloc
-#if __GNUC__ >= 10
+#if defined(__GNUC__) \
+    && __GNUC__ >= 10    \
+    && (__GNUC__ > 10 || (__GNUC__ >= 0 && __GNUC_MINOR__ >= 0)) \
+    && defined(__GNUC_PATCHLEVEL__)
 , malloc (htfh_free, 2)
 #endif
 )) __attribute__((alloc_size(3))) void* htfh_realloc(Allocator* alloc, void* ptr, size_t size);
