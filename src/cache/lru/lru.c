@@ -12,6 +12,7 @@ LRUCache* lru_create(size_t ht_size, size_t cache_size) {
     cache->cache_size = cache_size;
     return cache;
 }
+
 void lru_destroy(LRUCache* cache) {
     if (cache == NULL) {
         return;
@@ -23,7 +24,7 @@ void lru_destroy(LRUCache* cache) {
 
 // -1 = failure, 0 = success, 1 = evicted + added
 int lru_add(LRUCache* cache, const char* key, void* value, void* evicted) {
-    if (cache == NULL || cache->dqht == NULL || key == NULL) {
+    if (cache == NULL || cache->dqht == N || key == NULL) {
         return -1;
     }
     int ret_val = 0;
