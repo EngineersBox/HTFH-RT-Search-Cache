@@ -35,5 +35,5 @@ int he_less_than(HeapEntry* entry1, HeapEntry* entry2) {
         return 0; // Only entry2 has a value so this is less than
     }
     // Compare with however comparison should operate on the value pointed to.
-    return *entry1->value < *entry2->value;
+    return *((int*)entry1->value) < *((int*)entry2->value);
 }

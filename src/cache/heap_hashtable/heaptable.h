@@ -39,7 +39,7 @@ void hpt_heapify(HeapTable* hpt, size_t index);
 
 void hpt_remove(HeapTable* hpt, const char* key);
 void hpt_push(HeapTable* hpt, const char* key, void* value);
-void hpt_update(HeapTable* hpt const char* key, void* value);
+void hpt_update(HeapTable* hpt, const char* key, void* value);
 
 #ifdef __cplusplus
 };

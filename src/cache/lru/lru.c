@@ -24,7 +24,7 @@ void lru_destroy(LRUCache* cache) {
 
 // -1 = failure, 0 = success, 1 = evicted + added
 int lru_add(LRUCache* cache, const char* key, void* value, void* evicted) {
-    if (cache == NULL || cache->dqht == N || key == NULL) {
+    if (cache == NULL || cache->dqht == NULL || key == NULL) {
         return -1;
     }
     int ret_val = 0;

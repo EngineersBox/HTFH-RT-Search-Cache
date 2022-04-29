@@ -16,7 +16,6 @@ int main(int argc, char* argv[]) {
         printf("Could not create table with size 10\n");
         return 1;
     }
-    void test = 10;
     char* to_store[10] = {
         "test1",
         "other",
