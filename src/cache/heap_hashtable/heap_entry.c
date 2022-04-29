@@ -29,11 +29,11 @@ void he_destroy(HeapEntry* entry) {
 int he_less_than(HeapEntry* entry1, HeapEntry* entry2) {
     if (entry1 == NULL || entry2 == NULL) {
         return -1; // Failure
-    } else if (entry1->value != NULL && entry2->entry == NULL) {
+    } else if (entry1->value != NULL && entry2->value == NULL) {
         return 1; // Only entry1 has a value so this is not less than
-    } else if (entry1->value == NULL && entry2->entry != NULL) {
+    } else if (entry1->value == NULL && entry2->value != NULL) {
         return 0; // Only entry2 has a value so this is less than
     }
     // Compare with however comparison should operate on the value pointed to.
-    return *entry1->value < *entry2.value;
+    return *entry1->value < *entry2->value;
 }
