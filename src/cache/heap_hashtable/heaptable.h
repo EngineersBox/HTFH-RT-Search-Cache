@@ -27,6 +27,10 @@ void* hpt_get(HeapTable* hpt, const char* key);
 int hpt_insert(HeapTable* hpt, const char* key, void* value);
 int hpt_delete(HeapTable* hpt, const char* key);
 
+int hpt_remove(HeapTable* hpt, const char* key);
+void hpt_push(HeapTable* hpt, const char* key, void* value);
+void hpt_update(HeapTable* hpt, const char* key, void* value);
+
 void* hpt_min(HeapTable* hpt);
 void* hpt_popMin(HeapTable* hpt);
 
@@ -36,10 +40,6 @@ HeapEntry* hpt_child_right(HeapTable* hpt, size_t index);
 
 void hpt_heapify_up(HeapTable* hpt, size_t index);
 void hpt_heapify(HeapTable* hpt, size_t index);
-
-int hpt_remove(HeapTable* hpt, const char* key);
-void hpt_push(HeapTable* hpt, const char* key, void* value);
-void hpt_update(HeapTable* hpt, const char* key, void* value);
 
 #ifdef __cplusplus
 };

@@ -12,7 +12,7 @@ extern "C" {
 
 typedef struct ptr_pair { void* p[2]; } ptr_pair;
 
-inline void swap(_Atomic(ptr_pair)* ptrs) {
+static void atomic_swap(_Atomic(ptr_pair)* ptrs) {
     ptr_pair actual = { 0 };
     ptr_pair future = { 0 };
     while (!atomic_compare_exchange_weak(ptrs, &actual, future)) {

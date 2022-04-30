@@ -1,5 +1,6 @@
 #include "heaptable.h"
 
+#include "../../math_utils.h"
 #include "atomic_utils.h"
 
 HeapTable* hpt_create(size_t ht_size) {
@@ -47,6 +48,31 @@ int hpt_delete(HeapTable* hpt, const char* key) {
         return -1;
     }
     return hpt_remove(hpt, key);
+}
+
+int hpt_remove(HeapTable* hpt, const char* key) {
+    if (hpt == NULL || hpt->ht == NULL || key == NULL) {
+        return -1;
+    }
+    DQHTEntry* entry = ht_get(hpt->ht, key);
+    if (entry == NULL) {
+        return -1;
+    }
+    HeapEntry* last = hpt->heap[math_max(hpt->ht->count - 1, 0)];
+    if (last == NULL || last->value) {
+        return -1;
+    }
+    _Atomic(ptr_pair) pair = { NULL };
+    atomic_init(&pair, { {entry, last} });
+    atomic_swap(&pair);
+}
+
+void hpt_push(HeapTable* hpt, const char* key, void* value) {
+
+}
+
+void hpt_update(HeapTable* hpt, const char* key, void* value) {
+
 }
 
 void hpt_destroy(HeapTable* hpt) {
