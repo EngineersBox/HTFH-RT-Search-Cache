@@ -15,6 +15,8 @@ extern "C" {
 #include "heap_entry.h"
 
 typedef struct HeapTable {
+    size_t heapCount;
+    size_t heapSize;
     HashTable* ht;
     HeapEntry** heap;
 } HeapTable;
@@ -28,11 +30,12 @@ int hpt_insert(HeapTable* hpt, const char* key, void* value);
 int hpt_delete(HeapTable* hpt, const char* key);
 
 int hpt_remove(HeapTable* hpt, const char* key);
-void hpt_push(HeapTable* hpt, const char* key, void* value);
-void hpt_update(HeapTable* hpt, const char* key, void* value);
+int hpt_resize(HeapTable* hpt);
+int hpt_push(HeapTable* hpt, const char* key, void* value);
+int hpt_update(HeapTable* hpt, const char* key, void* value);
 
 void* hpt_min(HeapTable* hpt);
-void* hpt_popMin(HeapTable* hpt);
+void* hpt_pop_min(HeapTable* hpt);
 
 HeapEntry* hpt_parent(HeapTable* hpt, size_t index);
 HeapEntry* hpt_child_left(HeapTable* hpt, size_t index);
