@@ -140,8 +140,7 @@ void dlirs_prune(DLIRS* cache) {
 void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir) {
     if (cache == NULL) {
         return;
-    }
-    if (hit_nonresident_hir) {
+    } else if (hit_nonresident_hir) {
         cache->hirs_limit = math_min(
             cache->cache_size - 1,
             cache->hirs_limit +  math_max(
@@ -150,16 +149,16 @@ void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir) {
             )
         );
         cache->lirs_limit = cache->cache_size - cache->hirs_limit;
-    } else {
-        cache->lirs_limit = math_min(
-            cache->cache_size - 1,
-            cache->lirs_limit + math_max(
-                1,
-                (int)((((float) cache->non_resident) / ((float) cache->demoted)) + 0.5)
-            )
-        );
-        cache->hirs_limit = cache->cache_size - cache->lirs_limit;
+        return;
     }
+    cache->lirs_limit = math_min(
+        cache->cache_size - 1,
+        cache->lirs_limit + math_max(
+            1,
+            (int)((((float) cache->non_resident) / ((float) cache->demoted)) + 0.5)
+        )
+    );
+    cache->hirs_limit = cache->cache_size - cache->lirs_limit;
 }
 
 void dlirs_eject_lir(DLIRS* cache) {

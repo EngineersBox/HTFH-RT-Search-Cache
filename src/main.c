@@ -2,6 +2,10 @@
 #include "cache/dlirs/dlirs.h"
 #include "allocator/error/allocator_errno.h"
 
+#define ENABLE_LOGGING
+#include "logging/logging.h"
+
+
 #define print_error(subs, bytes) \
     char msg[100] \
     sprintf(msg, subs, bytes); \
@@ -40,6 +44,13 @@ int main(int argc, char* argv[]) {
         957357,
         64526
     };
+    for (int i = 0; i < 10; i++) {
+        DLIRSEntry* evicted;
+        if (dlirs_request(dlirs, to_store[i], &values[i], evicted) != 0) {
+            LOG(ERROR, STDOUT, "Unable to request cache population for [%s: %d]", to_store[i], values[i]);
+            return 1;
+        }
+    }
     dlirs_destroy(dlirs);
     return 0;
 }
