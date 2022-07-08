@@ -53,8 +53,8 @@ static inline char* logLevelToString(int level) {
         time(&rawtime); \
         timeinfo = localtime(&rawtime); \
         fprintf(stream, "[%d/%d/%d %d:%d:%d] %s:%d [%s] :: " msg "\n", \
-            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, \
             timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, \
+            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, \
             __func__, __LINE__, \
             logLevelToString(level), \
             ##__VA_ARGS__ \
