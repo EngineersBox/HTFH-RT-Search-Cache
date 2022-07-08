@@ -26,6 +26,15 @@ void dqht_destroy(DequeueHashTable* dqht) {
     if (dqht == NULL) {
         return;
     }
+    DQHTEntry* current = dqht->head;
+    DQHTEntry* next = current == NULL ? NULL : dqht->head->next;
+    while (current != NULL) {
+        dqhtentry_destroy(current);
+        current = next;
+        if (next != NULL) {
+            next = next->next;
+        }
+    }
     ht_destroy(dqht->ht);
     free(dqht);
 }

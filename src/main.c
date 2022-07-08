@@ -44,13 +44,15 @@ int main(int argc, char* argv[]) {
         64526
     };
     for (int i = 0; i < 10; i++) {
-        DLIRSEntry* evicted;
-        int requestResult;
-        if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
-            ERROR("Unable to request cache population for [%s: %d]", to_store[i], values[i]);
-            return 1;
+        for (int j = 1; j < i + 1; j++) {
+            DLIRSEntry* evicted;
+            int requestResult;
+            if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
+                ERROR("Unable to request cache population for [%s: %d]", to_store[i], values[i]);
+                return 1;
+            }
+            INFO("Request result: %s with evicted: %p", requestResult == 0 ? "miss" : "hit", evicted);
         }
-        INFO("Request result: %s wtih evicted: %p", requestResult == 0 ? "miss" : "hit", evicted);
     }
     dqht_print_table(dlirs->hirs);
     dqht_print_table(dlirs->lirs);

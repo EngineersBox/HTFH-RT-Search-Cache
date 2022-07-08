@@ -301,12 +301,25 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicte
     return miss;
 }
 
+void destroy_entries(DequeueHashTable* dqht) {
+    DQHTEntry* current = dqht->head;
+    while (current != NULL) {
+        if (current->ptr != NULL) {
+            dlirs_entry_destroy(current->ptr);
+        }
+        current = current->next;
+    }
+}
+
 int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {
         return 0;
     }
+    destroy_entries(cache->lirs);
     dqht_destroy(cache->lirs);
+    destroy_entries(cache->hirs);
     dqht_destroy(cache->hirs);
+    destroy_entries(cache->q);
     dqht_destroy(cache->q);
     free(cache);
     return 0;
