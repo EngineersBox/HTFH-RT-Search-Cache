@@ -9,6 +9,8 @@
 #include <stdlib.h>
 
 #include "../../math_utils.h"
+#define ENABLE_LOGGING
+#include "../../logging/logging.h"
 
 DLIRS* dlirs_create(size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio) {
     DLIRS* cache = malloc(sizeof(*cache));

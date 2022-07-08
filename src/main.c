@@ -1,10 +1,9 @@
-#include <stdlib.h>
-#include "cache/dlirs/dlirs.h"
-#include "allocator/error/allocator_errno.h"
-
 #define ENABLE_LOGGING
 #include "logging/logging.h"
 
+#include <stdlib.h>
+#include "cache/dlirs/dlirs.h"
+#include "allocator/error/allocator_errno.h"
 
 #define print_error(subs, bytes) \
     char msg[100] \
@@ -15,7 +14,7 @@
 #define HEAP_SIZE (16 * 10000)
 
 int main(int argc, char* argv[]) {
-    DLIRS* dlirs = dlirs_create(10, 10, 5, 0.1f);
+    DLIRS* dlirs = dlirs_create(5, 5, 5, 0.1f);
     if (dlirs == NULL) {
         printf("Could not create table with size 10\n");
         return 1;
@@ -46,11 +45,31 @@ int main(int argc, char* argv[]) {
     };
     for (int i = 0; i < 10; i++) {
         DLIRSEntry* evicted;
-        if (dlirs_request(dlirs, to_store[i], &values[i], evicted) != 0) {
-            LOG(ERROR, STDOUT, "Unable to request cache population for [%s: %d]", to_store[i], values[i]);
+        int requestResult;
+        if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
+            ERROR("Unable to request cache population for [%s: %d]", to_store[i], values[i]);
             return 1;
         }
+        INFO("Request result: %s wtih evicted: %p", requestResult == 0 ? "miss" : "hit", evicted);
     }
+    dqht_print_table(dlirs->hirs);
+    dqht_print_table(dlirs->lirs);
+    dqht_print_table(dlirs->q);
+    for (int i = 0; i < 10; i++) {
+        INFO("Cache contains %s: %s", to_store[i], dlirs_contains(dlirs, to_store[i]) == 0 ? "true" : "false");
+    }
+    for (int i = 0; i < 10; i++) {
+        DLIRSEntry* evicted;
+        int requestResult;
+        if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
+            ERROR("Unable to request cache population for [%s: %d]", to_store[i], values[i]);
+            return 1;
+        }
+        INFO("Request result: %s", requestResult == 0 ? "miss" : "hit");
+    }
+    dqht_print_table(dlirs->hirs);
+    dqht_print_table(dlirs->lirs);
+    dqht_print_table(dlirs->q);
     dlirs_destroy(dlirs);
     return 0;
 }
