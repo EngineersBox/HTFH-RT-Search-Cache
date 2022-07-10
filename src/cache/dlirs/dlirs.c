@@ -108,16 +108,13 @@ int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted) {
         entry->in_cache = true;
         cache->non_resident--;
     }
-    TRACE("%s", "Before ejection");
     while (cache->lirs_count >= (size_t) cache->lirs_limit) {
         dlirs_eject_lir(cache);
     }
-    TRACE("Passed lir eject: %zu", cache->lirs_count);
     while ((cache->hirs_count + cache->lirs_count) >= (size_t) cache->cache_size) {
         evicted = dlirs_eject_hir(cache);
     }
-    DLIRSEntry* next_entry = dqht_get(cache->lirs, key);
-    memcpy(entry, next_entry, sizeof(DLIRSEntry));
+    dqht_insert(cache->lirs, key, entry);
     cache->lirs_count++;
     return !in_cache;
 }
@@ -169,9 +166,7 @@ void dlirs_eject_lir(DLIRS* cache) {
     if (cache == NULL || cache->q == NULL || cache->lirs == NULL) {
         return;
     }
-    TRACE("%s", "Attempting pop front");
-    DLIRSEntry* lru = dqht_pop_front(cache->q);
-    TRACE("%s", "Popped front");
+    DLIRSEntry* lru = dqht_pop_front(cache->lirs);
     if (lru == NULL) {
         return;
     }
@@ -194,6 +189,8 @@ DLIRSEntry* dlirs_eject_hir(DLIRS* cache) {
     if (lru == NULL) {
         return NULL;
     }
+    TRACE("LRU: %s", lru->key);
+    dqht_print_table(" ====> INNER LIRS", cache->lirs);
     if (dqht_get(cache->lirs, lru->key) != NULL) {
         lru->in_cache = false;
         cache->non_resident++;
@@ -293,7 +290,6 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicte
             dlirs_hit_lir(cache, key);
         } else {
             miss = dlirs_hir_in_lirs(cache, key, evicted);
-            TRACE("%s", "HERE");
         }
     } else if (dqht_get(cache->q, key) != NULL) {
         dlirs_hit_hir_in_q(cache, key);

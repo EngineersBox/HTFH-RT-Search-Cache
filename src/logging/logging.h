@@ -45,6 +45,8 @@ static inline char* logLevelToString(int level) {
 #define STDOUT stdout
 #define STDERR stderr
 
+#define __FILENAME__ (strrchr("/" __FILE__, '/') + 1)
+
 #define LOG(level, msg, ...) { \
     if (typename(level) != T_INT) { \
         fprintf(STDERR, "Expected integer log level"); \
@@ -55,10 +57,10 @@ static inline char* logLevelToString(int level) {
         struct tm* timeinfo; \
         time(&rawtime); \
         timeinfo = localtime(&rawtime); \
-        fprintf(level == LL_ERROR ? STDERR : STDOUT, "[%d/%d/%d %d:%d:%d] %s:%d [%s] :: " msg "\n", \
+        fprintf(level == LL_ERROR ? STDERR : STDOUT, "[%d/%d/%d %d:%d:%d] %s(%s:%d) [%s] :: " msg "\n", \
             timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, \
             timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, \
-            __func__, __LINE__, \
+            __FILENAME__, __func__, __LINE__, \
             logLevelToString(level), \
             ##__VA_ARGS__ \
         ); \
