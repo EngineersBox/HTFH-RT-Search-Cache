@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
         for (int j = 1; j < i + 1; j++) {
             DLIRSEntry* evicted = NULL;
             int requestResult;
-            if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
+            if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], &evicted)) == -1) {
                 ERROR("[%d:%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, j, to_store[i], values[i], evicted);
                 dlirs_destroy(dlirs);
                 return 1;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < 10; i++) {
         DLIRSEntry* evicted;
         int requestResult;
-        if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
+        if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], &evicted)) == -1) {
             ERROR("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
             dlirs_destroy(dlirs);
             return 1;

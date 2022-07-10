@@ -39,7 +39,7 @@ int dlirs_is_full(DLIRS* cache);
 
 void dlirs_hit_lir(DLIRS* cache, const char* key);
 // -1 = failure, 0 = in cache, 1 = not in cache
-int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted);
+int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry** evicted);
 void dlirs_prune(DLIRS* cache);
 void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
 void dlirs_eject_lir(DLIRS* cache);
@@ -47,9 +47,9 @@ DLIRSEntry* dlirs_eject_hir(DLIRS* cache);
 void dlirs_hit_hir_in_q(DLIRS* cache, const char* key);
 void dlirs_limit_stack(DLIRS* cache);
 
-int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted);
+int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
 // -1 = failure, 0 = hit, 1 = miss
-int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted);
+int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
 
 #ifdef __cplusplus
 };
