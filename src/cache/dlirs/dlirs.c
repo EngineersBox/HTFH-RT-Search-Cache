@@ -10,6 +10,7 @@
 
 #include "../../math_utils.h"
 #define ENABLE_LOGGING
+#define LOG_DATETIME_PREFIX
 #include "../../logging/logging.h"
 
 DLIRS* dlirs_create(size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio) {
@@ -113,7 +114,6 @@ int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry** evicted) {
     }
     while ((cache->hirs_count + cache->lirs_count) >= (size_t) cache->cache_size) {
         *evicted = dlirs_eject_hir(cache);
-        TRACE("EVICTED: %p", *evicted);
     }
     dqht_insert(cache->lirs, key, entry);
     cache->lirs_count++;
@@ -261,7 +261,6 @@ int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted)
             dlirs_eject_lir(cache);
         }
         *evicted = dlirs_eject_hir(cache);
-        TRACE("EVICTED 2: %p", *evicted);
     }
     DLIRSEntry* entry = dlirs_entry_create(key, value);
     if (entry == NULL) {

@@ -1,4 +1,5 @@
 #define ENABLE_LOGGING
+#define LOG_DATETIME_PREFIX
 #include "logging/logging.h"
 
 #include <stdlib.h>

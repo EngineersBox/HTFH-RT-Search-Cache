@@ -47,18 +47,28 @@ static inline char* logLevelToString(int level) {
 
 #define __FILENAME__ (strrchr("/" __FILE__, '/') + 1)
 
+#ifdef LOG_DATETIME_PREFIX
+#define __GET_DATETIME_FORMAT_VALUES timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
+#define __DATETIME_PREFIX "[%d/%d/%d %d:%d:%d] "
+#define __DEFINE_DATETIME_STRUCTS time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime);
+#else
+#define __GET_DATETIME_FORMAT_VALUES
+#define __DATETIME_PREFIX ""
+#define __DEFINE_DATETIME_STRUCTS ({});
+#endif
+
 #define LOG(level, msg, ...) { \
     if (typename(level) != T_INT) { \
         fprintf(STDERR, "Expected integer log level"); \
         exit(1); \
     } \
-    if (level <= __min_log_level__) {   \
-        time_t rawtime; \
-        time(&rawtime); \
-        struct tm* timeinfo = localtime(&rawtime); \
-        fprintf(level == LL_ERROR ? STDERR : STDOUT, "[%d/%d/%d %d:%d:%d] %s(%s:%d) [%s] :: " msg "\n", \
-            timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, \
-            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, \
+    if (level <= __min_log_level__) { \
+        __DEFINE_DATETIME_STRUCTS; \
+        fprintf(               \
+            level == LL_ERROR ? STDERR : STDOUT, \
+            __DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
+            msg "\n", \
+            __GET_DATETIME_FORMAT_VALUES \
             __func__, __FILENAME__, __LINE__, \
             logLevelToString(level), \
             ##__VA_ARGS__ \
