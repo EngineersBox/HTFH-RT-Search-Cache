@@ -51,11 +51,11 @@ int main(int argc, char* argv[]) {
             DLIRSEntry* evicted = NULL;
             int requestResult;
             if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
-                ERROR("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
+                ERROR("[%d:%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, j, to_store[i], values[i], evicted);
                 dlirs_destroy(dlirs);
                 return 1;
             }
-            INFO("Request result: %s with evicted: %p for [%s: %d]", requestResult == 0 ? "hit" : "miss", evicted, to_store[i], values[i]);
+            INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %d]", i, j, requestResult == 0 ? "hit" : "miss", evicted, to_store[i], values[i]);
             dqht_print_table("HIRS", dlirs->hirs);
             dqht_print_table("LIRS", dlirs->lirs);
             dqht_print_table("Q", dlirs->q);

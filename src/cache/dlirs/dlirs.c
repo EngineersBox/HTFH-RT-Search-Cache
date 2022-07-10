@@ -174,9 +174,13 @@ void dlirs_eject_lir(DLIRS* cache) {
     lru->is_LIR = false;
     lru->is_demoted = true;
     cache->demoted++;
-    if (dqht_insert(cache->q, lru->key, lru->value) != 0) {
+    dqht_print_table("CACHE Q", cache->q);
+    TRACE("EJECT LIR: %p %s %p", lru, lru->key, lru->key);
+    if (dqht_insert(cache->q, lru->key, lru) != 0) {
         return;
     }
+    TRACE("AFTER INSERT TO Q FROM EJECT LIR");
+    dqht_print_table("CACHE Q", cache->q);
     cache->hirs_count++;
     dlirs_prune(cache);
 }
@@ -189,8 +193,8 @@ DLIRSEntry* dlirs_eject_hir(DLIRS* cache) {
     if (lru == NULL) {
         return NULL;
     }
-    TRACE("LRU: %s", lru->key);
     dqht_print_table(" ====> INNER LIRS", cache->lirs);
+    TRACE("LRU: %s", lru->key);
     if (dqht_get(cache->lirs, lru->key) != NULL) {
         lru->in_cache = false;
         cache->non_resident++;
@@ -210,6 +214,7 @@ void dlirs_hit_hir_in_q(DLIRS* cache, const char* key) {
     if (entry == NULL) {
         return;
     }
+    TRACE("HIT HIR IN Q: %s %p", key, entry);
     if (entry->is_demoted) {
         dlirs_adjust_size(cache, false);
         entry->is_demoted = true;
@@ -264,6 +269,7 @@ int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) 
         evicted = dlirs_eject_hir(cache);
     }
     DLIRSEntry* entry = dlirs_entry_create(key, value);
+    TRACE("MISS: %s %p", key, entry);
     if (entry == NULL) {
         return -1;
     } else if (dqht_insert(cache->q, key, entry) != 0
@@ -286,10 +292,12 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicte
 
     DLIRSEntry* entry = dqht_get(cache->lirs, key);
     if (entry != NULL) {
+        TRACE("CURRENT: %p %p", entry, entry->value);
         if (entry->is_LIR) {
             dlirs_hit_lir(cache, key);
         } else {
             miss = dlirs_hir_in_lirs(cache, key, evicted);
+            TRACE("EVICTED: %p %p", entry, entry->value);
         }
     } else if (dqht_get(cache->q, key) != NULL) {
         dlirs_hit_hir_in_q(cache, key);

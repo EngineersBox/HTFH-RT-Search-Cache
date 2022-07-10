@@ -12,10 +12,6 @@ extern "C" {
 
 #include "../types/typecheck.h"
 
-#ifndef ENABLE_LOGGING
-#define LOG(level, stream, msg, ...) ({})
-#else
-
 enum LogLevel {
     LL_ERROR = 0,
     LL_WARN = 1,
@@ -25,6 +21,10 @@ enum LogLevel {
 };
 
 static int __min_log_level__ = LL_TRACE;
+
+#ifndef ENABLE_LOGGING
+#define LOG(level, stream, msg, ...) ({})
+#else
 
 static inline char* logLevelToString(int level) {
     if (level == LL_ERROR)  {
@@ -54,13 +54,12 @@ static inline char* logLevelToString(int level) {
     } \
     if (level <= __min_log_level__) {   \
         time_t rawtime; \
-        struct tm* timeinfo; \
         time(&rawtime); \
-        timeinfo = localtime(&rawtime); \
+        struct tm* timeinfo = localtime(&rawtime); \
         fprintf(level == LL_ERROR ? STDERR : STDOUT, "[%d/%d/%d %d:%d:%d] %s(%s:%d) [%s] :: " msg "\n", \
             timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, \
             timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, \
-            __FILENAME__, __func__, __LINE__, \
+            __func__, __FILENAME__, __LINE__, \
             logLevelToString(level), \
             ##__VA_ARGS__ \
         ); \
@@ -70,11 +69,11 @@ static inline char* logLevelToString(int level) {
 
 //#define LOG(level, msg, ...) printf(msg "\n", ##__VA_ARGS__)
 
-#define ERROR(msg, ...) (LOG(LL_ERROR, msg, __VA_ARGS__))
-#define WARN(msg, ...) (LOG(LL_WARN, msg, __VA_ARGS__))
-#define INFO(msg, ...) (LOG(LL_INFO, msg, __VA_ARGS__))
-#define DEBUG(msg, ...) (LOG(LL_DEBUG, msg, __VA_ARGS__))
-#define TRACE(msg, ...) (LOG(LL_TRACE, msg, __VA_ARGS__))
+#define ERROR(msg, ...) (LOG(LL_ERROR, msg, ##__VA_ARGS__))
+#define WARN(msg, ...) (LOG(LL_WARN, msg, ##__VA_ARGS__))
+#define INFO(msg, ...) (LOG(LL_INFO, msg, ##__VA_ARGS__))
+#define DEBUG(msg, ...) (LOG(LL_DEBUG, msg, ##__VA_ARGS__))
+#define TRACE(msg, ...) (LOG(LL_TRACE, msg, ##__VA_ARGS__))
 
 #endif // ENABLE_LOGGING
 
