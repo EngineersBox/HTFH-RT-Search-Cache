@@ -5,6 +5,8 @@
 #include <inttypes.h>
 #include <string.h>
 
+#define ENABLE_LOGGING
+#include "../logging/logging.h"
 #include "../hashtable/hashing.h"
 
 DequeueHashTable* dqht_create(size_t size) {
@@ -159,21 +161,27 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
     return value;
 }
 
-void dqht_print_table(DequeueHashTable* dqht) {
+void dqht_print_table(char* name, DequeueHashTable* dqht) {
     if (dqht == NULL) {
         return;
     }
-    printf("{");
+    char printString[2048] = "";
+    strcat(printString, name);
+    strcat(printString, " {");
     DQHTEntry* entry = dqht->head;
     while (entry != NULL) {
-        printf(
+        char formatString[100];
+        sprintf(
+            formatString,
             " [%zu] %s: %p%s",
             entry->index,
             entry->key,
             entry->ptr,
             entry->next != NULL ? "," : " "
         );
+        strcat(printString, formatString);
         entry = entry->next;
     }
-    printf("}\n");
+    strcat(printString, "}");
+    INFO("%s", printString);
 }

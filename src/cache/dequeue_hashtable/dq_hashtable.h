@@ -34,7 +34,7 @@ void* dqht_get_last(DequeueHashTable* dqht);
 int dqht_push_last(DequeueHashTable* dqht, const char* key, void* value);
 void* dqht_pop_last(DequeueHashTable* dqht);
 
-void dqht_print_table(DequeueHashTable* dqht);
+void dqht_print_table(char* name, DequeueHashTable* dqht);
 
 #ifdef __cplusplus
 };

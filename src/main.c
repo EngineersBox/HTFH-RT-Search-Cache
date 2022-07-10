@@ -14,7 +14,7 @@
 #define HEAP_SIZE (16 * 10000)
 
 int main(int argc, char* argv[]) {
-    DLIRS* dlirs = dlirs_create(5, 5, 5, 0.1f);
+    DLIRS* dlirs = dlirs_create(8, 4, 5, 0.1f);
     if (dlirs == NULL) {
         printf("Could not create table with size 10\n");
         return 1;
@@ -43,20 +43,27 @@ int main(int argc, char* argv[]) {
         957357,
         64526
     };
+    dqht_print_table("Init HIRS", dlirs->hirs);
+    dqht_print_table("Init LIRS", dlirs->lirs);
+    dqht_print_table("Init Q", dlirs->q);
     for (int i = 0; i < 10; i++) {
         for (int j = 1; j < i + 1; j++) {
-            DLIRSEntry* evicted;
+            DLIRSEntry* evicted = NULL;
             int requestResult;
             if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
-                ERROR("Unable to request cache population for [%s: %d]", to_store[i], values[i]);
+                ERROR("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
+                dlirs_destroy(dlirs);
                 return 1;
             }
-            INFO("Request result: %s with evicted: %p", requestResult == 0 ? "miss" : "hit", evicted);
+            INFO("Request result: %s with evicted: %p for [%s: %d]", requestResult == 0 ? "hit" : "miss", evicted, to_store[i], values[i]);
+            dqht_print_table("HIRS", dlirs->hirs);
+            dqht_print_table("LIRS", dlirs->lirs);
+            dqht_print_table("Q", dlirs->q);
         }
     }
-    dqht_print_table(dlirs->hirs);
-    dqht_print_table(dlirs->lirs);
-    dqht_print_table(dlirs->q);
+    dqht_print_table("HIRS", dlirs->hirs);
+    dqht_print_table("LIRS", dlirs->lirs);
+    dqht_print_table("Q", dlirs->q);
     for (int i = 0; i < 10; i++) {
         INFO("Cache contains %s: %s", to_store[i], dlirs_contains(dlirs, to_store[i]) == 0 ? "true" : "false");
     }
@@ -64,14 +71,15 @@ int main(int argc, char* argv[]) {
         DLIRSEntry* evicted;
         int requestResult;
         if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], evicted)) == -1) {
-            ERROR("Unable to request cache population for [%s: %d]", to_store[i], values[i]);
+            ERROR("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
+            dlirs_destroy(dlirs);
             return 1;
         }
-        INFO("Request result: %s", requestResult == 0 ? "miss" : "hit");
+        INFO("Request result: %s", requestResult == 0 ? "hit" : "miss");
     }
-    dqht_print_table(dlirs->hirs);
-    dqht_print_table(dlirs->lirs);
-    dqht_print_table(dlirs->q);
+    dqht_print_table("HIRS", dlirs->hirs);
+    dqht_print_table("LIRS", dlirs->lirs);
+    dqht_print_table("Q", dlirs->q);
     dlirs_destroy(dlirs);
     return 0;
 }

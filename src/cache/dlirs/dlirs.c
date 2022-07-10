@@ -94,12 +94,12 @@ int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted) {
     }
     bool in_cache = entry->in_cache;
     entry->is_LIR = true;
-    if (dqht_remove(cache->lirs, key) != 0
-        || dqht_remove(cache->hirs, key) != 0) {
+    if (dqht_remove(cache->lirs, key) == NULL
+        || dqht_remove(cache->hirs, key) == NULL) {
         return -1;
     }
     if (in_cache) {
-        if (dqht_remove(cache->q, key) != 0) {
+        if (dqht_remove(cache->q, key) == NULL) {
             return -1;
         }
         cache->hirs_count--;
@@ -108,9 +108,11 @@ int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry* evicted) {
         entry->in_cache = true;
         cache->non_resident--;
     }
+    TRACE("%s", "Before ejection");
     while (cache->lirs_count >= (size_t) cache->lirs_limit) {
         dlirs_eject_lir(cache);
     }
+    TRACE("Passed lir eject: %zu", cache->lirs_count);
     while ((cache->hirs_count + cache->lirs_count) >= (size_t) cache->cache_size) {
         evicted = dlirs_eject_hir(cache);
     }
@@ -167,7 +169,9 @@ void dlirs_eject_lir(DLIRS* cache) {
     if (cache == NULL || cache->q == NULL || cache->lirs == NULL) {
         return;
     }
+    TRACE("%s", "Attempting pop front");
     DLIRSEntry* lru = dqht_pop_front(cache->q);
+    TRACE("%s", "Popped front");
     if (lru == NULL) {
         return;
     }
@@ -275,7 +279,7 @@ int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) 
     return 0;
 }
 
-// -1 = failure, 0 = miss, 1 = hit
+// -1 = failure, 0 = hit, 1 = miss
 int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicted) {
     if (cache == NULL || key == NULL) {
         return -1;
@@ -289,6 +293,7 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry* evicte
             dlirs_hit_lir(cache, key);
         } else {
             miss = dlirs_hir_in_lirs(cache, key, evicted);
+            TRACE("%s", "HERE");
         }
     } else if (dqht_get(cache->q, key) != NULL) {
         dlirs_hit_hir_in_q(cache, key);
@@ -306,6 +311,7 @@ void destroy_entries(DequeueHashTable* dqht) {
     while (current != NULL) {
         if (current->ptr != NULL) {
             dlirs_entry_destroy(current->ptr);
+            current->ptr = NULL;
         }
         current = current->next;
     }
@@ -319,7 +325,6 @@ int dlirs_destroy(DLIRS* cache) {
     dqht_destroy(cache->lirs);
     destroy_entries(cache->hirs);
     dqht_destroy(cache->hirs);
-    destroy_entries(cache->q);
     dqht_destroy(cache->q);
     free(cache);
     return 0;

@@ -10,11 +10,11 @@ extern "C" {
 #include <stdio.h>
 #include <time.h>
 
+#include "../types/typecheck.h"
+
 #ifndef ENABLE_LOGGING
 #define LOG(level, stream, msg, ...) ({})
 #else
-
-#define CHECK_TYPE(type,var) { typedef void (*type_t)(type); type_t tmp = (type_t)0; if(0) tmp(var);}
 
 enum LogLevel {
     LL_ERROR = 0,
@@ -24,7 +24,7 @@ enum LogLevel {
     LL_TRACE = 4
 };
 
-static int __min_log_level__ = LL_DEBUG;
+static int __min_log_level__ = LL_TRACE;
 
 static inline char* logLevelToString(int level) {
     if (level == LL_ERROR)  {
@@ -46,7 +46,10 @@ static inline char* logLevelToString(int level) {
 #define STDERR stderr
 
 #define LOG(level, msg, ...) { \
-    CHECK_TYPE(int, level); \
+    if (typename(level) != T_INT) { \
+        fprintf(STDERR, "Expected integer log level"); \
+        exit(1); \
+    } \
     if (level <= __min_log_level__) {   \
         time_t rawtime; \
         struct tm* timeinfo; \
@@ -59,8 +62,11 @@ static inline char* logLevelToString(int level) {
             logLevelToString(level), \
             ##__VA_ARGS__ \
         ); \
+        fflush(level == LL_ERROR ? STDERR : STDOUT); \
     } \
 }
+
+//#define LOG(level, msg, ...) printf(msg "\n", ##__VA_ARGS__)
 
 #define ERROR(msg, ...) (LOG(LL_ERROR, msg, __VA_ARGS__))
 #define WARN(msg, ...) (LOG(LL_WARN, msg, __VA_ARGS__))

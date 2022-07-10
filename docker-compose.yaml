@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  htfh-rts-search-cache:
+    image: ubuntu:20.04
+    volumes:
+      - ./:/htfh-rts-search-cache/
+    command: ["/usr/bin/bash"]

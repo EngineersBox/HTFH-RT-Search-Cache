@@ -79,7 +79,7 @@ int dqht_test_main(int argc, char* argv[]) {
         printf("Count was not 10: %d\n", table->ht->count);
         return 1;
     }
-    printf("Table: "); dqht_print_table(table);
+    printf("Table: "); dqht_print_table("Table:", table);
     printf("== Inserted entries ==\n");
     for (int i = 0; i < 10; i++) {
         int* value;
@@ -92,7 +92,7 @@ int dqht_test_main(int argc, char* argv[]) {
         }
         printf("=> Retrieved entry %d: %d\n", i, *value);
     }
-    printf("Table: "); dqht_print_table(table);
+    printf("Table: "); dqht_print_table("Table:", table);
     printf("== Retrieved entries ==\n");
     for (int i = 0; i < 10; i++) {
         if (dqht_pop_last(table)  == NULL) {
@@ -106,7 +106,7 @@ int dqht_test_main(int argc, char* argv[]) {
         return 1;
     }
     printf("== Deleted entries ==\n");
-    printf("Table: "); dqht_print_table(table);
+    printf("Table: "); dqht_print_table("Table:", table);
     dqht_destroy(table);
     return 0;
 }
