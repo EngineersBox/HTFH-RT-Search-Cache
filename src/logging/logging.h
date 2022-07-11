@@ -128,11 +128,35 @@ static inline char* logLevelToString(int level) {
 
 //#define LOG(level, msg, ...) printf(msg "\n", ##__VA_ARGS__)
 
+#if MIN_LOG_LEVEL <= 0
 #define ERROR(msg, ...) (LOG(LL_ERROR, msg, ##__VA_ARGS__))
+#else
+#define ERROR(msg, ...) ({})
+#endif
+
+#if MIN_LOG_LEVEL <= 1
 #define WARN(msg, ...) (LOG(LL_WARN, msg, ##__VA_ARGS__))
+#else
+#define WARN(msg, ...) ({})
+#endif
+
+#if MIN_LOG_LEVEL <= 2
 #define INFO(msg, ...) (LOG(LL_INFO, msg, ##__VA_ARGS__))
+#else
+#define INFO(msg, ...) ({})
+#endif
+
+#if MIN_LOG_LEVEL <= 3
 #define DEBUG(msg, ...) (LOG(LL_DEBUG, msg, ##__VA_ARGS__))
+#else
+#define DEBUG(msg, ...) ({})
+#endif
+
+#if MIN_LOG_LEVEL <= 4
 #define TRACE(msg, ...) (LOG(LL_TRACE, msg, ##__VA_ARGS__))
+#else
+#define TRACE(msg, ...) ({})
+#endif
 
 #endif // ENABLE_LOGGING
 
