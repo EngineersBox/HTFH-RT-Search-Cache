@@ -13,13 +13,12 @@
 #define LOG_DATETIME_PREFIX
 #include "../../logging/logging.h"
 
-DLIRS* dlirs_create(size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio) {
+DLIRS* dlirs_create(size_t ht_size, size_t cache_size, float hirs_ratio) {
     DLIRS* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
     cache->cache_size = cache_size;
-    cache->window_size = window_size;
 
     cache->hirs_ratio = hirs_ratio; // 0.01f;
     cache->hirs_limit = math_max(1.0f, (int)((cache_size * cache->hirs_ratio) + 0.5f));

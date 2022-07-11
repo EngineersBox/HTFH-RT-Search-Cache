@@ -18,7 +18,7 @@ typedef struct Cache {
 } Cache;
 
 /* Note: Use hirs_ratio = 0.01f */
-Cache* cache_new(size_t heap_size, size_t ht_size, size_t cache_size, size_t window_size, float hirs_ratio);
+Cache* cache_new(size_t heap_size, size_t ht_size, size_t cache_size, float hirs_ratio);
 int cache_destroy(Cache* cache);
 
 #ifdef __cplusplus

@@ -16,7 +16,7 @@ LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 #define HEAP_SIZE (16 * 10000)
 
 int main(int argc, char* argv[]) {
-    DLIRS* dlirs = dlirs_create(8, 4, 5, 0.1f);
+    DLIRS* dlirs = dlirs_create(8, 4, 0.1f);
     if (dlirs == NULL) {
         printf("Could not create table with size 10\n");
         return 1;
