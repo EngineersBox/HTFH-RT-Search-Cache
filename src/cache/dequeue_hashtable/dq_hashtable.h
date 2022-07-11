@@ -19,7 +19,10 @@ typedef struct DequeueHashTable {
     HashTable* ht;
 } DequeueHashTable;
 
+typedef void (*EntryValueDestroyHandler)(void*, void*);
+
 DequeueHashTable* dqht_create(size_t size);
+void dqht_destroy_handled(DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState);
 void dqht_destroy(DequeueHashTable* dqht);
 
 void* dqht_get(DequeueHashTable* dqht, const char* key);

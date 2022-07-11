@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define ENABLE_LOGGING
+#define LOG_DATETIME_PREFIX
+#include "../../logging/logging.h"
+
 DLIRSEntry* dlirs_entry_create_full(const char* key, void* value, bool is_LIR, bool in_cache) {
     DLIRSEntry* entry = malloc(sizeof(*entry));
     if (entry == NULL) {
@@ -26,10 +30,14 @@ DLIRSEntry* dlirs_entry_create(const char* key, void* value) {
 }
 
 void dlirs_entry_destroy(DLIRSEntry* entry) {
-    if (entry == NULL) {
+    if (entry == NULL || entry->key == NULL) {
         return;
-    } else if (entry->key != NULL) {
+    }
+    TRACE("Entry %p [Key: %s, Value: %p]", entry, entry->key, entry->value);
+    if (entry->key != NULL) {
         free(entry->key);
+        entry->key = NULL;
     }
     free(entry);
+    entry = NULL;
 }

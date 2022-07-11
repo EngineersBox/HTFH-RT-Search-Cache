@@ -283,19 +283,28 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evict
     *evicted = NULL;
 
     DLIRSEntry* entry = dqht_get(cache->lirs, key);
+    TRACE("Entry retrieval reached %s, %p", key, entry);
     if (entry != NULL) {
         if (entry->is_LIR) {
+            TRACE("Hit LIR before");
             dlirs_hit_lir(cache, key);
+            TRACE("Hit LIR after");
         } else {
+            TRACE("Hit HIR in LIRS before");
             miss = dlirs_hir_in_lirs(cache, key, evicted);
+            TRACE("Hit HIR in LIRS after");
         }
     } else if (dqht_get(cache->q, key) != NULL) {
+        TRACE("Hit HIR in Q before");
         dlirs_hit_hir_in_q(cache, key);
+        TRACE("Hit HIR in Q after");
     } else {
         miss = 1;
+        TRACE("Miss before");
         if (dlirs_miss(cache, key, value, evicted) != 0) {
             return -1;
         }
+        TRACE("Miss after");
     }
     return !miss;
 }
@@ -311,15 +320,52 @@ void destroy_entries(DequeueHashTable* dqht) {
     }
 }
 
+void dqht_destroy_entries_q(DLIRSEntry* entry, DLIRS* dlirs) {
+    if (entry == NULL || entry->key == NULL) {
+        return;
+    } else if (dqht_get(dlirs->lirs, entry->key) == NULL
+        && dqht_get(dlirs->hirs, entry->key) == NULL) {
+        dlirs_entry_destroy(entry);
+    }
+}
+
+void dqht_destroy_entries_hirs(DLIRSEntry* entry, DLIRS* dlirs) {
+    if (entry == NULL || entry->key == NULL) {
+        return;
+    } else if (dqht_get(dlirs->lirs, entry->key) == NULL) {
+        dlirs_entry_destroy(entry);
+    }
+}
+
+void dqht_destroy_entries_lirs(DLIRSEntry* entry, void* dlirs) {
+    if (entry == NULL || entry->key == NULL) {
+        return;
+    }
+    dlirs_entry_destroy(entry);
+}
+
 int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {
         return 0;
     }
-    destroy_entries(cache->lirs);
-    dqht_destroy(cache->lirs);
-    destroy_entries(cache->hirs);
-    dqht_destroy(cache->hirs);
-    dqht_destroy(cache->q);
+    dqht_destroy_handled(
+        cache->q,
+        (EntryValueDestroyHandler) dqht_destroy_entries_q,
+        cache
+    );
+    INFO("Destroyed Q table");
+    dqht_destroy_handled(
+        cache->hirs,
+        (EntryValueDestroyHandler) dqht_destroy_entries_hirs,
+        cache
+    );
+    INFO("Destroyed HIRS table");
+    dqht_destroy_handled(
+        cache->lirs,
+        (EntryValueDestroyHandler) dqht_destroy_entries_lirs,
+        NULL
+    );
+    INFO("Destroyed LIRS table");
     free(cache);
     return 0;
 }

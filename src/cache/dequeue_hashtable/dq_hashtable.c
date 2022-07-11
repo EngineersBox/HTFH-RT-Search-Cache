@@ -25,21 +25,39 @@ DequeueHashTable* dqht_create(size_t size) {
     return dqht;
 }
 
-void dqht_destroy(DequeueHashTable* dqht) {
+void dqht_destroy_handled(DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState) {
     if (dqht == NULL) {
         return;
     }
+    TRACE("Getting current");
     DQHTEntry* current = dqht->head;
+    TRACE("Current: %p", current);
     DQHTEntry* next = current == NULL ? NULL : dqht->head->next;
+    TRACE("Next: %p", next);
     while (current != NULL) {
+        if (handler != NULL) {
+            TRACE("Invoking handler: %p", handler);
+            TRACE("Handling current ptr: %p", current->ptr);
+            handler(current->ptr, callbackState);
+            current->ptr = NULL;
+            TRACE("Nullified current ptr: %p", current->ptr);
+        }
+        TRACE("Destroying current: %p", current);
         dqhtentry_destroy(current);
+        TRACE("Destroyed current: %p", current);
         current = next;
+        TRACE("Moved next to current");
         if (next != NULL) {
             next = next->next;
+            TRACE("Next 2: %p", next);
         }
     }
     ht_destroy(dqht->ht);
     free(dqht);
+}
+
+void dqht_destroy(DequeueHashTable* dqht) {
+    dqht_destroy_handled(dqht, NULL, NULL);
 }
 
 void* dqht_get(DequeueHashTable* dqht, const char* key) {
