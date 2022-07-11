@@ -34,10 +34,8 @@ void dlirs_entry_destroy(DLIRSEntry* entry) {
         return;
     }
     TRACE("Entry %p [Key: %s, Value: %p]", entry, entry->key, entry->value);
-    if (entry->key != NULL) {
-        free(entry->key);
-        entry->key = NULL;
-    }
+    free(entry->key);
+    entry->key = NULL;
     free(entry);
     entry = NULL;
 }

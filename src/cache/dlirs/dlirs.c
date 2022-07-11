@@ -337,7 +337,7 @@ void dqht_destroy_entries_hirs(DLIRSEntry* entry, DLIRS* dlirs) {
     }
 }
 
-void dqht_destroy_entries_lirs(DLIRSEntry* entry, void* dlirs) {
+void dqht_destroy_entries_lirs(DLIRSEntry* entry, void* _ignored) {
     if (entry == NULL || entry->key == NULL) {
         return;
     }
