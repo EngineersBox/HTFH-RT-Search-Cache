@@ -52,16 +52,16 @@ int dlirs_contains(DLIRS* cache, const char* key) {
     }
     DLIRSEntry* value;
     if ((value = dqht_get(cache->lirs, key)) != NULL) {
-        return value->in_cache ? 0 : -1;
+        return value->in_cache;
     }
-    return dqht_get(cache->q, key) != NULL ? 0 : -1;
+    return dqht_get(cache->q, key) != NULL;
 }
 
 int dlirs_is_full(DLIRS* cache) {
     if (cache == NULL) {
         return -1;
     }
-    return (cache->hirs_count + cache->lirs_count) == cache->cache_size ? 0 : -1;
+    return (cache->hirs_count + cache->lirs_count) == cache->cache_size;
 }
 
 void dlirs_hit_lir(DLIRS* cache, const char* key) {
@@ -275,7 +275,7 @@ int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted)
     return 0;
 }
 
-// -1 = failure, 0 = hit, 1 = miss
+// -1 = failure, 0 = miss, 1 = hit
 int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted) {
     if (cache == NULL || key == NULL) {
         return -1;
@@ -298,7 +298,7 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evict
             return -1;
         }
     }
-    return miss;
+    return !miss;
 }
 
 void destroy_entries(DequeueHashTable* dqht) {

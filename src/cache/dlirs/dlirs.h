@@ -34,11 +34,13 @@ typedef struct DLIRS {
 DLIRS* dlirs_create(size_t ht_size, size_t cache_size, size_t window_size, float hirs_limit);
 int dlirs_destroy(DLIRS* cache);
 
+// -1 = failure, 0 = not in cache, 1 = in cache
 int dlirs_contains(DLIRS* cache, const char* key);
+// -1 = failure, 0 = not full, 1 = full
 int dlirs_is_full(DLIRS* cache);
 
 void dlirs_hit_lir(DLIRS* cache, const char* key);
-// -1 = failure, 0 = in cache, 1 = not in cache
+// -1 = failure, 0 = not in cache, 1 = in cache
 int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry** evicted);
 void dlirs_prune(DLIRS* cache);
 void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
@@ -48,7 +50,7 @@ void dlirs_hit_hir_in_q(DLIRS* cache, const char* key);
 void dlirs_limit_stack(DLIRS* cache);
 
 int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
-// -1 = failure, 0 = hit, 1 = miss
+// -1 = failure, 0 = miss, 1 = hit
 int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
 
 #ifdef __cplusplus

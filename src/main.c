@@ -1,6 +1,7 @@
 #define ENABLE_LOGGING
 #define LOG_DATETIME_PREFIX
 #include "logging/logging.h"
+LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 
 #include <stdlib.h>
 #include "cache/dlirs/dlirs.h"
@@ -56,7 +57,7 @@ int main(int argc, char* argv[]) {
                 dlirs_destroy(dlirs);
                 return 1;
             }
-            INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %d]", i, j, requestResult == 0 ? "hit" : "miss", evicted, to_store[i], values[i]);
+            INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %d]", i, j, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
             dqht_print_table("HIRS", dlirs->hirs);
             dqht_print_table("LIRS", dlirs->lirs);
             dqht_print_table("Q", dlirs->q);
@@ -66,7 +67,7 @@ int main(int argc, char* argv[]) {
     dqht_print_table("LIRS", dlirs->lirs);
     dqht_print_table("Q", dlirs->q);
     for (int i = 0; i < 10; i++) {
-        INFO("Cache contains %s: %s", to_store[i], dlirs_contains(dlirs, to_store[i]) == 0 ? "true" : "false");
+        INFO("Cache contains %s: %s", to_store[i], dlirs_contains(dlirs, to_store[i]) == 1 ? "true" : "false");
     }
     for (int i = 0; i < 10; i++) {
         DLIRSEntry* evicted;
@@ -76,7 +77,7 @@ int main(int argc, char* argv[]) {
             dlirs_destroy(dlirs);
             return 1;
         }
-        INFO("Request result: %s", requestResult == 0 ? "hit" : "miss");
+        INFO("[%d] Request result: %s with evicted: %p for [%s: %d]", i, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
     }
     dqht_print_table("HIRS", dlirs->hirs);
     dqht_print_table("LIRS", dlirs->lirs);

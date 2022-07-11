@@ -9,6 +9,8 @@ extern "C" {
 
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
+#include <errno.h>
 
 #include "../types/typecheck.h"
 
@@ -20,11 +22,52 @@ enum LogLevel {
     LL_TRACE = 4
 };
 
-static int __min_log_level__ = LL_TRACE;
-
 #ifndef ENABLE_LOGGING
 #define LOG(level, stream, msg, ...) ({})
 #else
+
+void beforeMain() __attribute__((constructor));
+void afterMain() __attribute__((destructor));
+
+extern __thread FILE* logFileHandle;
+
+#ifndef __LOG_FILE_HANDLE__
+#define LOGS_DIR(path) \
+    void beforeMain() {  \
+        if (typename(path) != T_POINTER_TO_CHAR) { \
+            fprintf(STDERR, "Expected string file path"); \
+            exit(1); \
+        } \
+        time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime); \
+        char filepath[1024]; \
+        sprintf( \
+            filepath, \
+            "%s/log_%d-%d-%d_%d-%d-%d.log", \
+            path, \
+            timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, \
+            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec \
+        ); \
+        logFileHandle = fopen(filepath, "w+"); \
+        if (logFileHandle == NULL) { \
+            fprintf(STDERR, "Unable to open log file %s: ", filepath); \
+            perror(logFileHandle); \
+            exit(1); \
+        }               \
+        printf("Opened log file %s\n", filepath); \
+    } \
+    void afterMain() { \
+        if (logFileHandle == NULL) { \
+            fprintf(STDERR, "Log file was prematurely closed\n"); \
+            exit(1); \
+        } \
+        fclose(logFileHandle); \
+    }
+#define __LOG_FILE_HANDLE__ logFileHandle
+#endif // __LOG_FILE_HANDLE__
+
+#ifndef MIN_LOG_LEVEL
+#define MIN_LOG_LEVEL LL_TRACE
+#endif
 
 static inline char* logLevelToString(int level) {
     if (level == LL_ERROR)  {
@@ -62,10 +105,11 @@ static inline char* logLevelToString(int level) {
         fprintf(STDERR, "Expected integer log level"); \
         exit(1); \
     } \
-    if (level <= __min_log_level__) { \
-        __DEFINE_DATETIME_STRUCTS; \
-        fprintf(               \
-            level == LL_ERROR ? STDERR : STDOUT, \
+    if (level <= MIN_LOG_LEVEL) { \
+        __DEFINE_DATETIME_STRUCTS;  \
+        char logEntry[4096]; \
+        sprintf( \
+            logEntry, \
             __DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
             msg "\n", \
             __GET_DATETIME_FORMAT_VALUES \
@@ -73,7 +117,12 @@ static inline char* logLevelToString(int level) {
             logLevelToString(level), \
             ##__VA_ARGS__ \
         ); \
+        fprintf(level == LL_ERROR ? STDERR : STDOUT, logEntry); \
         fflush(level == LL_ERROR ? STDERR : STDOUT); \
+        if (__LOG_FILE_HANDLE__ != NULL) {\
+            fprintf( __LOG_FILE_HANDLE__, logEntry); \
+            fflush(__LOG_FILE_HANDLE__); \
+        }\
     } \
 }
 
