@@ -1,19 +1,21 @@
 #!/bin/bash
 
+MAX_LOGS=20
+
 echo "==== CMAKE INIT ===="
 cmake .
 
 echo "==== BUILD CACHE ===="
 make
 
-echo "==== PRUNE LOGS ===="
-log_count=$(ls logs | wc -l)
-echo "Found $log_count logs"
-if [ $log_count -gt 0 ]; then
+echo "==== PRUNE LOGS [Max: $MAX_LOGS] ===="
+# shellcheck disable=SC2012
+LOG_COUNT=$(ls logs | wc -l)
+if [ "$LOG_COUNT" -gt $MAX_LOGS ]; then
   rm logs/*
-  echo "Removed $log_count logs"
+  echo "Removed $LOG_COUNT logs"
 else
-  echo "No logs to remove, skipping"
+  echo "Found $LOG_COUNT logs, below threshold. Skipping."
 fi
 
 echo "==== RUN CACHE ===="
