@@ -26,14 +26,31 @@ DLIRSEntry* dlirs_entry_create_full(const char* key, void* value, bool is_LIR, b
 }
 
 DLIRSEntry* dlirs_entry_create(const char* key, void* value) {
-    return dlirs_entry_create_full(key, value, false, true);
+    DLIRSEntry* entry = dlirs_entry_create_full(key, value, false, true);
+    TRACE("CREATED NEW DLIRSEntry: %p [%s: %p]", entry, key, value);
+    return entry;
+}
+
+DLIRSEntry* dlirs_entry_copy(DLIRSEntry* other) {
+    if (other == NULL || other->key == NULL) {
+        return NULL;
+    }
+    DLIRSEntry* entry = dlirs_entry_create_full(
+        other->key,
+        other->value,
+        other->is_LIR,
+        other->in_cache
+    );
+    entry->is_demoted = other->is_demoted;
+    entry->length = other->length;
+    return entry;
 }
 
 void dlirs_entry_destroy(DLIRSEntry* entry) {
     if (entry == NULL || entry->key == NULL) {
         return;
     }
-    TRACE("Entry %p [Key: %s, Value: %p]", entry, entry->key, entry->value);
+    TRACE("DESTROYING DLIRSEntry: %p [%s: %p]", entry, entry->key, entry->value);
     free(entry->key);
     entry->key = NULL;
     free(entry);

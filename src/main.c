@@ -45,6 +45,7 @@ int main(int argc, char* argv[]) {
         957357,
         64526
     };
+    INFO("======== REQUEST 1 ========");
     dqht_print_table("Init HIRS", dlirs->hirs);
     dqht_print_table("Init LIRS", dlirs->lirs);
     dqht_print_table("Init Q", dlirs->q);
@@ -54,6 +55,7 @@ int main(int argc, char* argv[]) {
             int requestResult;
             if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], &evicted)) == -1) {
                 ERROR("[%d:%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, j, to_store[i], values[i], evicted);
+                dlirs_entry_destroy(evicted);
                 dlirs_destroy(dlirs);
                 return 1;
             }
@@ -61,24 +63,35 @@ int main(int argc, char* argv[]) {
             dqht_print_table("HIRS", dlirs->hirs);
             dqht_print_table("LIRS", dlirs->lirs);
             dqht_print_table("Q", dlirs->q);
+            dlirs_entry_destroy(evicted);
+            TRACE("Cache is full? %s", dlirs_is_full(dlirs) ? "true" : "false");
         }
     }
+    INFO("======== CONTAINS ========");
     dqht_print_table("HIRS", dlirs->hirs);
     dqht_print_table("LIRS", dlirs->lirs);
     dqht_print_table("Q", dlirs->q);
     for (int i = 0; i < 10; i++) {
         INFO("Cache contains %s: %s", to_store[i], dlirs_contains(dlirs, to_store[i]) == 1 ? "true" : "false");
     }
+    INFO("======== REQUEST 2 ========");
     for (int i = 0; i < 10; i++) {
         DLIRSEntry* evicted;
         int requestResult;
         if ((requestResult = dlirs_request(dlirs, to_store[i], &values[i], &evicted)) == -1) {
             ERROR("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
+            dlirs_entry_destroy(evicted);
             dlirs_destroy(dlirs);
             return 1;
         }
         INFO("[%d] Request result: %s with evicted: %p for [%s: %d]", i, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
+        dqht_print_table("HIRS", dlirs->hirs);
+        dqht_print_table("LIRS", dlirs->lirs);
+        dqht_print_table("Q", dlirs->q);
+        dlirs_entry_destroy(evicted);
+        TRACE("Cache is full? %s", dlirs_is_full(dlirs) ? "true" : "false");
     }
+    INFO("======== CLEANUP ========");
     dqht_print_table("HIRS", dlirs->hirs);
     dqht_print_table("LIRS", dlirs->lirs);
     dqht_print_table("Q", dlirs->q);

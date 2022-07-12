@@ -22,6 +22,7 @@ typedef struct DLIRSEntry {
 
 DLIRSEntry* dlirs_entry_create_full(const char* key, void* value, bool is_LIR, bool in_cache);
 DLIRSEntry* dlirs_entry_create(const char* key, void* value);
+DLIRSEntry* dlirs_entry_copy(DLIRSEntry* other);
 void dlirs_entry_destroy(DLIRSEntry* entry);
 
 #ifdef __cplusplus
