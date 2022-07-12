@@ -363,19 +363,19 @@ int dlirs_destroy(DLIRS* cache) {
         (EntryValueDestroyHandler) dqht_destroy_entries_q,
         cache
     );
-//    INFO("Destroyed Q table");
+    DEBUG("[Cache: %p, Table: %p] Destroyed Q table", cache, cache->q);
     dqht_destroy_handled(
         cache->hirs,
         (EntryValueDestroyHandler) dqht_destroy_entries_hirs,
         cache
     );
-//    INFO("Destroyed HIRS table");
+    DEBUG("[Cache: %p, Table: %p] Destroyed HIRS table", cache, cache->hirs);
     dqht_destroy_handled(
         cache->lirs,
         (EntryValueDestroyHandler) dqht_destroy_entries_lirs,
         NULL
     );
-//    INFO("Destroyed LIRS table");
+    DEBUG("[Cache: %p, Table: %p] Destroyed LIRS table", cache, cache->lirs);
     free(cache);
     return 0;
 }
