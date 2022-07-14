@@ -10,4 +10,3 @@ Makefile
 
 htfh_rt_search_cache
 run
-prune_logs.py
