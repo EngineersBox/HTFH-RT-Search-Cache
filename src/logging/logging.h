@@ -44,7 +44,7 @@ extern __thread FILE* logFileHandle;
             filepath, \
             "%s/log_%d-%d-%d_%d-%d-%d.log", \
             path, \
-            timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, \
+            timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, \
             timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec \
         ); \
         logFileHandle = fopen(filepath, "w+"); \
@@ -91,7 +91,7 @@ static inline char* logLevelToString(int level) {
 #define __FILENAME__ (strrchr("/" __FILE__, '/') + 1)
 
 #ifdef LOG_DATETIME_PREFIX
-#define __GET_DATETIME_FORMAT_VALUES timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
+#define __GET_DATETIME_FORMAT_VALUES timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
 #define __DATETIME_PREFIX "[%d/%d/%d %d:%d:%d] "
 #define __DEFINE_DATETIME_STRUCTS time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime);
 #else

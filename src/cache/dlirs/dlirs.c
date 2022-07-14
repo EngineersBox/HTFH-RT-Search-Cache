@@ -110,12 +110,18 @@ int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry** evicted) {
         entry->in_cache = true;
         cache->non_resident--;
     }
+    TRACE("Before eject lir loop");
     while (cache->lirs_count >= (size_t) cache->lirs_limit) {
+        TRACE("Ejecting LIR: [Count: %zu] [Limit: %f]", cache->lirs_count, cache->lirs_limit);
         dlirs_eject_lir(cache);
     }
+    TRACE("After eject lir loop");
+    TRACE("Before eject hir loop");
     while ((cache->hirs_count + cache->lirs_count) >= (size_t) cache->cache_size) {
+        TRACE("Ejecting HIR: [Count: %zu] [Limit: %zu]", (cache->hirs_count + cache->lirs_count), cache->cache_size);
         *evicted = dlirs_eject_hir(cache);
     }
+    TRACE("After eject hir loop");
     dqht_insert(cache->lirs, key, entry);
     cache->lirs_count++;
     return !in_cache;
@@ -125,23 +131,31 @@ void dlirs_prune(DLIRS* cache) {
     if (cache == NULL || cache->lirs == NULL) {
         return;
     }
+    dqht_print_table("PRUNE LIRS", cache->lirs);
+    dqht_print_table("PRUNE HIRS", cache->hirs);
+    dqht_print_table("PRUNE Q", cache->q);
     DLIRSEntry* entry;
     DLIRSEntry* entry1;
     DLIRSEntry* entry2;
     while ((entry = dqht_get_front(cache->lirs)) != NULL) {
-        if (entry->is_LIR) {
+        TRACE("Prune LIR entry %p", entry);
+        if (entry->is_LIR || (entry1 = dqht_remove(cache->lirs, entry->key)) == NULL) {
+            break;
+        } else if ((entry2 = dqht_remove(cache->hirs, entry->key)) == NULL) {
+            dlirs_entry_destroy(entry1);
             break;
         }
-        if ((entry1 = dqht_remove(cache->lirs, entry->key)) != NULL
-            || (entry2 = dqht_remove(cache->hirs, entry->key)) != NULL) {
-            break;
-        }
+        TRACE("Prune removed [LIR: %p] [HIR: %p]", entry1, entry2);
         if (!entry->in_cache) {
             cache->non_resident--;
         }
         dlirs_entry_destroy(entry1);
         dlirs_entry_destroy(entry2);
+        TRACE("Destroyed hir-lir");
     }
+    dqht_print_table("POST PRUNE LIRS", cache->lirs);
+    dqht_print_table("POST PRUNE HIRS", cache->hirs);
+    dqht_print_table("POST PRUNE Q", cache->q);
 }
 
 void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir) {
@@ -185,6 +199,7 @@ void dlirs_eject_lir(DLIRS* cache) {
     }
     dlirs_entry_destroy(lru);
     cache->hirs_count++;
+    TRACE("Incremented HIRS count");
     dlirs_prune(cache);
 }
 
@@ -235,7 +250,10 @@ void dlirs_limit_stack(DLIRS* cache) {
     while ((cache->hirs_count + cache->lirs_count + cache->non_resident) > (2 * cache->cache_size)) {
         DLIRSEntry* lru = dqht_pop_front(cache->hirs);
         DLIRSEntry* entry;
-        if (lru == NULL || (entry = dqht_remove(cache->lirs, lru->key)) != NULL) {
+        if (lru == NULL) {
+            break;
+        } else if ((entry = dqht_remove(cache->lirs, lru->key)) == NULL) {
+            dlirs_entry_destroy(lru);
             break;
         }
         if (!lru->in_cache) {
@@ -272,11 +290,9 @@ int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted)
     }
     TRACE("MISS ENTRY 2: %s", key);
     DLIRSEntry* entry = dlirs_entry_create(key, value);
-    if (entry == NULL) {
-        return -1;
-    } else if (dqht_insert(cache->q, key, entry) != 0
+    if (entry == NULL || (dqht_insert(cache->q, key, entry) != 0
         || dqht_insert(cache->lirs, key, dlirs_entry_copy(entry)) != 0
-        || dqht_insert(cache->hirs, key, dlirs_entry_copy(entry)) != 0) {
+        || dqht_insert(cache->hirs, key, dlirs_entry_copy(entry)) != 0)) {
         return -1;
     }
     cache->hirs_count++;

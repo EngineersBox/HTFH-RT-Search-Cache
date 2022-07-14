@@ -112,7 +112,9 @@ void* dqht_remove(DequeueHashTable* dqht, const char* key) {
         if (dqht->ht->items[index] != NULL
             && dqht->ht->items[index]->key != NULL
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
+            dqht_print_table("Before unlink", dqht);
             __dqht_unlink(dqht, dqht->ht->items[index]);
+            dqht_print_table("After unlink", dqht);
             void* value = dqht->ht->items[index]->ptr;
             dqhtentry_destroy(dqht->ht->items[index]);
             dqht->ht->items[index] = NULL;
@@ -202,5 +204,14 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
         entry = entry->next;
     }
     strcat(printString, "}");
-    INFO("%s", printString);
+    INFO(
+        "[Head: [%zu] %s:%p] [Tail: [%zu] %s:%p] %s",
+        dqht->head != NULL ? dqht->head->index : -1,
+        dqht->head != NULL ? dqht->head->key : "(nil)",
+        dqht->head != NULL ? dqht->head->ptr : "(nil)",
+        dqht->head != NULL ? dqht->tail->index : -1,
+        dqht->head != NULL ? dqht->tail->key : "(nil)",
+        dqht->head != NULL ? dqht->tail->ptr : "(nil)",
+        printString
+    );
 }
