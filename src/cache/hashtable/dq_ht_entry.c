@@ -31,6 +31,8 @@ void dqhtentry_destroy(DQHTEntry* entry) {
     }
     free(entry->key);
     entry->key = NULL;
+    entry->next = entry->prev = NULL;
+    entry->index = 0;
     free(entry);
     entry = NULL;
 }

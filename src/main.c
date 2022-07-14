@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     dqht_print_table("LIRS", dlirs->lirs);
     dqht_print_table("Q", dlirs->q);
     for (int i = 0; i < 10; i++) {
-        INFO("Cache contains %s: %s", to_store[i], dlirs_contains(dlirs, to_store[i]) == 1 ? "true" : "false");
+        INFO("Cache contains %s: %s", to_store[i], dlirs_contains(dlirs, to_store[i]) ? "true" : "false");
     }
     INFO("======== REQUEST 2 ========");
     for (int i = 0; i < 10; i++) {

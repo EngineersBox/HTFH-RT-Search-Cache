@@ -45,9 +45,9 @@ DLIRS* dlirs_create(size_t ht_size, size_t cache_size, float hirs_ratio) {
     return cache;
 }
 
-int dlirs_contains(DLIRS* cache, const char* key) {
+bool dlirs_contains(DLIRS* cache, const char* key) {
     if (cache == NULL || cache->lirs || cache->q || key == NULL) {
-        return -1;
+        return false;
     }
     DLIRSEntry* value;
     if ((value = dqht_get(cache->lirs, key)) != NULL) {
@@ -56,9 +56,9 @@ int dlirs_contains(DLIRS* cache, const char* key) {
     return dqht_get(cache->q, key) != NULL;
 }
 
-int dlirs_is_full(DLIRS* cache) {
+bool dlirs_is_full(DLIRS* cache) {
     if (cache == NULL) {
-        return -1;
+        return false;
     }
     return (cache->hirs_count + cache->lirs_count) == cache->cache_size;
 }

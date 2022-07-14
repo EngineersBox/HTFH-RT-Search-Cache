@@ -33,10 +33,8 @@ typedef struct DLIRS {
 DLIRS* dlirs_create(size_t ht_size, size_t cache_size, float hirs_limit);
 int dlirs_destroy(DLIRS* cache);
 
-// -1 = failure, 0 = not in cache, 1 = in cache
-int dlirs_contains(DLIRS* cache, const char* key);
-// -1 = failure, 0 = not full, 1 = full
-int dlirs_is_full(DLIRS* cache);
+bool dlirs_contains(DLIRS* cache, const char* key);
+bool dlirs_is_full(DLIRS* cache);
 
 void dlirs_hit_lir(DLIRS* cache, const char* key);
 // -1 = failure, 0 = not in cache, 1 = in cache

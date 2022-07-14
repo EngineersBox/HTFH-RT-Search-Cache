@@ -188,6 +188,32 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     }
     char printString[2048] = "";
     strcat(printString, name);
+    char headElement[100];
+    if (dqht->head != NULL) {
+        sprintf(
+            headElement,
+            " [Head: [%lld] %s:%p]",
+            dqht->head->index,
+            dqht->head->key,
+            dqht->head->ptr
+        );
+    } else {
+        strcpy(headElement, " [Head: (nil)]");
+    }
+    strcat(printString, headElement);
+    char tailElement[100];
+    if (dqht->tail != NULL) {
+        sprintf(
+            tailElement,
+            " [Tail: [%lld] %s:%p]",
+            dqht->tail->index,
+            dqht->tail->key,
+            dqht->tail->ptr
+        );
+    } else {
+        strcpy(tailElement, " [Tail: (nil)]");
+    }
+    strcat(printString, tailElement);
     strcat(printString, " {");
     DQHTEntry* entry = dqht->head;
     while (entry != NULL) {
@@ -204,14 +230,5 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
         entry = entry->next;
     }
     strcat(printString, "}");
-    INFO(
-        "[Head: [%zu] %s:%p] [Tail: [%zu] %s:%p] %s",
-        dqht->head != NULL ? dqht->head->index : -1,
-        dqht->head != NULL ? dqht->head->key : "(nil)",
-        dqht->head != NULL ? dqht->head->ptr : "(nil)",
-        dqht->head != NULL ? dqht->tail->index : -1,
-        dqht->head != NULL ? dqht->tail->key : "(nil)",
-        dqht->head != NULL ? dqht->tail->ptr : "(nil)",
-        printString
-    );
+    INFO("%s", printString);
 }
