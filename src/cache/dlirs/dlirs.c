@@ -289,10 +289,9 @@ int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted)
         *evicted = dlirs_eject_hir(cache);
     }
     TRACE("MISS ENTRY 2: %s", key);
-    DLIRSEntry* entry = dlirs_entry_create(key, value);
-    if (entry == NULL || (dqht_insert(cache->q, key, entry) != 0
-        || dqht_insert(cache->lirs, key, dlirs_entry_copy(entry)) != 0
-        || dqht_insert(cache->hirs, key, dlirs_entry_copy(entry)) != 0)) {
+    if (dqht_insert(cache->q, key, dlirs_entry_create(key, value)) != 0
+        || dqht_insert(cache->lirs, key, dlirs_entry_create(key, value)) != 0
+        || dqht_insert(cache->hirs, key, dlirs_entry_create(key, value)) != 0) {
         return -1;
     }
     cache->hirs_count++;
@@ -309,7 +308,7 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evict
     *evicted = NULL;
 
     DLIRSEntry* entry = dqht_get(cache->lirs, key);
-//    TRACE("Entry retrieval reached %s, %p", key, entry);
+    TRACE("Entry retrieval reached %s, %p", key, entry);
     if (entry != NULL) {
         if (entry->is_LIR) {
             TRACE("Hit LIR before");
