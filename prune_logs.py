@@ -15,7 +15,10 @@ def main(logsPath: str, maxLogs: int) -> None:
     sortedDatetimes = sorted(logFileMap.keys())
     for dt in sortedDatetimes[:len(sortedDatetimes) - maxLogs]:
         os.remove(logFileMap[dt])
-    print("Removed {} logs".format(len(sortedDatetimes) - maxLogs))
+    print("Removed {} logs:\n - {}".format(
+        len(sortedDatetimes) - maxLogs,
+        "\n - ".join([logFileMap[dt] for dt in sortedDatetimes[:len(sortedDatetimes) - maxLogs]])
+    ))
 
 MAX_LOGS = 20
 LOGS_PATH = "logs"
