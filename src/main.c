@@ -1,3 +1,6 @@
+#define DQHT_ENABLE_STRICT
+#define DLIRS_ENABLE_STRICT
+
 #define ENABLE_LOGGING
 #define LOG_DATETIME_PREFIX
 #include "logging/logging.h"
@@ -7,13 +10,13 @@ LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 #include "cache/dlirs/dlirs.h"
 #include "allocator/error/allocator_errno.h"
 
-#define print_error(subs, bytes) \
-    char msg[100] \
-    sprintf(msg, subs, bytes); \
-    alloc_perror(msg); \
-    return 1
-
-#define HEAP_SIZE (16 * 10000)
+//#define print_error(subs, bytes) \
+//    char msg[100] \
+//    sprintf(msg, subs, bytes); \
+//    alloc_perror(msg); \
+//    return 1
+//
+//#define HEAP_SIZE (16 * 10000)
 
 int main(int argc, char* argv[]) {
     DLIRS* dlirs = dlirs_create(8, 4, 0.1f);

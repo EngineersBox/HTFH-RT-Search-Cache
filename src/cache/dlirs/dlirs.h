@@ -30,6 +30,12 @@ typedef struct DLIRS {
     DequeueHashTable* q;
 } DLIRS;
 
+#ifdef DLIRS_ENABLE_STRICT
+#define DLIRS_STRICT_CHECK(cache) (cache->lirs == NULL || cache->hirs == NULL || cache->q == NULL)
+#else
+#define DLIRS_STRICT_CHECK(cache) false
+#endif
+
 DLIRS* dlirs_create(size_t ht_size, size_t cache_size, float hirs_limit);
 int dlirs_destroy(DLIRS* cache);
 

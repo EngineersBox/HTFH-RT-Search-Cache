@@ -9,8 +9,10 @@ extern "C" {
 
 #include <stddef.h>
 
+#include <stdbool.h>
+
 #include "../hashtable/cache_hashtable.h"
-#include "../hashtable/dq_ht_entry.h"
+#include "dq_ht_entry.h"
 
 typedef struct DequeueHashTable {
     DQHTEntry* head;
@@ -20,6 +22,12 @@ typedef struct DequeueHashTable {
 } DequeueHashTable;
 
 typedef void (*EntryValueDestroyHandler)(void*, void*);
+
+#ifdef DQHT_ENABLE_STRICT
+#define DQHT_STRICT_CHECK(dqht) (dqht->ht == NULL)
+#else
+#define DQHT_STRICT_CHECK(dqht) false
+#endif
 
 DequeueHashTable* dqht_create(size_t size);
 void dqht_destroy_handled(DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState);

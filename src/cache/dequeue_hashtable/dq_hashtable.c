@@ -26,7 +26,7 @@ DequeueHashTable* dqht_create(size_t size) {
 }
 
 void dqht_destroy_handled(DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState) {
-    if (dqht == NULL) {
+    if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
         return;
     }
     TRACE("Getting current");
@@ -61,7 +61,7 @@ void dqht_destroy(DequeueHashTable* dqht) {
 }
 
 void* dqht_get(DequeueHashTable* dqht, const char* key) {
-    if (dqht == NULL || key == NULL) {
+    if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
     DQHTEntry* entry = ht_get(dqht->ht, key);
@@ -84,7 +84,7 @@ void __dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
 }
 
 int dqht_insert(DequeueHashTable* dqht, const char* key, void* value) {
-    if (dqht == NULL || dqht->ht == NULL || key == NULL) {
+    if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
     DQHTEntry* entry = ht_insert(dqht->ht, key, value);
@@ -102,7 +102,7 @@ int dqht_insert(DequeueHashTable* dqht, const char* key, void* value) {
 }
 
 void* dqht_remove(DequeueHashTable* dqht, const char* key) {
-    if (dqht == NULL || dqht->ht == NULL || key == NULL) {
+    if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
@@ -127,11 +127,11 @@ void* dqht_remove(DequeueHashTable* dqht, const char* key) {
 }
 
 void* dqht_get_front(DequeueHashTable* dqht) {
-    return dqht != NULL ? dqht->head : NULL;
+    return dqht != NULL || DQHT_STRICT_CHECK(dqht) ? dqht->head : NULL;
 }
 
 int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value) {
-    if (dqht == NULL || dqht->ht == NULL || key == NULL) {
+    if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
     DQHTEntry* entry = ht_insert(dqht->ht, key, value);
@@ -149,7 +149,7 @@ int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value) {
 }
 
 void* dqht_pop_front(DequeueHashTable* dqht) {
-    if (dqht == NULL || dqht->head == NULL) {
+    if (dqht == NULL || dqht->head == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
     DQHTEntry* front = dqht->head;
@@ -162,7 +162,7 @@ void* dqht_pop_front(DequeueHashTable* dqht) {
 }
 
 void* dqht_get_last(DequeueHashTable* dqht) {
-    return dqht != NULL ? dqht->tail : NULL;
+    return dqht != NULL || DQHT_STRICT_CHECK(dqht) ? dqht->tail : NULL;
 }
 
 int dqht_push_last(DequeueHashTable* dqht, const char* key, void* value) {
@@ -170,7 +170,7 @@ int dqht_push_last(DequeueHashTable* dqht, const char* key, void* value) {
 }
 
 void* dqht_pop_last(DequeueHashTable* dqht) {
-    if (dqht == NULL || dqht->tail == NULL) {
+    if (dqht == NULL || dqht->tail == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
     DQHTEntry* back = dqht->tail;
@@ -183,7 +183,7 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
 }
 
 void dqht_print_table(char* name, DequeueHashTable* dqht) {
-    if (dqht == NULL) {
+    if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
         return;
     }
     char printString[2048] = "";
