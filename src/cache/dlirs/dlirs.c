@@ -340,17 +340,6 @@ int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evict
     return !miss;
 }
 
-void destroy_entries(DequeueHashTable* dqht) {
-    DQHTEntry* current = dqht->head;
-    while (current != NULL) {
-        if (current->ptr != NULL) {
-            dlirs_entry_destroy(current->ptr);
-            current->ptr = NULL;
-        }
-        current = current->next;
-    }
-}
-
 int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {
         return 0;
