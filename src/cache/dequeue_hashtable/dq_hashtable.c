@@ -68,7 +68,7 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
     return entry != NULL ? entry->ptr : NULL;
 }
 
-void __dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
+void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     DQHTEntry* prev_entry = entry->prev;
     DQHTEntry* next_entry = entry->next;
     if (prev_entry != NULL) {
@@ -113,7 +113,7 @@ void* dqht_remove(DequeueHashTable* dqht, const char* key) {
             && dqht->ht->items[index]->key != NULL
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
             dqht_print_table("Before unlink", dqht);
-            __dqht_unlink(dqht, dqht->ht->items[index]);
+            dqht_unlink(dqht, dqht->ht->items[index]);
             dqht_print_table("After unlink", dqht);
             void* value = dqht->ht->items[index]->ptr;
             dqhtentry_destroy(dqht->ht->items[index]);
@@ -154,7 +154,7 @@ void* dqht_pop_front(DequeueHashTable* dqht) {
     }
     DQHTEntry* front = dqht->head;
     void* value = front->ptr;
-    __dqht_unlink(dqht, dqht->head);
+    dqht_unlink(dqht, dqht->head);
     dqht->ht->items[front->index] = NULL;
     dqhtentry_destroy(front);
     dqht->ht->count--;
@@ -175,7 +175,7 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
     }
     DQHTEntry* back = dqht->tail;
     void* value = back->ptr;
-    __dqht_unlink(dqht, dqht->tail);
+    dqht_unlink(dqht, dqht->tail);
     dqht->ht->items[back->index] = NULL;
     dqhtentry_destroy(back);
     dqht->ht->count--;

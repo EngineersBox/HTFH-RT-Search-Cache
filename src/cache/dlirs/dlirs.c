@@ -12,6 +12,7 @@
 #define ENABLE_LOGGING
 #define LOG_DATETIME_PREFIX
 #include "../../logging/logging.h"
+#include "../preprocessor/lambda.h"
 
 DLIRS* dlirs_create(size_t ht_size, size_t cache_size, float hirs_ratio) {
     DLIRS* cache = malloc(sizeof(*cache));
@@ -350,49 +351,43 @@ void destroy_entries(DequeueHashTable* dqht) {
     }
 }
 
-void dqht_destroy_entries_q(DLIRSEntry* entry, DLIRS* dlirs) {
-    if (entry == NULL || entry->key == NULL) {
-        return;
-    } else if (dqht_get(dlirs->lirs, entry->key) == NULL
-        && dqht_get(dlirs->hirs, entry->key) == NULL) {
-        dlirs_entry_destroy(entry);
-    }
-}
-
-void dqht_destroy_entries_hirs(DLIRSEntry* entry, DLIRS* dlirs) {
-    if (entry == NULL || entry->key == NULL) {
-        return;
-    } else if (dqht_get(dlirs->lirs, entry->key) == NULL) {
-        dlirs_entry_destroy(entry);
-    }
-}
-
-void dqht_destroy_entries_lirs(DLIRSEntry* entry, void* _ignored) {
-    if (entry == NULL || entry->key == NULL) {
-        return;
-    }
-    dlirs_entry_destroy(entry);
-}
-
 int dlirs_destroy(DLIRS* cache) {
     if (cache == NULL) {
         return 0;
     }
     dqht_destroy_handled(
         cache->q,
-        (EntryValueDestroyHandler) dqht_destroy_entries_q,
+        (EntryValueDestroyHandler) lambda(void, (DLIRSEntry* entry, DLIRS* dlirs), {
+            if (entry == NULL || entry->key == NULL) {
+                return;
+            } else if (dqht_get(dlirs->lirs, entry->key) == NULL
+                       && dqht_get(dlirs->hirs, entry->key) == NULL) {
+                dlirs_entry_destroy(entry);
+            }
+        }),
         cache
     );
     DEBUG("[Cache: %p, Table: %p] Destroyed Q table", cache, cache->q);
     dqht_destroy_handled(
         cache->hirs,
-        (EntryValueDestroyHandler) dqht_destroy_entries_hirs,
+        (EntryValueDestroyHandler) lambda(void, (DLIRSEntry* entry, DLIRS* dlirs), {
+            if (entry == NULL || entry->key == NULL) {
+                return;
+            } else if (dqht_get(dlirs->lirs, entry->key) == NULL) {
+                dlirs_entry_destroy(entry);
+            }
+        }),
         cache
     );
     DEBUG("[Cache: %p, Table: %p] Destroyed HIRS table", cache, cache->hirs);
     dqht_destroy_handled(
         cache->lirs,
-        (EntryValueDestroyHandler) dqht_destroy_entries_lirs,
+        (EntryValueDestroyHandler) lambda(void, (DLIRSEntry* entry, void* _ignored), {
+            if (entry == NULL || entry->key == NULL) {
+            return;
+        }
+            dlirs_entry_destroy(entry);
+        }),
         NULL
     );
     DEBUG("[Cache: %p, Table: %p] Destroyed LIRS table", cache, cache->lirs);

@@ -21,7 +21,7 @@ typedef struct DequeueHashTable {
     HashTable* ht;
 } DequeueHashTable;
 
-typedef void (*EntryValueDestroyHandler)(void*, void*);
+typedef void (*EntryValueDestroyHandler)(void* entry, void* ctx);
 
 #ifdef DQHT_ENABLE_STRICT
 #define DQHT_STRICT_CHECK(dqht) (dqht->ht == NULL)
