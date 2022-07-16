@@ -7,13 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HTFH_ALLOCATOR
-#define LOCALISE_ALLOCATOR_ARG Allocator* allocator = cache->alloc;
-#else
-#define LOCALISE_ALLOCATOR_ARG
-#endif
-
-Cache* cache_new(size_t heap_size, size_t ht_size, size_t cache_size, float hirs_ratio) {
+Cache* cache_create(size_t heap_size, size_t ht_size, size_t cache_size, float hirs_ratio) {
     Cache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;

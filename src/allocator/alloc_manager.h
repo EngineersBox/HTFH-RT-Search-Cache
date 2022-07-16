@@ -10,7 +10,7 @@ extern "C" {
 #include <stdlib.h>
 
 #include "htfh/htfh.h"
-//#define HTFH_ALLOCATOR
+#define HTFH_ALLOCATOR
 #ifdef HTFH_ALLOCATOR
 #define AM_ALLOCATOR_PARAM Allocator* allocator,
 #define AM_ALLOCATOR_ARG allocator,

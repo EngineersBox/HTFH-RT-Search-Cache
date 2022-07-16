@@ -278,6 +278,7 @@ int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DL
         if (entry == NULL) {
             return -1;
         }
+        TRACE("Setting is_LIR true");
         entry->is_LIR = true;
         if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry) != 0) {
             return -1;
