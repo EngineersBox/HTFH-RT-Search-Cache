@@ -10,6 +10,7 @@ extern "C" {
 #include "../allocator/htfh/htfh.h"
 #include "dlirs/dlirs.h"
 #include "../allocator/thread/lock.h"
+#include "../allocator/alloc_manager.h"
 
 typedef struct Cache {
     __htfh_rwlock_t rwlock;
@@ -20,6 +21,11 @@ typedef struct Cache {
 /* Note: Use hirs_ratio = 0.01f */
 Cache* cache_new(size_t heap_size, size_t ht_size, size_t cache_size, float hirs_ratio);
 int cache_destroy(Cache* cache);
+
+bool cache_contains(Cache* cache, const char* key);
+bool cache_is_full(Cache* cache);
+
+int cache_request(Cache* cache, const char* key, void* value, DLIRSEntry** evicted);
 
 #ifdef __cplusplus
 };

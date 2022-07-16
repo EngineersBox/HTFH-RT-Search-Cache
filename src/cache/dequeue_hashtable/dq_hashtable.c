@@ -10,12 +10,12 @@
 #include "../logging/logging.h"
 #include "../hashtable/hashing.h"
 
-DequeueHashTable* dqht_create(size_t size) {
-    HashTable* ht = ht_create(size);
+DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size) {
+    HashTable* ht = ht_create(AM_ALLOCATOR_ARG size);
     if (ht == NULL) {
         return NULL;
     }
-    DequeueHashTable* dqht = malloc(sizeof(*dqht));
+    DequeueHashTable* dqht = am_malloc(sizeof(*dqht));
     if (dqht == NULL) {
         return NULL;
     }
@@ -25,7 +25,7 @@ DequeueHashTable* dqht_create(size_t size) {
     return dqht;
 }
 
-void dqht_destroy_handled(DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState) {
+void dqht_destroy_handled(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState) {
     if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
         return;
     }
@@ -38,12 +38,12 @@ void dqht_destroy_handled(DequeueHashTable* dqht, EntryValueDestroyHandler handl
         if (handler != NULL) {
             TRACE("Invoking handler: %p", handler);
             TRACE("Handling current ptr: %p", current->ptr);
-            handler(current->ptr, callbackState);
+            handler(AM_ALLOCATOR_ARG current->ptr, callbackState);
             current->ptr = NULL;
             TRACE("Nullified current ptr: %p", current->ptr);
         }
         TRACE("Destroying current: %p", current);
-        dqhtentry_destroy(current);
+        dqhtentry_destroy(AM_ALLOCATOR_ARG current);
         TRACE("Destroyed current: %p", current);
         current = next;
         TRACE("Moved next to current");
@@ -52,12 +52,12 @@ void dqht_destroy_handled(DequeueHashTable* dqht, EntryValueDestroyHandler handl
             TRACE("Next 2: %p", next);
         }
     }
-    ht_destroy(dqht->ht);
-    free(dqht);
+    ht_destroy(AM_ALLOCATOR_ARG dqht->ht);
+    am_free(dqht);
 }
 
-void dqht_destroy(DequeueHashTable* dqht) {
-    dqht_destroy_handled(dqht, NULL, NULL);
+void dqht_destroy(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
+    dqht_destroy_handled(AM_ALLOCATOR_ARG dqht, NULL, NULL);
 }
 
 void* dqht_get(DequeueHashTable* dqht, const char* key) {
@@ -83,11 +83,11 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     }
 }
 
-int dqht_insert(DequeueHashTable* dqht, const char* key, void* value) {
+int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
-    DQHTEntry* entry = ht_insert(dqht->ht, key, value);
+    DQHTEntry* entry = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value);
     if (entry == NULL) {
         return -1;
     }
@@ -101,7 +101,7 @@ int dqht_insert(DequeueHashTable* dqht, const char* key, void* value) {
     return 0;
 }
 
-void* dqht_remove(DequeueHashTable* dqht, const char* key) {
+void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
@@ -116,7 +116,7 @@ void* dqht_remove(DequeueHashTable* dqht, const char* key) {
             dqht_unlink(dqht, dqht->ht->items[index]);
             dqht_print_table("After unlink", dqht);
             void* value = dqht->ht->items[index]->ptr;
-            dqhtentry_destroy(dqht->ht->items[index]);
+            dqhtentry_destroy(AM_ALLOCATOR_ARG dqht->ht->items[index]);
             dqht->ht->items[index] = NULL;
             dqht->ht->count--;
             return value;
@@ -130,11 +130,11 @@ void* dqht_get_front(DequeueHashTable* dqht) {
     return dqht != NULL || DQHT_STRICT_CHECK(dqht) ? dqht->head : NULL;
 }
 
-int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value) {
+int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
-    DQHTEntry* entry = ht_insert(dqht->ht, key, value);
+    DQHTEntry* entry = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value);
     if (entry == NULL) {
         return -1;
     }
@@ -148,7 +148,7 @@ int dqht_push_front(DequeueHashTable* dqht, const char* key, void* value) {
     return 0;
 }
 
-void* dqht_pop_front(DequeueHashTable* dqht) {
+void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     if (dqht == NULL || dqht->head == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
@@ -156,7 +156,7 @@ void* dqht_pop_front(DequeueHashTable* dqht) {
     void* value = front->ptr;
     dqht_unlink(dqht, dqht->head);
     dqht->ht->items[front->index] = NULL;
-    dqhtentry_destroy(front);
+    dqhtentry_destroy(AM_ALLOCATOR_ARG front);
     dqht->ht->count--;
     return value;
 }
@@ -165,11 +165,11 @@ void* dqht_get_last(DequeueHashTable* dqht) {
     return dqht != NULL || DQHT_STRICT_CHECK(dqht) ? dqht->tail : NULL;
 }
 
-int dqht_push_last(DequeueHashTable* dqht, const char* key, void* value) {
-    return dqht_insert(dqht, key, value);
+int dqht_push_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
+    return dqht_insert(AM_ALLOCATOR_ARG dqht, key, value);
 }
 
-void* dqht_pop_last(DequeueHashTable* dqht) {
+void* dqht_pop_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     if (dqht == NULL || dqht->tail == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
@@ -177,7 +177,7 @@ void* dqht_pop_last(DequeueHashTable* dqht) {
     void* value = back->ptr;
     dqht_unlink(dqht, dqht->tail);
     dqht->ht->items[back->index] = NULL;
-    dqhtentry_destroy(back);
+    dqhtentry_destroy(AM_ALLOCATOR_ARG back);
     dqht->ht->count--;
     return value;
 }

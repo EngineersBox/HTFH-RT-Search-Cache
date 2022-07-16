@@ -7,13 +7,13 @@
 #define LOG_DATETIME_PREFIX
 #include "../../logging/logging.h"
 
-DLIRSEntry* dlirs_entry_create_full(const char* key, void* value, bool is_LIR, bool in_cache) {
-    DLIRSEntry* entry = malloc(sizeof(*entry));
+DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* value, bool is_LIR, bool in_cache) {
+    DLIRSEntry* entry = am_malloc(sizeof(*entry));
     if (entry == NULL) {
         return NULL;
     }
     entry->length = strlen(key);
-    entry->key = calloc(entry->length + 1, sizeof(char));
+    entry->key = am_calloc(entry->length + 1, sizeof(char));
     if (entry->key == NULL) {
         return NULL;
     }
@@ -25,17 +25,18 @@ DLIRSEntry* dlirs_entry_create_full(const char* key, void* value, bool is_LIR, b
     return entry;
 }
 
-DLIRSEntry* dlirs_entry_create(const char* key, void* value) {
-    DLIRSEntry* entry = dlirs_entry_create_full(key, value, false, true);
+DLIRSEntry* dlirs_entry_create(AM_ALLOCATOR_PARAM const char* key, void* value) {
+    DLIRSEntry* entry = dlirs_entry_create_full(AM_ALLOCATOR_ARG key, value, false, true);
     TRACE("CREATED NEW DLIRSEntry: %p [%s: %p]", entry, key, value);
     return entry;
 }
 
-DLIRSEntry* dlirs_entry_copy(DLIRSEntry* other) {
+DLIRSEntry* dlirs_entry_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other) {
     if (other == NULL || other->key == NULL) {
         return NULL;
     }
     DLIRSEntry* entry = dlirs_entry_create_full(
+        AM_ALLOCATOR_ARG
         other->key,
         other->value,
         other->is_LIR,
@@ -46,13 +47,13 @@ DLIRSEntry* dlirs_entry_copy(DLIRSEntry* other) {
     return entry;
 }
 
-void dlirs_entry_destroy(DLIRSEntry* entry) {
+void dlirs_entry_destroy(AM_ALLOCATOR_PARAM DLIRSEntry* entry) {
     if (entry == NULL || entry->key == NULL) {
         return;
     }
     TRACE("DESTROYING DLIRSEntry: %p [%s: %p]", entry, entry->key, entry->value);
-    free(entry->key);
+    am_free(entry->key);
     entry->key = NULL;
-    free(entry);
+    am_free(entry);
     entry = NULL;
 }

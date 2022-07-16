@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include "../allocator/alloc_manager.h"
 
 typedef struct DQHTEntry {
     char* key;
@@ -18,9 +19,9 @@ typedef struct DQHTEntry {
     struct DQHTEntry* next;
 } DQHTEntry;
 
-DQHTEntry* dqhtentry_create(const char* key, void* ptr);
-DQHTEntry* dqhtentry_create_full(const char* key, void* ptr, DQHTEntry* prev, DQHTEntry* next);
-void dqhtentry_destroy(DQHTEntry* entry);
+DQHTEntry* dqhtentry_create(AM_ALLOCATOR_PARAM const char* key, void* ptr);
+DQHTEntry* dqhtentry_create_full(AM_ALLOCATOR_PARAM const char* key, void* ptr, DQHTEntry* prev, DQHTEntry* next);
+void dqhtentry_destroy(AM_ALLOCATOR_PARAM DQHTEntry* entry);
 
 #ifdef __cplusplus
 };

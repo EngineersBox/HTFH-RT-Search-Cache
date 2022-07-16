@@ -12,6 +12,8 @@ extern "C" {
 #include "../../allocator/thread/lock.h"
 #include "dlirs_entry.h"
 
+#include "../allocator/alloc_manager.h"
+
 typedef struct DLIRS {
     size_t cache_size;
 
@@ -36,25 +38,25 @@ typedef struct DLIRS {
 #define DLIRS_STRICT_CHECK(cache) false
 #endif
 
-DLIRS* dlirs_create(size_t ht_size, size_t cache_size, float hirs_limit);
-int dlirs_destroy(DLIRS* cache);
+DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, float hirs_limit);
+int dlirs_destroy(AM_ALLOCATOR_PARAM DLIRS* cache);
 
 bool dlirs_contains(DLIRS* cache, const char* key);
 bool dlirs_is_full(DLIRS* cache);
 
-void dlirs_hit_lir(DLIRS* cache, const char* key);
+void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
 // -1 = failure, 0 = not in cache, 1 = in cache
-int dlirs_hir_in_lirs(DLIRS* cache, const char* key, DLIRSEntry** evicted);
-void dlirs_prune(DLIRS* cache);
+int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** evicted);
+void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache);
 void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
-void dlirs_eject_lir(DLIRS* cache);
-DLIRSEntry* dlirs_eject_hir(DLIRS* cache);
-void dlirs_hit_hir_in_q(DLIRS* cache, const char* key);
-void dlirs_limit_stack(DLIRS* cache);
+void dlirs_eject_lir(AM_ALLOCATOR_PARAM DLIRS* cache);
+DLIRSEntry* dlirs_eject_hir(AM_ALLOCATOR_PARAM DLIRS* cache);
+void dlirs_hit_hir_in_q(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
+void dlirs_limit_stack(AM_ALLOCATOR_PARAM DLIRS* cache);
 
-int dlirs_miss(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
+int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
 // -1 = failure, 0 = miss, 1 = hit
-int dlirs_request(DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
+int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
 
 #ifdef __cplusplus
 };

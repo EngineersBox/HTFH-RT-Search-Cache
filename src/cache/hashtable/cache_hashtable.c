@@ -5,27 +5,27 @@
 #include <stdio.h>
 #include "hashing.h"
 
-HashTable* ht_create(size_t size) {
-    HashTable* ht = malloc(sizeof(*ht));
+HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size) {
+    HashTable* ht = am_malloc(sizeof(*ht));
     ht->size = size;
     ht->count = 0;
-    ht->items = calloc(ht->size, sizeof(DQHTEntry*));
+    ht->items = am_calloc(ht->size, sizeof(DQHTEntry*));
     return ht;
 }
 
-void ht_destroy(HashTable* ht) {
+void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
     if (ht == NULL || ht->items == NULL) {
         return;
     }
-    free(ht->items);
-    free(ht);
+    am_free(ht->items);
+    am_free(ht);
 }
 
-DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
+DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value) {
     if (ht == NULL
         || ht->items == NULL
         || value == NULL
-        || ht->count >= (ht->size / 2) && ht_resize(ht) != 0) {
+        || ht->count >= (ht->size / 2) && ht_resize(AM_ALLOCATOR_ARG ht) != 0) {
         return NULL;
     }
     uint64_t hash = fnv1a_hash(key);
@@ -38,7 +38,7 @@ DQHTEntry* ht_insert(HashTable* ht, const char* key, void* value) {
         }
         index = (index + 1) % ht->size;
     }
-    ht->items[index] = dqhtentry_create(key, value);
+    ht->items[index] = dqhtentry_create(AM_ALLOCATOR_ARG key, value);
     if (ht->items[index] == NULL) {
         return NULL;
     }
@@ -65,12 +65,12 @@ void print_table(HashTable* ht) {
     }
 }
 
-int ht_resize(HashTable* ht) {
+int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht) {
     size_t new_size = ht->size * 2;
     if (new_size < ht->size) {
         return -1;
     }
-    DQHTEntry** new_items = calloc(new_size, sizeof(DQHTEntry*));
+    DQHTEntry** new_items = am_calloc(new_size, sizeof(DQHTEntry*));
     if (new_items == NULL) {
         return -1;
     }
@@ -86,7 +86,7 @@ int ht_resize(HashTable* ht) {
             return -1;
         }
     }
-    free(ht->items);
+    am_free(ht->items);
     ht->items = new_items;
     ht->size = new_size;
     return 0;
@@ -112,7 +112,7 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
     return NULL;
 }
 
-void* ht_delete(HashTable* ht, const char* key) {
+void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key) {
     if (ht == NULL
         || ht->items == NULL
         || key == NULL) {
@@ -125,7 +125,7 @@ void* ht_delete(HashTable* ht, const char* key) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL
             && strcmp(key, ht->items[index]->key) == 0) {
-            dqhtentry_destroy(ht->items[index]);
+            dqhtentry_destroy(AM_ALLOCATOR_ARG ht->items[index]);
             ht->count--;
             void* value = ht->items[index]->ptr;
             ht->items[index] = NULL;

@@ -35,7 +35,7 @@ extern __thread FILE* logFileHandle;
 #define LOGS_DIR(path) \
     void beforeMain() {  \
         if (typename(path) != T_POINTER_TO_CHAR) { \
-            fprintf(STDERR, "Expected string file path"); \
+            fprintf(STDERR, "[LOGGER] Expected string file path"); \
             exit(1); \
         } \
         time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime); \
@@ -49,18 +49,19 @@ extern __thread FILE* logFileHandle;
         ); \
         logFileHandle = fopen(filepath, "w+"); \
         if (logFileHandle == NULL) { \
-            fprintf(STDERR, "Unable to open log file %s: ", filepath); \
+            fprintf(STDERR, "[LOGGER] Unable to open log file %s: ", filepath); \
             perror(logFileHandle); \
             exit(1); \
         }               \
-        printf("Opened log file %s\n", filepath); \
+        printf("[LOGGER] Opened log file %s\n", filepath); \
     } \
     void afterMain() { \
         if (logFileHandle == NULL) { \
-            fprintf(STDERR, "Log file was prematurely closed\n"); \
+            fprintf(STDERR, "[LOGGER] Log file was prematurely closed\n"); \
             exit(1); \
         } \
         fclose(logFileHandle); \
+        printf("[LOGGER] Closed log file\n"); \
     }
 #define __LOG_FILE_HANDLE__ logFileHandle
 #endif // __LOG_FILE_HANDLE__
@@ -102,7 +103,7 @@ static inline char* logLevelToString(int level) {
 
 #define LOG(level, msg, ...) { \
     if (typename(level) != T_INT) { \
-        fprintf(STDERR, "Expected integer log level"); \
+        fprintf(STDERR, "[LOGGER] Expected integer log level"); \
         exit(1); \
     } \
     if (level <= MIN_LOG_LEVEL) { \

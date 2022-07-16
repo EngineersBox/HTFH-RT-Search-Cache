@@ -3,17 +3,17 @@
 #include <string.h>
 #include <stdlib.h>
 
-DQHTEntry* dqhtentry_create(const char* key, void* ptr) {
-    return dqhtentry_create_full(key, ptr, NULL, NULL);
+DQHTEntry* dqhtentry_create(AM_ALLOCATOR_PARAM const char* key, void* ptr) {
+    return dqhtentry_create_full(AM_ALLOCATOR_ARG key, ptr, NULL, NULL);
 }
 
-DQHTEntry* dqhtentry_create_full(const char* key, void* ptr, DQHTEntry* prev, DQHTEntry* next) {
-    DQHTEntry* entry = malloc(sizeof(*entry));
+DQHTEntry* dqhtentry_create_full(AM_ALLOCATOR_PARAM const char* key, void* ptr, DQHTEntry* prev, DQHTEntry* next) {
+    DQHTEntry* entry = am_malloc(sizeof(*entry));
     if (entry == NULL) {
         return NULL;
     }
     entry->length = strlen(key);
-    entry->key = calloc(entry->length + 1, sizeof(char));
+    entry->key = am_calloc(entry->length + 1, sizeof(char));
     if (entry->key == NULL) {
         return NULL;
     }
@@ -25,14 +25,14 @@ DQHTEntry* dqhtentry_create_full(const char* key, void* ptr, DQHTEntry* prev, DQ
     return entry;
 }
 
-void dqhtentry_destroy(DQHTEntry* entry) {
+void dqhtentry_destroy(AM_ALLOCATOR_PARAM DQHTEntry* entry) {
     if (entry == NULL || entry->key == NULL) {
         return;
     }
-    free(entry->key);
+    am_free(entry->key);
     entry->key = NULL;
     entry->next = entry->prev = NULL;
     entry->index = 0;
-    free(entry);
+    am_free(entry);
     entry = NULL;
 }
