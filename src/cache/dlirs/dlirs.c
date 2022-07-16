@@ -14,14 +14,14 @@
 #include "../../logging/logging.h"
 #include "../preprocessor/lambda.h"
 
-DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, float hirs_ratio) {
+DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSOptions* options) {
     DLIRS* cache = am_malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
     cache->cache_size = cache_size;
 
-    cache->hirs_ratio = hirs_ratio; // 0.01f;
+    cache->hirs_ratio = options != NULL ? options->hirs_ratio : 0.01f; // 0.01f;
     cache->hirs_limit = math_max(1.0f, (int)((cache_size * cache->hirs_ratio) + 0.5f));
     cache->lirs_limit = cache_size - cache->hirs_limit;
 

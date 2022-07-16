@@ -18,11 +18,14 @@ typedef struct LRUCache {
     DequeueHashTable* dqht;
 } LRUCache;
 
-LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size);
+LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* options);
 void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache);
 
+bool lru_contains(LRUCache* cache, const char* key);
+bool lru_is_full(LRUCache* cache);
+
 // -1 = failure, 0 = success, 1 = evicted + added
-int lru_add(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted);
+int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted);
 int lru_evict(AM_ALLOCATOR_PARAM LRUCache* cache, void** evicted);
 
 #ifdef __cplusplus

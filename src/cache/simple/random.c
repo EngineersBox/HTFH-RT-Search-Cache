@@ -1,6 +1,6 @@
 #include "./random.h"
 
-RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size) {
+RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* options) {
     RandomCache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
@@ -23,8 +23,22 @@ void rc_destroy(AM_ALLOCATOR_PARAM RandomCache* cache) {
     free(cache);
 }
 
+bool rc_contains(RandomCache* cache, const char* key) {
+    if (cache == NULL || cache->ht == NULL || key == NULL) {
+        return false;
+    }
+    return ht_get(cache->ht, key) != NULL;
+}
+
+bool rc_is_full(RandomCache* cache) {
+    if (cache == NULL || cache->ht == NULL) {
+        return false;
+    }
+    return cache->ht->count == cache->cache_size;
+}
+
 // -1 = failure, 0 = success, 1 = full
-int rc_add(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* value, void** evicted) {
+int rc_request(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* value, void** evicted) {
     if (cache == NULL || cache->ht == NULL || key == NULL) {
         return -1;
     }

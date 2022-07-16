@@ -15,7 +15,7 @@ int random_test_main(int argc, char* argv[]) {
     }
 #endif
     srand((unsigned int)time(NULL));
-    RandomCache* rc = rc_create(AM_ALLOCATOR_ARG 10, 10);
+    RandomCache* rc = rc_create(AM_ALLOCATOR_ARG 10, 10, NULL);
     if (rc == NULL) {
         printf("Unable to create RandomCache with size of 10");
         return 1;

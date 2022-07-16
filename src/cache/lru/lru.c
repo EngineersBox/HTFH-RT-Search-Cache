@@ -1,6 +1,6 @@
 #include "lru.h"
 
-LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size) {
+LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* options) {
     LRUCache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
@@ -22,8 +22,22 @@ void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache) {
     free(cache);
 }
 
+bool lru_contains(LRUCache* cache, const char* key) {
+    if (cache == NULL || cache->dqht == NULL || key == NULL) {
+        return false;
+    }
+    return dqht_get(cache->dqht, key) != NULL;
+}
+
+bool lru_is_full(LRUCache* cache) {
+    if (cache == NULL || cache->dqht == NULL) {
+        return false;
+    }
+    return cache->dqht->ht->count == cache->cache_size;
+}
+
 // -1 = failure, 0 = success, 1 = evicted + added
-int lru_add(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted) {
+int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted) {
     if (cache == NULL || cache->dqht == NULL || key == NULL) {
         return -1;
     }

@@ -38,7 +38,11 @@ typedef struct DLIRS {
 #define DLIRS_STRICT_CHECK(cache) false
 #endif
 
-DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, float hirs_limit);
+typedef struct DLIRSOptions {
+    float hirs_ratio;
+} DLIRSOptions;
+
+DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSOptions* options);
 int dlirs_destroy(AM_ALLOCATOR_PARAM DLIRS* cache);
 
 bool dlirs_contains(DLIRS* cache, const char* key);
