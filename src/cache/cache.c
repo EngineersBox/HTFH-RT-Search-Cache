@@ -49,10 +49,11 @@ int cache_destroy(Cache* cache) {
 }
 
 bool cache_contains(Cache* cache, const char* key) {
-    if (cache == NULL) {
+    if (cache == NULL || __htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
         return false;
     }
-    return dlirs_contains(cache->dlirs, key);
+    bool result = dlirs_contains(cache->dlirs, key);
+    return __htfh_rwlock_unlock_handled(&cache->rwlock) != 0 ? false : result;
 }
 
 bool cache_is_full(Cache* cache) {
