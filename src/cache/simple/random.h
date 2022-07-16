@@ -18,15 +18,15 @@ typedef struct RandomCache {
     HashTable* ht;
 } RandomCache;
 
-RandomCache* rc_create(size_t ht_size, size_t cache_size);
-void rc_destroy(RandomCache* cache);
+RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size);
+void rc_destroy(AM_ALLOCATOR_PARAM RandomCache* cache);
 
 // -1 = failure, 0 = success, 1 = evicted + added
-int rc_add(RandomCache* cache, const char* key, void* value, void* evicted);
+int rc_add(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* value, void** evicted);
 
-void* rc_evict_random(RandomCache* cache);
+void* rc_evict_random(AM_ALLOCATOR_PARAM RandomCache* cache);
 
-void* rc_evict_by_key(RandomCache* cache, const char* key);
+void* rc_evict_by_key(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key);
 
 #ifdef __cplusplus
 };

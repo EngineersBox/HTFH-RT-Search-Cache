@@ -4,9 +4,18 @@
 
 #include "cache/simple/random.h"
 
+#define HEAP_SIZE (16 * 10000)
+
 int random_test_main(int argc, char* argv[]) {
+#ifdef HTFH_ALLOCATOR
+    Allocator* allocator = htfh_create(HEAP_SIZE);
+    if (allocator == NULL) {
+        printf("Unable to create HTFH with size of %d", HEAP_SIZE);
+        return 1;
+    }
+#endif
     srand((unsigned int)time(NULL));
-    RandomCache* rc = rc_create(10, 10);
+    RandomCache* rc = rc_create(AM_ALLOCATOR_ARG 10, 10);
     if (rc == NULL) {
         printf("Unable to create RandomCache with size of 10");
         return 1;
@@ -35,6 +44,6 @@ int random_test_main(int argc, char* argv[]) {
         957357,
         64526
     };
-    rc_destroy(rc);
+    rc_destroy(AM_ALLOCATOR_ARG rc);
     return 0;
 }

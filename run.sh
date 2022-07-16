@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 MAX_LOGS=20
 
 echo "==== CMAKE INIT ===="

@@ -16,7 +16,14 @@ struct TestStruct {
 #define HEAP_SIZE (16 * 10000)
 
 int dqht_test_main(int argc, char* argv[]) {
-    DequeueHashTable * table = dqht_create(10);
+#ifdef HTFH_ALLOCATOR
+    Allocator* allocator = htfh_create(HEAP_SIZE);
+    if (allocator == NULL) {
+        printf("Unable to create HTFH with size of %d", HEAP_SIZE);
+        return 1;
+    }
+#endif
+    DequeueHashTable * table = dqht_create(AM_ALLOCATOR_ARG 10);
     if (table == NULL) {
         printf("Could not create table with size 10\n");
         return 1;
@@ -47,7 +54,7 @@ int dqht_test_main(int argc, char* argv[]) {
         64526
     };
     for (int i = 0; i < 10; i++) {
-        if (dqht_push_front(table, to_store[i], &values[i]) != 0) {
+        if (dqht_push_front(AM_ALLOCATOR_ARG table, to_store[i], &values[i]) != 0) {
             printf("Could not insert entry: [%s: %d]\n", to_store[i], values[i]);
             return 1;
         }
@@ -95,7 +102,7 @@ int dqht_test_main(int argc, char* argv[]) {
     printf("Table: "); dqht_print_table("Table:", table);
     printf("== Retrieved entries ==\n");
     for (int i = 0; i < 10; i++) {
-        if (dqht_pop_last(table)  == NULL) {
+        if (dqht_pop_last(AM_ALLOCATOR_ARG table)  == NULL) {
             printf("Could not delete entry: [%s]\n", to_store[i]);
             return 1;
         }
@@ -107,6 +114,6 @@ int dqht_test_main(int argc, char* argv[]) {
     }
     printf("== Deleted entries ==\n");
     printf("Table: "); dqht_print_table("Table:", table);
-    dqht_destroy(table);
+    dqht_destroy(AM_ALLOCATOR_ARG table);
     return 0;
 }
