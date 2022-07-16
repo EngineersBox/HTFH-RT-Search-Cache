@@ -12,16 +12,16 @@ extern "C" {
 
 #include "../allocator/alloc_manager.h"
 
-#ifndef CACHE_BACKING_TYPE
-#define CACHE_BACKING_TYPE void*
-#warning "No backing type set, defaulting to void*"
+#ifndef cache_backing_t
+#define cache_backing_t void*
+#warning No backing type set, defaulting to void*
 #endif
 
 typedef void* (*CacheBackingCreate)(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* opts);
-typedef int (*CacheBackingDestroy)(AM_ALLOCATOR_PARAM CACHE_BACKING_TYPE cache);
-typedef int (*CacheBackingRequest)(AM_ALLOCATOR_PARAM CACHE_BACKING_TYPE cache, const char* key, void* value, void** evicted);
-typedef bool (*CacheBackingContains)(CACHE_BACKING_TYPE cache, const char* key);
-typedef bool (*CacheBackingIsFull)(CACHE_BACKING_TYPE cache);
+typedef int (*CacheBackingDestroy)(AM_ALLOCATOR_PARAM cache_backing_t cache);
+typedef int (*CacheBackingRequest)(AM_ALLOCATOR_PARAM cache_backing_t cache, const char* key, void* value, void** evicted);
+typedef bool (*CacheBackingContains)(cache_backing_t cache, const char* key);
+typedef bool (*CacheBackingIsFull)(cache_backing_t cache);
 
 typedef struct CacheBackingHandlers {
     CacheBackingCreate createHandler;

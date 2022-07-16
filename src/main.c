@@ -7,7 +7,7 @@
 LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 
 #include <stdlib.h>
-#define CACHE_BACKING_TYPE DLIRS*
+#define cache_backing_t DLIRS*
 #include "cache/cache.h"
 #include "allocator/error/allocator_errno.h"
 

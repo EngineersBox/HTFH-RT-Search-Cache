@@ -21,7 +21,7 @@ extern "C" {
 
 typedef struct Cache {
     __htfh_rwlock_t rwlock;
-    CACHE_BACKING_TYPE backing;
+    cache_backing_t backing;
     CacheBackingHandlers handlers;
     Allocator* alloc;
 } Cache;
