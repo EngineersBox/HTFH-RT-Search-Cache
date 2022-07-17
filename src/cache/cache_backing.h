@@ -17,7 +17,7 @@ extern "C" {
 #warning No backing type set, defaulting to void*
 #endif
 
-typedef void* (*CacheBackingCreate)(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* opts);
+typedef cache_backing_t (*CacheBackingCreate)(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* opts);
 typedef int (*CacheBackingDestroy)(AM_ALLOCATOR_PARAM cache_backing_t cache);
 typedef int (*CacheBackingRequest)(AM_ALLOCATOR_PARAM cache_backing_t cache, const char* key, void* value, void** evicted);
 typedef void* (*CacheBackingGet)(cache_backing_t cache, const char* key);
