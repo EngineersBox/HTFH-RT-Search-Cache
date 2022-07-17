@@ -29,6 +29,7 @@ enum LogLevel {
 void beforeMain() __attribute__((constructor));
 void afterMain() __attribute__((destructor));
 
+extern __thread char logFileName[1024];
 extern __thread FILE* logFileHandle;
 
 #ifndef __LOG_FILE_HANDLE__
@@ -47,6 +48,7 @@ extern __thread FILE* logFileHandle;
             timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, \
             timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec \
         ); \
+        strcpy(logFileName, filepath); \
         logFileHandle = fopen(filepath, "w+"); \
         if (logFileHandle == NULL) { \
             fprintf(STDERR, "[LOGGER] Unable to open log file %s: ", filepath); \
@@ -61,7 +63,7 @@ extern __thread FILE* logFileHandle;
             exit(1); \
         } \
         fclose(logFileHandle); \
-        printf("[LOGGER] Closed log file\n"); \
+        printf("[LOGGER] Closed log file %s\n", logFileName); \
     }
 #define __LOG_FILE_HANDLE__ logFileHandle
 #endif // __LOG_FILE_HANDLE__
