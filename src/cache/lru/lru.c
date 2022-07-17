@@ -23,10 +23,7 @@ void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache) {
 }
 
 bool lru_contains(LRUCache* cache, const char* key) {
-    if (cache == NULL || cache->dqht == NULL || key == NULL) {
-        return false;
-    }
-    return dqht_get(cache->dqht, key) != NULL;
+    return lru_get(cache, key) != NULL;
 }
 
 bool lru_is_full(LRUCache* cache) {

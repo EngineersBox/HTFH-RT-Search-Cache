@@ -47,14 +47,7 @@ DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSO
 }
 
 bool dlirs_contains(DLIRS* cache, const char* key) {
-    if (cache == NULL || key == NULL || DLIRS_STRICT_CHECK(cache)) {
-        return false;
-    }
-    DLIRSEntry* value;
-    if ((value = dqht_get(cache->lirs, key)) != NULL) {
-        return value->in_cache;
-    }
-    return dqht_get(cache->q, key) != NULL;
+    return dlirs_get(cache, key) != NULL;
 }
 
 bool dlirs_is_full(DLIRS* cache) {

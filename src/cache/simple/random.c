@@ -24,10 +24,7 @@ void rc_destroy(AM_ALLOCATOR_PARAM RandomCache* cache) {
 }
 
 bool rc_contains(RandomCache* cache, const char* key) {
-    if (cache == NULL || cache->ht == NULL || key == NULL) {
-        return false;
-    }
-    return ht_get(cache->ht, key) != NULL;
+    return rc_get(cache, key) != NULL;
 }
 
 bool rc_is_full(RandomCache* cache) {
