@@ -64,6 +64,17 @@ bool dlirs_is_full(DLIRS* cache) {
     return (cache->hirs_count + cache->lirs_count) == cache->cache_size;
 }
 
+void* dlirs_get(DLIRS* cache, const char* key) {
+    if (cache == NULL || key == NULL || DLIRS_STRICT_CHECK(cache)) {
+        return false;
+    }
+    DLIRSEntry* value;
+    if ((value = dqht_get(cache->lirs, key)) != NULL && value->in_cache) {
+        return value->value;
+    }
+    return (value = dqht_get(cache->q, key)) != NULL ? value->value : NULL;
+}
+
 void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
     if (cache == NULL ||  key == NULL || DLIRS_STRICT_CHECK(cache)) {
         return;

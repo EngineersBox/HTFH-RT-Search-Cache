@@ -36,7 +36,7 @@ bool lru_is_full(LRUCache* cache) {
     return cache->dqht->ht->count == cache->cache_size;
 }
 
-// -1 = failure, 0 = success, 1 = evicted + added
+// -1 = failure, 0 = miss, 1 = hit
 int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted) {
     if (cache == NULL || cache->dqht == NULL || key == NULL) {
         return -1;
@@ -50,6 +50,13 @@ int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value
         ret_val = 1;
     }
     return dqht_insert(AM_ALLOCATOR_ARG cache->dqht, key, value) == 0 ? ret_val : -1;
+}
+
+void* lru_get(LRUCache* cache, const char* key) {
+    if (cache == NULL || cache->dqht == NULL || key == NULL) {
+        return false;
+    }
+    return dqht_get(cache->dqht, key);
 }
 
 int lru_evict(AM_ALLOCATOR_PARAM LRUCache* cache, void** evicted) {

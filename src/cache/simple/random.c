@@ -37,7 +37,7 @@ bool rc_is_full(RandomCache* cache) {
     return cache->ht->count == cache->cache_size;
 }
 
-// -1 = failure, 0 = success, 1 = full
+// -1 = failure, 0 = miss, 1 = hit
 int rc_request(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* value, void** evicted) {
     if (cache == NULL || cache->ht == NULL || key == NULL) {
         return -1;
@@ -49,6 +49,13 @@ int rc_request(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* val
         ret_val = 1;
     }
     return ht_insert(AM_ALLOCATOR_ARG cache->ht, key, value) != NULL ? ret_val : -1;
+}
+
+void* rc_get(RandomCache* cache, const char* key) {
+    if (cache == NULL || cache->ht == NULL || key == NULL) {
+        return NULL;
+    }
+    return ht_get(cache->ht, key);
 }
 
 void* rc_evict_random(AM_ALLOCATOR_PARAM RandomCache* cache) {

@@ -24,7 +24,8 @@ int main(int argc, char* argv[]) {
             .destroyHandler = dlirs_destroy,
             .containsHandler = dlirs_contains,
             .isFullHandler = dlirs_is_full,
-            .requestHandler = (CacheBackingRequest) dlirs_request
+            .requestHandler = (CacheBackingRequest) dlirs_request,
+            .getHandler = dlirs_get
         },
         &(CacheOptions) {
             .hirs_ratio = 0.01f
@@ -87,7 +88,8 @@ int main(int argc, char* argv[]) {
     dqht_print_table("LIRS", cache->backing->lirs);
     dqht_print_table("Q", cache->backing->q);
     for (int i = 0; i < 10; i++) {
-        INFO("Cache contains %s: %s", to_store[i], cache_contains(cache, to_store[i]) ? "true" : "false");
+        void* match = cache_get(cache, to_store[i]);
+        INFO("Cache contains %s: %s [Value: %p]", to_store[i], match != NULL ? "true" : "false", match);
     }
     INFO("======== REQUEST 2 ========");
     for (int i = 0; i < 10; i++) {

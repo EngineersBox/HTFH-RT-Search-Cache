@@ -33,6 +33,7 @@ bool cache_contains(Cache* cache, const char* key);
 bool cache_is_full(Cache* cache);
 
 int cache_request(Cache* cache, const char* key, void* value, void** evicted);
+void* cache_get(Cache* cache, const char* key);
 
 #ifdef __cplusplus
 };

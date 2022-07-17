@@ -61,6 +61,7 @@ void dlirs_limit_stack(AM_ALLOCATOR_PARAM DLIRS* cache);
 int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
 // -1 = failure, 0 = miss, 1 = hit
 int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
+void* dlirs_get(DLIRS* cache, const char* key);
 
 #ifdef __cplusplus
 };

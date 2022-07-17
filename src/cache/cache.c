@@ -73,3 +73,11 @@ int cache_request(Cache* cache, const char* key, void* value, void** evicted) {
     int lockResult = __htfh_rwlock_unlock_handled(&cache->rwlock);
     return lockResult != 0 ? lockResult : result;
 }
+
+void* cache_get(Cache* cache, const char* key) {
+    if (cache == NULL || __htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
+        return NULL;
+    }
+    void* result = cache->handlers.getHandler(cache->backing, key);
+    return __htfh_rwlock_unlock_handled(&cache->rwlock) != 0 ? NULL : result;
+}

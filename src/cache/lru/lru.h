@@ -24,8 +24,10 @@ void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache);
 bool lru_contains(LRUCache* cache, const char* key);
 bool lru_is_full(LRUCache* cache);
 
-// -1 = failure, 0 = success, 1 = evicted + added
+// -1 = failure, 0 = miss, 1 = hit
 int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted);
+void* lru_get(LRUCache* cache, const char* key);
+
 int lru_evict(AM_ALLOCATOR_PARAM LRUCache* cache, void** evicted);
 
 #ifdef __cplusplus
