@@ -13,8 +13,7 @@ Cache* cache_create(size_t heap_size, size_t ht_size, size_t cache_size, CacheBa
         return NULL;
     }
     cache->handlers = handlers;
-    int lock_result;
-    if ((lock_result = __htfh_rwlock_init(&cache->rwlock, PTHREAD_PROCESS_PRIVATE)) != 0) {
+    init_check(int, lock_result, __htfh_rwlock_init(&cache->rwlock, PTHREAD_PROCESS_PRIVATE), != 0) {
         set_alloc_errno_msg(RWLOCK_LOCK_INIT, strerror(lock_result));
         return NULL;
     }

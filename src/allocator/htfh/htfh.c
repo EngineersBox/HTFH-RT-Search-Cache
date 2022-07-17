@@ -97,8 +97,7 @@ Allocator* htfh_create(size_t bytes) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return NULL;
     }
-    int lock_result;
-    if ((lock_result = __htfh_lock_init(&alloc->mutex, PTHREAD_MUTEX_RECURSIVE)) != 0) {
+    init_check(int, lock_result, __htfh_lock_init(&alloc->mutex, PTHREAD_MUTEX_RECURSIVE), != 0) {
         set_alloc_errno_msg(MUTEX_LOCK_INIT, strerror(lock_result));
         return NULL;
     } else if (__htfh_lock_lock_handled(&alloc->mutex) != 0) {

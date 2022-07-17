@@ -7,4 +7,6 @@
 #define ARCH_64_BIT
 #endif
 
+#define init_check(type, var, init, comparison) type var; if ((var = init) comparison)
+
 #endif // _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_CHECKS_
