@@ -9,8 +9,6 @@
 #include <stdlib.h>
 
 #include "../../math_utils.h"
-#define ENABLE_LOGGING
-#define LOG_DATETIME_PREFIX
 #include "../../logging/logging.h"
 #include "../preprocessor/lambda.h"
 
@@ -139,9 +137,6 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
     if (cache == NULL || DLIRS_STRICT_CHECK(cache)) {
         return;
     }
-    dqht_print_table("PRUNE LIRS", cache->lirs);
-    dqht_print_table("PRUNE HIRS", cache->hirs);
-    dqht_print_table("PRUNE Q", cache->q);
     DLIRSEntry* entry;
     DLIRSEntry* entry1;
     DLIRSEntry* entry2;
@@ -161,9 +156,6 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
         dlirs_entry_destroy(AM_ALLOCATOR_ARG entry2);
         TRACE("Destroyed hir-lir");
     }
-    dqht_print_table("POST PRUNE LIRS", cache->lirs);
-    dqht_print_table("POST PRUNE HIRS", cache->hirs);
-    dqht_print_table("POST PRUNE Q", cache->q);
 }
 
 void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir) {

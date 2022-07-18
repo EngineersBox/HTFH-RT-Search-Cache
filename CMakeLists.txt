@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 project(htfh_rt_search_cache C)
 
-#set(CC gcc-9.3)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -pthread")
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -31,3 +30,15 @@ list(REMOVE_DUPLICATES includeDirs)
 # Mark executable
 add_executable(htfh_rt_search_cache ${sourceFiles})
 target_include_directories(htfh_rt_search_cache PRIVATE ${includeDirs})
+
+# Global defines
+target_compile_definitions(
+        htfh_rt_search_cache
+        PRIVATE
+        HTFH_ALLOCATOR
+        cache_backing_t=DLIRS*
+        DQHT_ENABLE_STRICT
+        DLIRS_ENABLE_STRICT
+        ENABLE_LOGGING
+        LOG_DATETIME_PREFIX
+)

@@ -1,12 +1,8 @@
-#define DQHT_ENABLE_STRICT
-#define DLIRS_ENABLE_STRICT
-#define HTFH_ALLOCATOR
-#define ENABLE_LOGGING
-#define LOG_DATETIME_PREFIX
-#include "logging/logging.h"
-LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
-
 #include <stdlib.h>
+
+#include "logging/logging.h"
+//LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
+
 #define cache_backing_t DLIRS*
 #include "cache/cache.h"
 #include "allocator/error/allocator_errno.h"
@@ -32,8 +28,7 @@ int main(int argc, char* argv[]) {
         }
     );
     if (cache == NULL) {
-        printf("Could not create cache with size 10\n");
-        return 1;
+        FATAL("Could not create cache with size 10");
     }
     char* to_store[10] = {
         "test1",
@@ -114,6 +109,8 @@ int main(int argc, char* argv[]) {
     dqht_print_table("HIRS", cache->backing->hirs);
     dqht_print_table("LIRS", cache->backing->lirs);
     dqht_print_table("Q", cache->backing->q);
-    cache_destroy(cache);
+    if (cache_destroy(cache) != 0) {
+        FATAL("Could not destroy cache");
+    }
     return 0;
 }

@@ -7,11 +7,8 @@
 extern "C" {
 #endif
 
-#include <stdlib.h>
-
-#include "htfh/htfh.h"
-#define HTFH_ALLOCATOR
 #ifdef HTFH_ALLOCATOR
+#include "htfh/htfh.h"
 #define AM_ALLOCATOR_PARAM Allocator* allocator,
 #define AM_ALLOCATOR_ARG allocator,
 #define am_malloc(size) htfh_malloc(AM_ALLOCATOR_ARG size)
@@ -20,6 +17,7 @@ extern "C" {
 #define am_realloc(ptr, size) htfh_realloc(AM_ALLOCATOR_ARG ptr, size)
 #define am_free(ptr) htfh_free(AM_ALLOCATOR_ARG ptr)
 #else
+#include <stdlib.h>
 #define AM_ALLOCATOR_PARAM
 #define AM_ALLOCATOR_ARG
 #define am_malloc(size) malloc(size)

@@ -11,6 +11,7 @@ extern "C" {
 #include <time.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 
 #include "../types/typecheck.h"
 
@@ -24,18 +25,27 @@ enum LogLevel {
 };
 
 #ifndef ENABLE_LOGGING
-#define LOG(level, stream, msg, ...) ({})
+#define LOG(level, msg, ...)
+#define LOGS_DIR(path)
 #else
+
+#ifndef MIN_LOG_LEVEL
+#define MIN_LOG_LEVEL LL_TRACE
+#endif
 
 void beforeMain() __attribute__((constructor));
 void afterMain() __attribute__((destructor));
 
-extern __thread char logFileName[1024];
-extern __thread FILE* logFileHandle;
+extern _Thread_local char logFileName[1024];
+extern _Thread_local FILE* logFileHandle;
+
+// Log streams
+#define STDOUT stdout
+#define STDERR stderr
 
 #ifndef __LOG_FILE_HANDLE__
 #define LOGS_DIR(path) \
-    void beforeMain() {  \
+    void beforeMain() { \
         if (typename(path) != T_POINTER_TO_CHAR) { \
             fprintf(STDERR, "[LOGGER] Expected string file path"); \
             exit(1); \
@@ -69,10 +79,6 @@ extern __thread FILE* logFileHandle;
 #define __LOG_FILE_HANDLE__ logFileHandle
 #endif // __LOG_FILE_HANDLE__
 
-#ifndef MIN_LOG_LEVEL
-#define MIN_LOG_LEVEL LL_TRACE
-#endif
-
 static inline char* logLevelToString(int level) {
     if (level == LL_FATAL) {
         return "FATAL";
@@ -89,10 +95,6 @@ static inline char* logLevelToString(int level) {
     }
     return "INFO ";
 }
-
-// Log streams
-#define STDOUT stdout
-#define STDERR stderr
 
 #define __FILENAME__ (strrchr("/" __FILE__, '/') + 1)
 
@@ -132,45 +134,43 @@ static inline char* logLevelToString(int level) {
     } \
 }
 
-//#define LOG(level, msg, ...) printf(msg "\n", ##__VA_ARGS__)
+#endif // ENABLE_LOGGING
 
 #if MIN_LOG_LEVEL <= 0
 #define FATAL(msg, ...) LOG(LL_FATAL, msg, ##__VA_ARGS__); exit(1)
 #else
-#define FATAL(msg, ...) ({})
+#define FATAL(msg, ...)
 #endif
 
 #if MIN_LOG_LEVEL <= 1
-#define ERROR(msg, ...) (LOG(LL_ERROR, msg, ##__VA_ARGS__))
+#define ERROR(msg, ...) LOG(LL_ERROR, msg, ##__VA_ARGS__)
 #else
-#define ERROR(msg, ...) ({})
+#define ERROR(msg, ...)
 #endif
 
 #if MIN_LOG_LEVEL <= 2
-#define WARN(msg, ...) (LOG(LL_WARN, msg, ##__VA_ARGS__))
+#define WARN(msg, ...) LOG(LL_WARN, msg, ##__VA_ARGS__)
 #else
-#define WARN(msg, ...) ({})
+#define WARN(msg, ...)
 #endif
 
 #if MIN_LOG_LEVEL <= 3
-#define INFO(msg, ...) (LOG(LL_INFO, msg, ##__VA_ARGS__))
+#define INFO(msg, ...) LOG(LL_INFO, msg, ##__VA_ARGS__)
 #else
-#define INFO(msg, ...) ({})
+#define INFO(msg, ...)
 #endif
 
 #if MIN_LOG_LEVEL <= 4
-#define DEBUG(msg, ...) (LOG(LL_DEBUG, msg, ##__VA_ARGS__))
+#define DEBUG(msg, ...) LOG(LL_DEBUG, msg, ##__VA_ARGS__)
 #else
-#define DEBUG(msg, ...) ({})
+#define DEBUG(msg, ...)
 #endif
 
 #if MIN_LOG_LEVEL <= 5
-#define TRACE(msg, ...) (LOG(LL_TRACE, msg, ##__VA_ARGS__))
+#define TRACE(msg, ...) LOG(LL_TRACE, msg, ##__VA_ARGS__)
 #else
-#define TRACE(msg, ...) ({})
+#define TRACE(msg, ...)
 #endif
-
-#endif // ENABLE_LOGGING
 
 #ifdef __cplusplus
 };

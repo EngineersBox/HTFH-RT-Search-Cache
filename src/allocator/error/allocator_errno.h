@@ -70,10 +70,10 @@ typedef enum allocator_error_num {
 #define MAX_ERR_LINE_LENGTH 1024
 #define MAX_ERR_STRING_LENGTH 2048
 
-extern __thread int alloc_errno;
-extern __thread char __alloc__errno_location[MAX_ERR_LINE_LENGTH];
-extern __thread char __alloc__errno_msg[MAX_ERR_STRING_LENGTH];
-extern __thread char __alloc__errno_strerr[MAX_ERR_LINE_LENGTH];
+extern _Thread_local int alloc_errno;
+extern _Thread_local char __alloc__errno_location[MAX_ERR_LINE_LENGTH];
+extern _Thread_local char __alloc__errno_msg[MAX_ERR_STRING_LENGTH];
+extern _Thread_local char __alloc__errno_strerr[MAX_ERR_LINE_LENGTH];
 
 extern void get_alloc_errmsg(AllocatorErrno err);
 

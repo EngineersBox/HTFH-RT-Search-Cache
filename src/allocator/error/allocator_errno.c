@@ -1,10 +1,10 @@
 #include "allocator_errno.h"
 #include <string.h>
 
-__thread int alloc_errno = NONE;
-__thread char __alloc__errno_location[MAX_ERR_LINE_LENGTH];
-__thread char __alloc__errno_msg[MAX_ERR_STRING_LENGTH];
-__thread char __alloc__errno_strerr[MAX_ERR_LINE_LENGTH];
+_Thread_local int alloc_errno = NONE;
+_Thread_local char __alloc__errno_location[MAX_ERR_LINE_LENGTH];
+_Thread_local char __alloc__errno_msg[MAX_ERR_STRING_LENGTH];
+_Thread_local char __alloc__errno_strerr[MAX_ERR_LINE_LENGTH];
 
 #define enum_error(enum_val, err_msg) case enum_val: strcpy(__alloc__errno_msg, err_msg); break;
 

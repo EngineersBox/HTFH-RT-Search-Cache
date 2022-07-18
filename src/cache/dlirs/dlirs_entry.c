@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ENABLE_LOGGING
-#define LOG_DATETIME_PREFIX
 #include "../../logging/logging.h"
 
 DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* value, bool is_LIR, bool in_cache) {
