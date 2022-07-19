@@ -119,7 +119,8 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
             dqht->ht->count--;
             return value;
         }
-        index = (index + 1) % dqht->ht->size;
+        index++;
+        index %= dqht->ht->size;
     }
     return NULL;
 }
