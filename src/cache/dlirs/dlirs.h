@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _C_HTFH_RT_SEARCH_CACHE_DLIRS_
-#define _C_HTFH_RT_SEARCH_CACHE_DLIRS_
+#ifndef C_HTFH_RT_SEARCH_CACHE_DLIRS
+#define C_HTFH_RT_SEARCH_CACHE_DLIRS
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,4 +67,4 @@ void* dlirs_get(DLIRS* cache, const char* key);
 };
 #endif
 
-#endif // _C_HTFH_RT_SEARCH_CACHE_DLIRS_
+#endif // C_HTFH_RT_SEARCH_CACHE_DLIRS

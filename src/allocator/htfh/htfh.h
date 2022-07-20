@@ -40,8 +40,8 @@
 
 #pragma once
 
-#ifndef _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_
-#define _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_
+#ifndef C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR
+#define C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,7 +53,7 @@ extern "C" {
 #include "controller.h"
 
 typedef struct Allocator {
-    __htfh_lock_t mutex;
+    htfh_lock_t mutex;
     Controller* controller;
     size_t heap_size;
     void* heap;
@@ -120,4 +120,4 @@ size_t htfh_alloc_overhead(void);
 };
 #endif
 
-#endif // _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_
+#endif // C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR

@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_BLOCK_
-#define _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_BLOCK_
+#ifndef C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_BLOCK
+#define C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_BLOCK
 
 #ifdef __cplusplus
 extern "C" {
@@ -86,4 +86,4 @@ BlockHeader* block_absorb(BlockHeader* prev, BlockHeader* block);
 };
 #endif
 
-#endif // _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_BLOCK_
+#endif // C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_BLOCK

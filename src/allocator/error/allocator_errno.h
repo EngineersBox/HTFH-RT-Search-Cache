@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _H_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_ERRNO_
-#define _H_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_ERRNO_
+#ifndef H_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_ERRNO
+#define H_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_ERRNO
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,14 +71,14 @@ typedef enum allocator_error_num {
 #define MAX_ERR_STRING_LENGTH 2048
 
 extern _Thread_local int alloc_errno;
-extern _Thread_local char __alloc__errno_location[MAX_ERR_LINE_LENGTH];
-extern _Thread_local char __alloc__errno_msg[MAX_ERR_STRING_LENGTH];
-extern _Thread_local char __alloc__errno_strerr[MAX_ERR_LINE_LENGTH];
+extern _Thread_local char alloc_errno_location[MAX_ERR_LINE_LENGTH];
+extern _Thread_local char alloc_errno_msg[MAX_ERR_STRING_LENGTH];
+extern _Thread_local char alloc_errno_strerr[MAX_ERR_LINE_LENGTH];
 
 extern void get_alloc_errmsg(AllocatorErrno err);
 
-#define set_alloc_errno(err) alloc_errno = err; sprintf(__alloc__errno_location, "%s(%s:%d)", __func__, __FILE__, __LINE__)
-#define set_alloc_errno_msg(err, msg) sprintf(__alloc__errno_strerr, ": [%s]:", msg); set_alloc_errno(err)
+#define set_alloc_errno(err) alloc_errno = err; sprintf(alloc_errno_location, "%s(%s:%d)", __func__, __FILE__, __LINE__)
+#define set_alloc_errno_msg(err, msg) sprintf(alloc_errno_strerr, ": [%s]:", msg); set_alloc_errno(err)
 
 #define alloc_perror(prefix) ({ \
     char trunc_prefix[MAX_PREFIX_LENGTH]; \
@@ -104,4 +104,4 @@ extern void get_alloc_errmsg(AllocatorErrno err);
 };
 #endif
 
-#endif // _H_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_ERRNO_
+#endif // H_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_ERRNO

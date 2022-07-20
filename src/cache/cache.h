@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _C_HTFH_RT_SEARCH_CACHE_
-#define _C_HTFH_RT_SEARCH_CACHE_
+#ifndef C_HTFH_RT_SEARCH_CACHE
+#define C_HTFH_RT_SEARCH_CACHE
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 typedef struct Cache {
-    __htfh_rwlock_t rwlock;
+    htfh_rwlock_t rwlock;
     cache_backing_t backing;
     CacheBackingHandlers handlers;
     Allocator* alloc;
@@ -39,4 +39,4 @@ void* cache_get(Cache* cache, const char* key);
 };
 #endif
 
-#endif // _C_HTFH_RT_SEARCH_CACHE_
+#endif // C_HTFH_RT_SEARCH_CACHE

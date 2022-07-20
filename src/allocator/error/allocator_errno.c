@@ -2,11 +2,11 @@
 #include <string.h>
 
 _Thread_local int alloc_errno = NONE;
-_Thread_local char __alloc__errno_location[MAX_ERR_LINE_LENGTH];
-_Thread_local char __alloc__errno_msg[MAX_ERR_STRING_LENGTH];
-_Thread_local char __alloc__errno_strerr[MAX_ERR_LINE_LENGTH];
+_Thread_local char alloc_errno_location[MAX_ERR_LINE_LENGTH];
+_Thread_local char alloc_errno_msg[MAX_ERR_STRING_LENGTH];
+_Thread_local char alloc_errno_strerr[MAX_ERR_LINE_LENGTH];
 
-#define enum_error(enum_val, err_msg) case enum_val: strcpy(__alloc__errno_msg, err_msg); break;
+#define enum_error(enum_val, err_msg) case enum_val: strcpy(alloc_errno_msg, err_msg); break;
 
 inline void get_alloc_errmsg(AllocatorErrno err) {
     switch (err) {

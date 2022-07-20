@@ -90,6 +90,7 @@ int block_mark_as_free(BlockHeader* block) {
     }
     block_set_prev_free(next);
     block_set_free(block);
+    return 0;
 }
 
 int block_mark_as_used(BlockHeader* block) {

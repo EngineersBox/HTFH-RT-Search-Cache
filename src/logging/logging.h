@@ -43,7 +43,7 @@ extern _Thread_local FILE* logFileHandle;
 #define STDOUT stdout
 #define STDERR stderr
 
-#ifndef __LOG_FILE_HANDLE__
+#ifndef LOG_FILE_HANDLE
 #define LOGS_DIR(path) \
     void beforeMain() { \
         if (typename(path) != T_POINTER_TO_CHAR) { \
@@ -76,8 +76,8 @@ extern _Thread_local FILE* logFileHandle;
         fclose(logFileHandle); \
         printf("[LOGGER] Closed log file %s\n", logFileName); \
     }
-#define __LOG_FILE_HANDLE__ logFileHandle
-#endif // __LOG_FILE_HANDLE__
+#define LOG_FILE_HANDLE logFileHandle
+#endif // LOG_FILE_HANDLE
 
 static inline char* logLevelToString(int level) {
     if (level == LL_FATAL) {
@@ -96,12 +96,12 @@ static inline char* logLevelToString(int level) {
     return "INFO ";
 }
 
-#define __FILENAME__ (strrchr("/" __FILE__, '/') + 1)
+#define FILENAME (strrchr("/" __FILE__, '/') + 1)
 
 #ifdef LOG_DATETIME_PREFIX
-#define __GET_DATETIME_FORMAT_VALUES timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
-#define __DATETIME_PREFIX "[%d/%d/%d %d:%d:%d] "
-#define __DEFINE_DATETIME_STRUCTS time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime);
+#define GET_DATETIME_FORMAT_VALUES timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
+#define DATETIME_PREFIX "[%d/%d/%d %d:%d:%d] "
+#define DEFINE_DATETIME_STRUCTS time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime);
 #else
 #define __GET_DATETIME_FORMAT_VALUES
 #define __DATETIME_PREFIX ""
@@ -114,22 +114,22 @@ static inline char* logLevelToString(int level) {
         exit(1); \
     } \
     if (level <= MIN_LOG_LEVEL) { \
-        __DEFINE_DATETIME_STRUCTS;  \
+        DEFINE_DATETIME_STRUCTS;  \
         char logEntry[4096]; \
         sprintf( \
             logEntry, \
-            __DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
+            DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
             msg "\n", \
-            __GET_DATETIME_FORMAT_VALUES \
-            __func__, __FILENAME__, __LINE__, \
+            GET_DATETIME_FORMAT_VALUES \
+            __func__, FILENAME, __LINE__, \
             logLevelToString(level), \
             ##__VA_ARGS__ \
         ); \
         fprintf(level == LL_ERROR ? STDERR : STDOUT, logEntry); \
         fflush(level == LL_ERROR ? STDERR : STDOUT); \
-        if (__LOG_FILE_HANDLE__ != NULL) {\
-            fprintf( __LOG_FILE_HANDLE__, logEntry); \
-            fflush(__LOG_FILE_HANDLE__); \
+        if (LOG_FILE_HANDLE != NULL) {\
+            fprintf( LOG_FILE_HANDLE, logEntry); \
+            fflush(LOG_FILE_HANDLE); \
         }\
     } \
 }

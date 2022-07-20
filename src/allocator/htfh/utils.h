@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_UTILS_
-#define _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_UTILS_
+#ifndef C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_UTILS
+#define C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_UTILS
 
 #ifdef __cplusplus
 extern "C" {
@@ -121,4 +121,4 @@ void mapping_search(size_t size, int* fli, int* sli);
 };
 #endif
 
-#endif // _C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_UTILS_
+#endif // C_HYBRID_TLSF_FIXED_HEAP_ALLOCATOR_UTILS

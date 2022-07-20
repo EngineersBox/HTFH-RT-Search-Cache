@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _C_HTFH_RT_SEARCH_CACHE_DEQUEUE_HASHTABLE_
-#define _C_HTFH_RT_SEARCH_CACHE_DEQUEUE_HASHTABLE_
+#ifndef C_HTFH_RT_SEARCH_CACHE_DEQUEUE_HASHTABLE
+#define C_HTFH_RT_SEARCH_CACHE_DEQUEUE_HASHTABLE
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +24,7 @@ typedef struct DequeueHashTable {
 typedef void (*EntryValueDestroyHandler)(AM_ALLOCATOR_PARAM void* entry, void* ctx);
 
 #ifdef DQHT_ENABLE_STRICT
-#define DQHT_STRICT_CHECK(dqht) (dqht->ht == NULL)
+#define DQHT_STRICT_CHECK(dqht) ((dqht)->ht == NULL)
 #else
 #define DQHT_STRICT_CHECK(dqht) false
 #endif
@@ -51,4 +51,4 @@ void dqht_print_table(char* name, DequeueHashTable* dqht);
 };
 #endif
 
-#endif // _C_HTFH_RT_SEARCH_CACHE_DEQUEUE_HASHTABLE_
+#endif // C_HTFH_RT_SEARCH_CACHE_DEQUEUE_HASHTABLE

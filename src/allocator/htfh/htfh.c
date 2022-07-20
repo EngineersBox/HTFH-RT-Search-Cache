@@ -42,14 +42,14 @@ inline size_t htfh_alloc_overhead(void) {
 }
 
 void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
-    if (__htfh_lock_lock_handled(&alloc->mutex) == -1) {
+    if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
     }
     const size_t pool_overhead = htfh_pool_overhead();
     const size_t pool_bytes = align_down(bytes - pool_overhead, ALIGN_SIZE);
     if (((ptrdiff_t) mem % ALIGN_SIZE) != 0) {
         set_alloc_errno(POOL_MISALIGNED);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     } else if (pool_bytes < block_size_min || pool_bytes > block_size_max) {
         char msg[100];
@@ -65,7 +65,7 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
 #endif
         );
         set_alloc_errno_msg(INVALID_POOL_SIZE, msg);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
     BlockHeader* block = offset_to_block(mem, -(ptrdiff_t) block_header_overhead);
@@ -73,7 +73,7 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
     block_set_free(block);
     block_set_prev_used(block);
     if (controller_block_insert(alloc->controller, block) != 0) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
 
@@ -82,7 +82,7 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
     block_set_used(next);
     block_set_prev_free(next);
 
-    return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? mem : NULL;
+    return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? mem : NULL;
 }
 
 Allocator* htfh_create(size_t bytes) {
@@ -97,10 +97,10 @@ Allocator* htfh_create(size_t bytes) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return NULL;
     }
-    init_check(int, lock_result, __htfh_lock_init(&alloc->mutex, PTHREAD_MUTEX_RECURSIVE), != 0) {
+    init_check(int, lock_result, htfh_lock_init(&alloc->mutex, PTHREAD_MUTEX_RECURSIVE), != 0) {
         set_alloc_errno_msg(MUTEX_LOCK_INIT, strerror(lock_result));
         return NULL;
-    } else if (__htfh_lock_lock_handled(&alloc->mutex) != 0) {
+    } else if (htfh_lock_lock_handled(&alloc->mutex) != 0) {
         return NULL;
     }
     alloc->heap_size = bytes;
@@ -114,14 +114,14 @@ Allocator* htfh_create(size_t bytes) {
     );
     if (alloc->heap == NULL) {
         set_alloc_errno(HEAP_MMAP_FAILED);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     } else if (controller_new(alloc->controller) != 0) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
     htfh_add_pool(alloc, (char*)alloc->heap + htfh_size(), bytes - htfh_size());
-    return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? alloc : NULL;
+    return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? alloc : NULL;
 }
 
 int htfh_destroy(Allocator* alloc) {
@@ -131,15 +131,15 @@ int htfh_destroy(Allocator* alloc) {
     } else if (alloc->controller == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return -1;
-    } else if (__htfh_lock_lock_handled(&alloc->mutex) != 0) {
+    } else if (htfh_lock_lock_handled(&alloc->mutex) != 0) {
         return -1;
     }
     if (munmap(alloc->heap, alloc->heap_size) != 0) {
         set_alloc_errno(HEAP_UNMAP_FAILED);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return -1;
     }
-    if (__htfh_lock_unlock_handled(&alloc->mutex) != 0) {
+    if (htfh_lock_unlock_handled(&alloc->mutex) != 0) {
         return -1;
     }
     free(alloc);
@@ -153,17 +153,17 @@ void* htfh_malloc(Allocator* alloc, size_t size) {
     } else if (alloc->controller == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return NULL;
-    } else if (__htfh_lock_lock_handled(&alloc->mutex) == -1) {
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
     }
     const size_t adjust = adjust_request_size(size, ALIGN_SIZE);
     BlockHeader* block = controller_block_find_free(alloc->controller, adjust);
     if (block == NULL) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
     void* ptr = controller_block_mark_used(alloc->controller, block, adjust);
-    return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
+    return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
 }
 
 int htfh_free(Allocator* alloc, void* ptr) {
@@ -173,34 +173,34 @@ int htfh_free(Allocator* alloc, void* ptr) {
     } else if (alloc->controller == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return -1;
-    } else if (__htfh_lock_lock_handled(&alloc->mutex) == -1) {
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return -1;
     } else if (ptr == NULL) {
         /* Don't attempt to free a NULL pointer. */
-        return __htfh_lock_unlock_handled(&alloc->mutex);
+        return htfh_lock_unlock_handled(&alloc->mutex);
     }
     BlockHeader* block = block_from_ptr(ptr);
     if (block == NULL) {
         set_alloc_errno(BLOCK_IS_NULL);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return -1;
     } else if (block_is_free(block)) {
         set_alloc_errno(BLOCK_ALREADY_FREED);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return -1;
     }
     block_mark_as_free(block);
     if ((block = controller_block_merge_prev(alloc->controller, block)) == NULL) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return -1;
     } else if ((block = controller_block_merge_next(alloc->controller, block)) == NULL) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return -1;
     } else if (controller_block_insert(alloc->controller, block) != 0) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return -1;
     }
-    return __htfh_lock_unlock_handled(&alloc->mutex);
+    return htfh_lock_unlock_handled(&alloc->mutex);
 }
 
 void* htfh_calloc(Allocator* alloc, size_t count, size_t bytes) {
@@ -218,7 +218,7 @@ void* htfh_memalign(Allocator* alloc, size_t align, size_t size) {
     } else if (alloc->controller == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return NULL;
-    } else if (__htfh_lock_lock_handled(&alloc->mutex) == -1) {
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
     }
     const size_t adjust = adjust_request_size(size, ALIGN_SIZE);
@@ -243,7 +243,7 @@ void* htfh_memalign(Allocator* alloc, size_t align, size_t size) {
     BlockHeader* block = controller_block_find_free(alloc->controller, aligned_size);
     if (sizeof(BlockHeader) != block_size_min + block_header_overhead) {
         set_alloc_errno(BLOCK_SIZE_MISMATCH);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     } else if (block != NULL) {
         void* ptr = block_to_ptr(block);
@@ -261,17 +261,17 @@ void* htfh_memalign(Allocator* alloc, size_t align, size_t size) {
         if (gap) {
             if (gap < gap_minimum) {
                 set_alloc_errno(GAP_TOO_SMALL);
-                __htfh_lock_unlock_handled(&alloc->mutex);
+                htfh_lock_unlock_handled(&alloc->mutex);
                 return NULL;
             } else if ((block = controller_block_trim_free_leading(alloc->controller, block, gap)) == NULL) {
-                __htfh_lock_unlock_handled(&alloc->mutex);
+                htfh_lock_unlock_handled(&alloc->mutex);
                 return NULL;
             }
         }
     }
 
     void* ptr = controller_block_mark_used(alloc->controller, block, adjust);
-    return ptr != NULL && __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
+    return ptr != NULL && htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
 }
 
 /*
@@ -294,18 +294,18 @@ void* htfh_realloc(Allocator* alloc, void* ptr, size_t size) {
     } else if (alloc->controller == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return NULL;
-    } else if (__htfh_lock_lock_handled(&alloc->mutex) == -1) {
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
     }
     void* p = NULL;
     /* Zero-size requests are treated as free. */
     if (ptr && size == 0 && htfh_free(alloc, ptr) != 0) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     } else if (!ptr) {
         /* Requests with NULL pointers are treated as malloc. */
         p = htfh_malloc(alloc, size);
-        return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? p : NULL;
+        return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? p : NULL;
     }
     BlockHeader* block = block_from_ptr(ptr);
     BlockHeader* next = block_next(block);
@@ -316,7 +316,7 @@ void* htfh_realloc(Allocator* alloc, void* ptr, size_t size) {
 
     if (block_is_free(block)) {
         set_alloc_errno(BLOCK_ALREADY_FREED);
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
 
@@ -328,15 +328,15 @@ void* htfh_realloc(Allocator* alloc, void* ptr, size_t size) {
         if ((p = htfh_malloc(alloc, size)) != NULL) {
             memcpy(p, ptr, htfh_min(cursize, size));
             if (htfh_free(alloc, ptr) != 0) {
-                __htfh_lock_unlock_handled(&alloc->mutex);
+                htfh_lock_unlock_handled(&alloc->mutex);
                 return NULL;
             }
         }
-        return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? p : NULL;
+        return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? p : NULL;
     } else if (adjust > cursize) {
         /* Do we need to expand to the next block? */
         if (controller_block_merge_next(alloc->controller, block) != 0) {
-            __htfh_lock_unlock_handled(&alloc->mutex);
+            htfh_lock_unlock_handled(&alloc->mutex);
             return NULL;
         }
         block_mark_as_used(block);
@@ -344,8 +344,8 @@ void* htfh_realloc(Allocator* alloc, void* ptr, size_t size) {
 
     /* Trim the resulting block and return the original pointer. */
     if (controller_block_trim_used(alloc->controller, block, adjust) != 0) {
-        __htfh_lock_unlock_handled(&alloc->mutex);
+        htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
-    return __htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
+    return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? ptr : NULL;
 }
