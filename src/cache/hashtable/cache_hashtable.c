@@ -5,10 +5,11 @@
 #include <stdio.h>
 #include "hashing.h"
 
-HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size) {
+HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {
     HashTable* ht = am_malloc(sizeof(*ht));
     ht->size = size;
     ht->count = 0;
+    ht->comparator = comparator == NULL ? strcmp : comparator;
     ht->items = am_calloc(ht->size, sizeof(DQHTEntry*));
     return ht;
 }

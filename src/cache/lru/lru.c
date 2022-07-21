@@ -1,11 +1,11 @@
 #include "lru.h"
 
-LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* options) {
+LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, LRUCacheOptions* options) {
     LRUCache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
-    cache->dqht = dqht_create(AM_ALLOCATOR_ARG ht_size);
+    cache->dqht = dqht_create(AM_ALLOCATOR_ARG ht_size, options == NULL ? strcmp : options->comparator);
     if (cache->dqht == NULL) {
         return NULL;
     }

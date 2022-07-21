@@ -8,8 +8,8 @@
 #include "../logging/logging.h"
 #include "../hashtable/hashing.h"
 
-DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size) {
-    HashTable* ht = ht_create(AM_ALLOCATOR_ARG size);
+DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {
+    HashTable* ht = ht_create(AM_ALLOCATOR_ARG size, comparator);
     if (ht == NULL) {
         return NULL;
     }

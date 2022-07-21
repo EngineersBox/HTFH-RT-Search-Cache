@@ -9,8 +9,31 @@
 
 #define HEAP_SIZE (16 * 10000)
 
+#define AND_OP '^'
+#define OR_OP '|'
+#define OR_OP_STR "|"
+
+int key_compare(const char* key1, const char* key2) {
+    if (key1 == NULL && key2 == NULL) {
+        return 0;
+    } else if (key1 == NULL && key2 != NULL) {
+        return -1;
+    } else if (key1 != NULL && key2 == NULL) {
+        return 1;
+    } else if (strchr(key2, AND_OP) != NULL || strchr(key2, OR_OP) == NULL) {
+        return strcmp(key1, key2);
+    }
+    char* token = strtok(key2, OR_OP_STR);
+    while (token != NULL) {
+        if (strcmp(key1, token) == 0) {
+            return 0;
+        }
+        token = strtok(key2, OR_OP_STR);
+    }
+    return 1;
+}
+
 int main(int argc, char* argv[]) {
-    typedef struct CacheOptions { float hirs_ratio; } CacheOptions;
     Cache* cache = cache_create(
         HEAP_SIZE,
         8,
@@ -23,8 +46,9 @@ int main(int argc, char* argv[]) {
             .requestHandler = (CacheBackingRequest) dlirs_request,
             .getHandler = dlirs_get
         },
-        &(CacheOptions) {
-            .hirs_ratio = 0.01f
+        &(DLIRSOptions) {
+            .hirs_ratio = 0.01f,
+            .comparator = key_compare
         }
     );
     if (cache == NULL) {

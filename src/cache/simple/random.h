@@ -19,7 +19,11 @@ typedef struct RandomCache {
     HashTable* ht;
 } RandomCache;
 
-RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* options);
+typedef struct RandomCacheOptions {
+    KeyComparator comparator;
+} RandomCacheOptions;
+
+RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, RandomCacheOptions* options);
 void rc_destroy(AM_ALLOCATOR_PARAM RandomCache* cache);
 
 bool rc_contains(RandomCache* cache, const char* key);

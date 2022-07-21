@@ -18,7 +18,11 @@ typedef struct LRUCache {
     DequeueHashTable* dqht;
 } LRUCache;
 
-LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* options);
+typedef struct LRUCacheOptions {
+    KeyComparator comparator;
+} LRUCacheOptions;
+
+LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, LRUCacheOptions* options);
 void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache);
 
 bool lru_contains(LRUCache* cache, const char* key);

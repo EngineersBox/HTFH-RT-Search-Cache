@@ -1,11 +1,11 @@
 #include "./random.h"
 
-RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* options) {
+RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, RandomCacheOptions* options) {
     RandomCache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
-    cache->ht = ht_create(AM_ALLOCATOR_ARG ht_size);
+    cache->ht = ht_create(AM_ALLOCATOR_ARG ht_size, options == NULL ? strcmp : options->comparator);
     if (cache->ht == NULL) {
         return NULL;
     }

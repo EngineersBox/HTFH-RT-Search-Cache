@@ -29,7 +29,7 @@ typedef void (*EntryValueDestroyHandler)(AM_ALLOCATOR_PARAM void* entry, void* c
 #define DQHT_STRICT_CHECK(dqht) false
 #endif
 
-DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size);
+DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator);
 void dqht_destroy_handled(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState);
 void dqht_destroy(AM_ALLOCATOR_PARAM DequeueHashTable* dqht);
 

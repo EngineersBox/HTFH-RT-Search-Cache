@@ -27,19 +27,15 @@ DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSO
     cache->lirs_count = 0;
     cache->demoted = 0;
     cache->non_resident = 0;
-
-    cache->lirs = dqht_create(AM_ALLOCATOR_ARG ht_size);
-    if (cache->lirs == NULL) {
-        return NULL;
-    }
-    cache->hirs = dqht_create(AM_ALLOCATOR_ARG ht_size);
-    if (cache->hirs == NULL) {
-        return NULL;
-    }
-    cache->q = dqht_create(AM_ALLOCATOR_ARG ht_size);
-    if (cache->q == NULL) {
-        return NULL;
-    }
+#define init_dqht(target) ({ \
+    (target) = dqht_create(AM_ALLOCATOR_ARG ht_size, options == NULL ? NULL : options->comparator); \
+    if ((target) == NULL) { \
+        return NULL; \
+    } \
+})
+    init_dqht(cache->lirs);
+    init_dqht(cache->hirs);
+    init_dqht(cache->q);
 
     return cache;
 }

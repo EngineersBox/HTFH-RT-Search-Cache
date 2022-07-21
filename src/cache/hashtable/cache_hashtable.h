@@ -13,13 +13,16 @@ extern "C" {
 #include "dq_ht_entry.h"
 #include "../allocator/alloc_manager.h"
 
+typedef int (*KeyComparator)(const char* key1, const char* key2);
+
 typedef struct HashTable {
     int size;
     int count;
+    KeyComparator comparator;
     DQHTEntry** items;
 } HashTable;
 
-HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size);
+HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator);
 void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht);
 int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht);
 

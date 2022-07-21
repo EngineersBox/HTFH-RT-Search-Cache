@@ -40,6 +40,7 @@ typedef struct DLIRS {
 
 typedef struct DLIRSOptions {
     float hirs_ratio;
+    KeyComparator comparator;
 } DLIRSOptions;
 
 DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSOptions* options);

@@ -23,7 +23,7 @@ int dqht_test_main(int argc, char* argv[]) {
         return 1;
     }
 #endif
-    DequeueHashTable * table = dqht_create(AM_ALLOCATOR_ARG 10);
+    DequeueHashTable * table = dqht_create(AM_ALLOCATOR_ARG 10, NULL);
     if (table == NULL) {
         printf("Could not create table with size 10\n");
         return 1;
