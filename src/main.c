@@ -16,9 +16,9 @@
 int key_compare(const char* key1, const char* key2) {
     if (key1 == NULL && key2 == NULL) {
         return 0;
-    } else if (key1 == NULL && key2 != NULL) {
+    } else if (key1 == NULL) {
         return -1;
-    } else if (key1 != NULL && key2 == NULL) {
+    } else if (key2 == NULL) {
         return 1;
     } else if (strchr(key2, AND_OP) != NULL || strchr(key2, OR_OP) == NULL) {
         return strcmp(key1, key2);
@@ -34,6 +34,7 @@ int key_compare(const char* key1, const char* key2) {
 }
 
 int main(int argc, char* argv[]) {
+    srand(time(0));
     Cache* cache = cache_create(
         HEAP_SIZE,
         8,
