@@ -28,12 +28,12 @@ typedef struct DLIRS {
     size_t non_resident;
 
     DequeueHashTable* lirs;
-    DequeueHashTable* hirs;
-    DequeueHashTable* q;
+    DequeueHashTable* non_resident_hirs;
+    DequeueHashTable* resident_hirs;
 } DLIRS;
 
 #ifdef DLIRS_ENABLE_STRICT
-#define DLIRS_STRICT_CHECK(cache) (cache->lirs == NULL || cache->hirs == NULL || cache->q == NULL)
+#define DLIRS_STRICT_CHECK(cache) (cache->lirs == NULL || cache->non_resident_hirs == NULL || cache->resident_hirs == NULL)
 #else
 #define DLIRS_STRICT_CHECK(cache) false
 #endif
@@ -53,10 +53,10 @@ void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
 // -1 = failure, 0 = not in cache, 1 = in cache
 int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** evicted);
 void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache);
-void dlirs_adjust_size(DLIRS* cache, bool hit_nonresident_hir);
-void dlirs_eject_lir(AM_ALLOCATOR_PARAM DLIRS* cache);
-DLIRSEntry* dlirs_eject_hir(AM_ALLOCATOR_PARAM DLIRS* cache);
-void dlirs_hit_hir_in_q(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
+void dlirs_resize(DLIRS* cache, bool hit_nonresident_hir);
+void dlirs_evict_lir(AM_ALLOCATOR_PARAM DLIRS* cache);
+DLIRSEntry* dlirs_evict_resident_hir(AM_ALLOCATOR_PARAM DLIRS* cache);
+void dlirs_hit_hir_in_resident_hirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
 void dlirs_limit_stack(AM_ALLOCATOR_PARAM DLIRS* cache);
 
 int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);

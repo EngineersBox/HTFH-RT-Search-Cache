@@ -80,9 +80,9 @@ int main(int argc, char* argv[]) {
         64526
     };
     INFO("======== REQUEST 1 ========");
-    dqht_print_table("Init HIRS", cache->backing->hirs);
-    dqht_print_table("Init LIRS", cache->backing->lirs);
-    dqht_print_table("Init Q", cache->backing->q);
+    dqht_print_table("Non-Resident HIRS", cache->backing->non_resident_hirs);
+    dqht_print_table("LIRS", cache->backing->lirs);
+    dqht_print_table("Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
         for (int j = 1; j < i + 1; j++) {
             DLIRSEntry* evicted = NULL;
@@ -95,18 +95,18 @@ int main(int argc, char* argv[]) {
                 return 1;
             }
             INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %d]", i, j, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
-            dqht_print_table("HIRS", cache->backing->hirs);
+            dqht_print_table("Non-Resident HIRS", cache->backing->non_resident_hirs);
             dqht_print_table("LIRS", cache->backing->lirs);
-            dqht_print_table("Q", cache->backing->q);
+            dqht_print_table("Resident HIRS", cache->backing->resident_hirs);
             LOCALISE_ALLOCATOR_ARG
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
             TRACE("Cache is full? %s", cache_is_full(cache) ? "true" : "false");
         }
     }
     INFO("======== CONTAINS ========");
-    dqht_print_table("HIRS", cache->backing->hirs);
+    dqht_print_table("Non-Resident HIRS", cache->backing->non_resident_hirs);
     dqht_print_table("LIRS", cache->backing->lirs);
-    dqht_print_table("Q", cache->backing->q);
+    dqht_print_table("Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
         void* match = cache_get(cache, to_store[i]);
         INFO("Cache contains %s: %s [Value: %p]", to_store[i], match != NULL ? "true" : "false", match);
@@ -123,17 +123,17 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         INFO("[%d] Request result: %s with evicted: %p for [%s: %d]", i, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
-        dqht_print_table("HIRS", cache->backing->hirs);
+        dqht_print_table("Non-Resident HIRS", cache->backing->non_resident_hirs);
         dqht_print_table("LIRS", cache->backing->lirs);
-        dqht_print_table("Q", cache->backing->q);
+        dqht_print_table("Resident HIRS", cache->backing->resident_hirs);
         LOCALISE_ALLOCATOR_ARG
         dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
         TRACE("Cache is full? %s", cache_is_full(cache) ? "true" : "false");
     }
     INFO("======== CLEANUP ========");
-    dqht_print_table("HIRS", cache->backing->hirs);
+    dqht_print_table("Non-Resident HIRS", cache->backing->non_resident_hirs);
     dqht_print_table("LIRS", cache->backing->lirs);
-    dqht_print_table("Q", cache->backing->q);
+    dqht_print_table("Resident HIRS", cache->backing->resident_hirs);
     if (cache_destroy(cache) != 0) {
         FATAL("Could not destroy cache");
     }
