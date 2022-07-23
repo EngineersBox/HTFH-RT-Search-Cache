@@ -110,9 +110,9 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
         if (dqht->ht->items[index] != NULL
             && dqht->ht->items[index]->key != NULL
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
-            dqht_print_table("Before unlink", dqht);
+//            dqht_print_table("Before unlink", dqht);
             dqht_unlink(dqht, dqht->ht->items[index]);
-            dqht_print_table("After unlink", dqht);
+//            dqht_print_table("After unlink", dqht);
             void* value = dqht->ht->items[index]->ptr;
             dqhtentry_destroy(AM_ALLOCATOR_ARG dqht->ht->items[index]);
             dqht->ht->items[index] = NULL;
