@@ -37,7 +37,7 @@ int key_compare(const char* key1, const char* key2) {
 }
 
 static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable* dqht) {
-    if (cache == NULL || htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
+    if (htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
         return;
     }
     dqht_print_table(prefix, dqht);
