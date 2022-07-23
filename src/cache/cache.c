@@ -59,7 +59,7 @@ int cache_destroy(Cache* cache) {
 }
 
 bool cache_contains(Cache* cache, const char* key) {
-    if (cache == NULL || htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
+    if (cache == NULL || htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
         return false;
     }
     bool result = cache->handlers.containsHandler(cache->backing, key);
@@ -84,7 +84,7 @@ int cache_request(Cache* cache, const char* key, void* value, void** evicted) {
 }
 
 void* cache_get(Cache* cache, const char* key) {
-    if (cache == NULL || htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
+    if (cache == NULL || htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
         return NULL;
     }
     void* result = cache->handlers.getHandler(cache->backing, key);
