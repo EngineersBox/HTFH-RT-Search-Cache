@@ -1,4 +1,5 @@
 #include "dq_ht_entry.h"
+#include "logging.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -31,7 +32,8 @@ void dqhtentry_destroy(AM_ALLOCATOR_PARAM DQHTEntry* entry) {
     }
     am_free(entry->key);
     entry->key = NULL;
-    entry->next = entry->prev = NULL;
+    entry->next = NULL;
+    entry->prev = NULL;
     entry->index = 0;
     am_free(entry);
     entry = NULL;

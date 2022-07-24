@@ -67,31 +67,47 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
 }
 
 void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
-    DQHTEntry* prev_entry = entry->prev;
+    DQHTEntry* prev_entry = entry->prev;//0x4e76990
     DQHTEntry* next_entry = entry->next;
+    printf("Pointers [%s: %p] %p %p %p %p %p\n", entry->key, entry->ptr, entry, prev_entry, next_entry, dqht->head, dqht->tail);
+    printf("Before prev_entry check %p\n", prev_entry);
     if (prev_entry != NULL) {
+        printf("Non NULL prev_entry->next before %p\n", prev_entry->next);
         prev_entry->next = next_entry;
+        printf("Non NULL prev_entry->next after %p\n", prev_entry->next);
     } else {
+        printf("dqht->head before %p\n", dqht->head);
         dqht->head = next_entry;
+        printf("dqht->head after %p\n", dqht->head);
     }
+    printf("Before next_entry check %p\n", next_entry);
     if (next_entry != NULL) {
+        printf("Non NULL next_entry->prev before %p\n", next_entry->prev);
         next_entry->prev = prev_entry;
+        printf("Non NULL next_entry->prev after %p\n", next_entry->prev);
     } else {
+        printf("dqht->tail before %p\n", dqht->tail);
         dqht->tail = prev_entry;
+        printf("dqht->tail after: %p\n", dqht->tail);
     }
+    printf("End unlink\n");
 }
 
 int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
+    printf("Inserting [%s: %p]\n", key, value);
     DQHTEntry* entry = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value);
     if (entry == NULL) {
         return -1;
     }
     if (dqht->tail != NULL) {
+        printf("Amending tail: [%s: %p]\n", entry->key, entry->ptr);
         dqht->tail->next = entry;
+        printf("Entry->prev before %p\n", entry->prev);
         entry->prev = dqht->tail;
+        printf("Entry->prev after: %p\n", entry->prev);
     } else {
         dqht->head = entry;
     }
@@ -137,7 +153,9 @@ int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, 
         return -1;
     }
     if (dqht->head != NULL) {
+        printf("dqht->head->prev before %p\n", dqht->head->prev);
         dqht->head->prev = entry;
+        printf("dqht->head->prev after %p\n", dqht->head->prev);
         entry->next = dqht->head;
     } else {
         dqht->tail = entry;
@@ -151,8 +169,10 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
         return NULL;
     }
     DQHTEntry* front = dqht->head;
+    printf("Front %p\n", dqht->head);
     void* value = front->ptr;
     dqht_unlink(dqht, dqht->head);
+    TRACE("After unlink invocation");
     dqht->ht->items[front->index] = NULL;
     dqhtentry_destroy(AM_ALLOCATOR_ARG front);
     dqht->ht->count--;
@@ -181,52 +201,52 @@ void* dqht_pop_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
 }
 
 void dqht_print_table(char* name, DequeueHashTable* dqht) {
-    if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
-        return;
-    }
-    char printString[2048] = "";
-    strcat(printString, name);
-    char headElement[100];
-    if (dqht->head != NULL) {
-        sprintf(
-            headElement,
-            " [Head: [%lld] %s:%p]",
-            dqht->head->index,
-            dqht->head->key,
-            dqht->head->ptr
-        );
-    } else {
-        strcpy(headElement, " [Head: (nil)]");
-    }
-    strcat(printString, headElement);
-    char tailElement[100];
-    if (dqht->tail != NULL) {
-        sprintf(
-            tailElement,
-            " [Tail: [%lld] %s:%p]",
-            dqht->tail->index,
-            dqht->tail->key,
-            dqht->tail->ptr
-        );
-    } else {
-        strcpy(tailElement, " [Tail: (nil)]");
-    }
-    strcat(printString, tailElement);
-    strcat(printString, " {");
-    DQHTEntry* entry = dqht->head;
-    while (entry != NULL) {
-        char formatString[100];
-        sprintf(
-            formatString,
-            " [%zu] %s: %p%s",
-            entry->index,
-            entry->key,
-            entry->ptr,
-            entry->next != NULL ? "," : " "
-        );
-        strcat(printString, formatString);
-        entry = entry->next;
-    }
-    strcat(printString, "}");
-    INFO("%s", printString);
+//    if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
+//        return;
+//    }
+//    char printString[4096] = "";
+//    strcat(printString, name);
+//    char headElement[100];
+//    if (dqht->head != NULL) {
+//        sprintf(
+//            headElement,
+//            " [Head: [%lld] %s:%p]",
+//            dqht->head->index,
+//            dqht->head->key,
+//            dqht->head->ptr
+//        );
+//    } else {
+//        strcpy(headElement, " [Head: (nil)]");
+//    }
+//    strcat(printString, headElement);
+//    char tailElement[100];
+//    if (dqht->tail != NULL) {
+//        sprintf(
+//            tailElement,
+//            " [Tail: [%lld] %s:%p]",
+//            dqht->tail->index,
+//            dqht->tail->key,
+//            dqht->tail->ptr
+//        );
+//    } else {
+//        strcpy(tailElement, " [Tail: (nil)]");
+//    }
+//    strcat(printString, tailElement);
+//    strcat(printString, " {");
+//    DQHTEntry* entry = dqht->head;
+//    while (entry != NULL) {
+//        char formatString[100];
+//        sprintf(
+//            formatString,
+//            " [%zu] %s: %p%s",
+//            entry->index,
+//            entry->key,
+//            entry->ptr,
+//            entry->next != NULL ? "," : " "
+//        );
+//        strcat(printString, formatString);
+//        entry = entry->next;
+//    }
+//    strcat(printString, "}");
+//    INFO("%s", printString);
 }

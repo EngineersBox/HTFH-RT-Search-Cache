@@ -53,6 +53,8 @@ int cache_destroy(Cache* cache) {
 #endif
     if (htfh_rwlock_unlock_handled(&cache->rwlock) != 0) {
         return -1;
+    } else if (htfh_rwlock_destroy_handled(&cache->rwlock) != 0) {
+        return -1;
     }
     free(cache);
     return 0;

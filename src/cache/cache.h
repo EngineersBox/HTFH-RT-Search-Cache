@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 typedef struct Cache {
-    htfh_rwlock_t rwlock;
+    htfh_lock_t rwlock;
     cache_backing_t backing;
     CacheBackingHandlers handlers;
     Allocator* alloc;

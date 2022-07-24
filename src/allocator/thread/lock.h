@@ -68,11 +68,12 @@ typedef pthread_rwlock_t htfh_rwlock_t;
 #define htfh_rwlock_rdlock(lock) pthread_rwlock_rdlock(lock)
 #define htfh_rwlock_wrlock(lock) pthread_rwlock_wrlock(lock)
 #define htfh_rwlock_unlock(lock) pthread_rwlock_unlock(lock)
+#define htfh_rwlock_destroy(lock) pthread_rwlock_destroy(lock)
 
 #define htfh_rwlock_rdlock_handled(lock) ({ \
     int _lock_result = 0; \
-    if (htfh_rwlock_rdlock(lock) == EINVAL) { \
-        set_alloc_errno_msg(RWLOCK_WRLOCK_LOCK, strerror(EINVAL)); \
+    if (htfh_rwlock_rdlock(lock) != 0) { \
+        set_alloc_errno_msg(RWLOCK_WRLOCK_LOCK, strerror(_lock_result)); \
         _lock_result = -1; \
     } \
     _lock_result; \
@@ -80,8 +81,8 @@ typedef pthread_rwlock_t htfh_rwlock_t;
 
 #define htfh_rwlock_wrlock_handled(lock) ({ \
     int _lock_result = 0; \
-    if (htfh_rwlock_wrlock(lock) == EINVAL) { \
-        set_alloc_errno_msg(RWLOCK_RDLOCK_LOCK, strerror(EINVAL)); \
+    if (htfh_rwlock_wrlock(lock) != 0) { \
+        set_alloc_errno_msg(RWLOCK_RDLOCK_LOCK, strerror(_lock_result)); \
         _lock_result = -1; \
     } \
     _lock_result; \
@@ -90,6 +91,15 @@ typedef pthread_rwlock_t htfh_rwlock_t;
 #define htfh_rwlock_unlock_handled(lock) ({ \
     int _unlock_result = 0; \
     if ((_unlock_result = htfh_rwlock_unlock(lock)) != 0) { \
+        set_alloc_errno_msg(RWLOCK_LOCK_UNLOCK, strerror(_unlock_result)); \
+        _unlock_result = -1; \
+    } \
+    _unlock_result; \
+})
+
+#define htfh_rwlock_destroy_handled(lock) ({ \
+    int _unlock_result = 0; \
+    if ((_unlock_result = htfh_rwlock_destroy(lock)) != 0) { \
         set_alloc_errno_msg(RWLOCK_LOCK_UNLOCK, strerror(_unlock_result)); \
         _unlock_result = -1; \
     } \

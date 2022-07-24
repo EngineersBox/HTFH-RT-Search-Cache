@@ -281,8 +281,10 @@ int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DL
     }
     while ((cache->hirs_count + cache->lirs_count) >= cache->cache_size) {
         while (cache->lirs_count > (unsigned long long) cache->lirs_limit) {
+            TRACE("Evicting LIR");
             dlirs_evict_lir(AM_ALLOCATOR_ARG cache);
         }
+        TRACE("Evicting resident HIR");
         *evicted = dlirs_evict_resident_hir(AM_ALLOCATOR_ARG cache);
     }
     TRACE("MISS ENTRY 2: %s", key);
