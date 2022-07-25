@@ -2,6 +2,7 @@
 #include "logging.h"
 
 #include <string.h>
+//#include <stdio.h>
 #include <stdlib.h>
 
 DQHTEntry* dqhtentry_create(AM_ALLOCATOR_PARAM const char* key, void* ptr) {
@@ -19,9 +20,13 @@ DQHTEntry* dqhtentry_create_full(AM_ALLOCATOR_PARAM const char* key, void* ptr, 
         return NULL;
     }
     strncpy(entry->key, key, entry->length);
+//    printf("NEW ENTRY [Key: %s]\n", entry->key);
     entry->ptr = ptr;
+//    printf("NEW ENTRY [Ptr: %p]\n", entry->ptr);
     entry->prev = prev;
+//    printf("NEW ENTRY [Prev: %p]\n", entry->prev);
     entry->next = next;
+//    printf("NEW ENTRY [Next: %p]\n", entry->next);
     entry->index = 0;
     return entry;
 }

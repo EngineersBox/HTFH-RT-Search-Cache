@@ -66,16 +66,35 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
     return entry != NULL ? entry->ptr : NULL;
 }
 
+void dump(void *myStruct, long size) {
+    unsigned int i;
+    const unsigned char * const px = (unsigned char*)myStruct;
+    for (i = 0; i < size; ++i) {
+        if( i % (sizeof(int) * 8) == 0){
+            printf("\n%08X ", i);
+        } else if( i % 4 == 0){
+            printf(" ");
+        }
+        printf("%02X", px[i]);
+    }
+
+    printf("\n\n");
+}
+
 void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
-    DQHTEntry* prev_entry = entry->prev;//0x4e76990
+    DQHTEntry* prev_entry = entry->prev;
     DQHTEntry* next_entry = entry->next;
-    printf("Pointers [%s: %p] %p %p %p %p %p\n", entry->key, entry->ptr, entry, prev_entry, next_entry, dqht->head, dqht->tail);
+    printf("Pointers %p, [%s: %p] %p %p %p %p %p\n", dqht, entry->key, entry->ptr, entry, prev_entry, next_entry, dqht->head, dqht->tail);
     printf("Before prev_entry check %p\n", prev_entry);
+    uintptr_t current = prev_entry;
     if (prev_entry != NULL) {
+//        printf("BEFORE: %X, %X\n", prev_entry, (uintptr_t) prev_entry->next);
+        dump(prev_entry, sizeof(DQHTEntry));
         printf("Non NULL prev_entry->next before %p\n", prev_entry->next);
         prev_entry->next = next_entry;
         printf("Non NULL prev_entry->next after %p\n", prev_entry->next);
     } else {
+        printf("DQHT %p\n", dqht);
         printf("dqht->head before %p\n", dqht->head);
         dqht->head = next_entry;
         printf("dqht->head after %p\n", dqht->head);
@@ -86,6 +105,7 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
         next_entry->prev = prev_entry;
         printf("Non NULL next_entry->prev after %p\n", next_entry->prev);
     } else {
+        printf("DQHT %p\n", dqht);
         printf("dqht->tail before %p\n", dqht->tail);
         dqht->tail = prev_entry;
         printf("dqht->tail after: %p\n", dqht->tail);
@@ -126,10 +146,12 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
         if (dqht->ht->items[index] != NULL
             && dqht->ht->items[index]->key != NULL
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
-//            dqht_print_table("Before unlink", dqht);
+            dqht_print_table("Before unlink", dqht);
             dqht_unlink(dqht, dqht->ht->items[index]);
-//            dqht_print_table("After unlink", dqht);
+            dqht_print_table("After unlink", dqht);
             void* value = dqht->ht->items[index]->ptr;
+            dqht->ht->items[index]->next = NULL;
+            dqht->ht->items[index]->prev = NULL;
             dqhtentry_destroy(AM_ALLOCATOR_ARG dqht->ht->items[index]);
             dqht->ht->items[index] = NULL;
             dqht->ht->count--;

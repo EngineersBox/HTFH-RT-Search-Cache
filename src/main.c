@@ -37,73 +37,83 @@ int key_compare(const char* key1, const char* key2) {
 }
 
 static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable* dqht) {
-    if (htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
-        return;
-    }
-    dqht_print_table(prefix, dqht);
-    htfh_rwlock_unlock_handled(&cache->rwlock);
+//    if (htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
+//        return;
+//    }
+//    dqht_print_table(prefix, dqht);
+//    htfh_rwlock_unlock_handled(&cache->rwlock);
 }
 
 static pthread_barrier_t barrier;
+char* to_store[10] = {
+    "test1",
+    "other",
+    "more",
+    "something",
+    "yeahd",
+    "dgsdfs",
+    "ehjigdss",
+    "oijfguod",
+    "ngujhdw",
+    "doij42od"
+};
+int values[10] = {
+    56135,
+    7345,
+    5246,
+    16473,
+    9537,
+    24675,
+    55363,
+    426723,
+    957357,
+    64526
+};
+
+typedef struct Params {
+    int index;
+    Cache* cache;
+} Params;
 
 void* threadFn(void* arg) {
-    Cache* cache = (Cache*) arg;
-    char* to_store[10] = {
-        "test1",
-        "other",
-        "more",
-        "something",
-        "yeahd",
-        "dgsdfs",
-        "ehjigdss",
-        "oijfguod",
-        "ngujhdw",
-        "doij42od"
-    };
-    int values[10] = {
-        56135,
-        7345,
-        5246,
-        16473,
-        9537,
-        24675,
-        55363,
-        426723,
-        957357,
-        64526
-    };
+    Params* params = (Params*) arg;
+    Cache* cache = (Cache*) params->cache;
+    int index = params->index;
     DEBUG("======== BEFORE WAITING ========");
     pthread_barrier_wait(&barrier);
     DEBUG("======== AFTER WAITING ========");
     INFO("======== REQUEST 1 ========");
-//    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-//    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-//    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
         for (int j = 1; j < i + 1; j++) {
             DLIRSEntry* evicted = NULL;
             int requestResult;
+            printf("==== THREAD: %d ====\n", index);
             if ((requestResult = cache_request(cache, to_store[i], &values[i], (void**) &evicted)) == -1) {
-                ERROR("[%d:%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, j, to_store[i], values[i], evicted);
+                INFO("[%d:%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, j, to_store[i], values[i], evicted);
                 LOCALISE_ALLOCATOR_ARG
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
                 cache_destroy(cache);
-                exit(1);
+                pthread_exit(1);
+                return 1;
             }
             INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %d]", i, j, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
-//            locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-//            locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-//            locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+            locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+            locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+            locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
             LOCALISE_ALLOCATOR_ARG
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
             TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
         }
     }
     INFO("======== CONTAINS ========");
-//    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-//    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-//    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
+        INFO("==== THREAD: %d ====", index);
         void* match = cache_get(cache, to_store[i]);
         INFO("Cache contains %s: %s [Value: %p]", to_store[i], match != NULL ? "true" : "false", match);
     }
@@ -111,23 +121,26 @@ void* threadFn(void* arg) {
     for (int i = 0; i < 10; i++) {
         DLIRSEntry* evicted;
         int requestResult;
+        INFO("==== THREAD: %d ====", index);
         if ((requestResult = cache_request(cache, to_store[i], &values[i], (void**) &evicted)) == -1) {
-            ERROR("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
+            INFO("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
             LOCALISE_ALLOCATOR_ARG
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
             cache_destroy(cache);
-            exit(1);
+            pthread_exit(1);
+            return 1;
         }
         INFO("[%d] Request result: %s with evicted: %p for [%s: %d]", i, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
-//        locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-//        locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-//        locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+        locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+        locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+        locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
         LOCALISE_ALLOCATOR_ARG
         dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
         TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
     }
     INFO("<><><><> END OF TEST <><><><>");
-    pthread_exit(NULL);
+    pthread_exit(0);
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -159,30 +172,39 @@ int main(int argc, char* argv[]) {
 
     pthread_t threadIds[THREAD_COUNT];
     DEBUG("Created thread attributes");
+    Params params[THREAD_COUNT];
     for (int i = 0; i < THREAD_COUNT; i++) {
-        if (pthread_create(&threadIds[i], NULL, threadFn, (void*) cache) != 0) {
+        params[i] = (Params){
+            .index = i,
+            .cache = cache
+        };
+        if (pthread_create(&threadIds[i], NULL, threadFn, (void*) &params[i]) != 0) {
             FATAL("Could not create thread\n");
         }
         DEBUG("Created thread %d", i);
     }
-    printf("======== BEFORE BARRIER ========\n");
+    INFO("======== BEFORE BARRIER ========");
     pthread_barrier_wait(&barrier);
-    printf("======== AFTER BARRIER ========\n");
-    printf("======== BEFORE JOIN ========\n");
+    INFO("======== AFTER BARRIER ========");
+    INFO("======== BEFORE JOIN ========");
+    int retVals[THREAD_COUNT];
     for (int i = 0; i < THREAD_COUNT; i++) {
-        pthread_join(threadIds[i], NULL);
+        pthread_join(threadIds[i], &retVals[i]);
+        if (retVals[i] != 0) {
+            return 1;
+        }
     }
-    printf("======== AFTER JOIN ========\n");
+    INFO("======== AFTER JOIN ========");
     if (pthread_barrier_destroy(&barrier) != 0) {
         FATAL("Could not destroy thread barrier");
     }
 
-    printf("======== CLEANUP ========\n");
+    INFO("======== CLEANUP ========");
     locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
     locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
     locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
-    if (cache_destroy(cache) != 0) {
-        FATAL("Could not destroy cache");
-    }
+//    if (cache_destroy(cache) != 0) {
+//        FATAL("Could not destroy cache");
+//    }
     return 0;
 }
