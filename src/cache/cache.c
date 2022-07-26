@@ -83,7 +83,7 @@ int cache_request(Cache* cache, const char* key, void* value, void** evicted) {
     int result = cache->handlers.requestHandler(AM_ALLOCATOR_ARG cache->backing, key, value, evicted);
     int lockResult = htfh_rwlock_unlock_handled(&cache->rwlock);
     printf("Lock result: %d, Request result %d\n", lockResult, result);
-    return lockResult != 0 ? lockResult : result;
+    return lockResult != 0 ? -1 : result;
 }
 
 void* cache_get(Cache* cache, const char* key) {

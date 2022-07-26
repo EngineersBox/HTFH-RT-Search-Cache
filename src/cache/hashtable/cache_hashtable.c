@@ -126,9 +126,9 @@ void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL
             && strcmp(key, ht->items[index]->key) == 0) {
+            void* value = ht->items[index]->ptr;
             dqhtentry_destroy(AM_ALLOCATOR_ARG ht->items[index]);
             ht->count--;
-            void* value = ht->items[index]->ptr;
             ht->items[index] = NULL;
             return value;
         }

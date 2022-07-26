@@ -80,7 +80,6 @@ void* threadFn(void* arg) {
     Cache* cache = (Cache*) params->cache;
     int index = params->index;
     DEBUG("======== BEFORE WAITING ========");
-    pthread_barrier_wait(&barrier);
     DEBUG("======== AFTER WAITING ========");
     INFO("======== REQUEST 1 ========");
     locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
@@ -184,7 +183,6 @@ int main(int argc, char* argv[]) {
         DEBUG("Created thread %d", i);
     }
     INFO("======== BEFORE BARRIER ========");
-    pthread_barrier_wait(&barrier);
     INFO("======== AFTER BARRIER ========");
     INFO("======== BEFORE JOIN ========");
     int retVals[THREAD_COUNT];

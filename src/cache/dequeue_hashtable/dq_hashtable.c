@@ -82,15 +82,16 @@ void dump(void *myStruct, long size) {
 }
 
 void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
+    if (dqht == NULL || entry == NULL) {
+        return;
+    }
     DQHTEntry* prev_entry = entry->prev;
     DQHTEntry* next_entry = entry->next;
-    printf("Pointers %p, [%s: %p] %p %p %p %p %p\n", dqht, entry->key, entry->ptr, entry, prev_entry, next_entry, dqht->head, dqht->tail);
-    printf("Before prev_entry check %p\n", prev_entry);
-    uintptr_t current = prev_entry;
+    printf("Unlink entry: %p\n", entry);
+    printf("Unlink prev_entry check %p\n", prev_entry);
     if (prev_entry != NULL) {
-//        printf("BEFORE: %X, %X\n", prev_entry, (uintptr_t) prev_entry->next);
-        dump(prev_entry, sizeof(DQHTEntry));
-        printf("Non NULL prev_entry->next before %p\n", prev_entry->next);
+//        dump(prev_entry, sizeof(DQHTEntry));
+        printf("Next entry: %p\n", next_entry);
         prev_entry->next = next_entry;
         printf("Non NULL prev_entry->next after %p\n", prev_entry->next);
     } else {
@@ -146,12 +147,10 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
         if (dqht->ht->items[index] != NULL
             && dqht->ht->items[index]->key != NULL
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
+            void* value = dqht->ht->items[index]->ptr;
             dqht_print_table("Before unlink", dqht);
             dqht_unlink(dqht, dqht->ht->items[index]);
             dqht_print_table("After unlink", dqht);
-            void* value = dqht->ht->items[index]->ptr;
-            dqht->ht->items[index]->next = NULL;
-            dqht->ht->items[index]->prev = NULL;
             dqhtentry_destroy(AM_ALLOCATOR_ARG dqht->ht->items[index]);
             dqht->ht->items[index] = NULL;
             dqht->ht->count--;
@@ -193,10 +192,11 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     DQHTEntry* front = dqht->head;
     printf("Front %p\n", dqht->head);
     void* value = front->ptr;
+    int index = front->index;
     dqht_unlink(dqht, dqht->head);
     TRACE("After unlink invocation");
-    dqht->ht->items[front->index] = NULL;
     dqhtentry_destroy(AM_ALLOCATOR_ARG front);
+    dqht->ht->items[index] = NULL;
     dqht->ht->count--;
     return value;
 }
@@ -215,60 +215,50 @@ void* dqht_pop_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     }
     DQHTEntry* back = dqht->tail;
     void* value = back->ptr;
+    int index = back->index;
     dqht_unlink(dqht, dqht->tail);
-    dqht->ht->items[back->index] = NULL;
     dqhtentry_destroy(AM_ALLOCATOR_ARG back);
+    dqht->ht->items[index] = NULL;
     dqht->ht->count--;
     return value;
 }
 
 void dqht_print_table(char* name, DequeueHashTable* dqht) {
-//    if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
-//        return;
-//    }
-//    char printString[4096] = "";
-//    strcat(printString, name);
-//    char headElement[100];
+    if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
+        return;
+    }
+//    INFO("TABLE: %s", name);
 //    if (dqht->head != NULL) {
-//        sprintf(
-//            headElement,
-//            " [Head: [%lld] %s:%p]",
+//        printf(
+//            "[Head: [%lld] %s:%p]\n",
 //            dqht->head->index,
 //            dqht->head->key,
 //            dqht->head->ptr
 //        );
 //    } else {
-//        strcpy(headElement, " [Head: (nil)]");
+//        printf("[Head: (nil)]\n");
 //    }
-//    strcat(printString, headElement);
-//    char tailElement[100];
 //    if (dqht->tail != NULL) {
-//        sprintf(
-//            tailElement,
-//            " [Tail: [%lld] %s:%p]",
+//        printf(
+//            "[Tail: [%lld] %s:%p]\n",
 //            dqht->tail->index,
 //            dqht->tail->key,
 //            dqht->tail->ptr
 //        );
 //    } else {
-//        strcpy(tailElement, " [Tail: (nil)]");
+//        printf("[Tail: (nil)]\n");
 //    }
-//    strcat(printString, tailElement);
-//    strcat(printString, " {");
+//    printf("{");
 //    DQHTEntry* entry = dqht->head;
 //    while (entry != NULL) {
-//        char formatString[100];
-//        sprintf(
-//            formatString,
+//        printf(
 //            " [%zu] %s: %p%s",
 //            entry->index,
 //            entry->key,
 //            entry->ptr,
 //            entry->next != NULL ? "," : " "
 //        );
-//        strcat(printString, formatString);
 //        entry = entry->next;
 //    }
-//    strcat(printString, "}");
-//    INFO("%s", printString);
+//    printf(" }\n");
 }
