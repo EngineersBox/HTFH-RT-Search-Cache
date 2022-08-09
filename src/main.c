@@ -95,8 +95,8 @@ void* threadFn(void* arg) {
                 LOCALISE_ALLOCATOR_ARG
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
                 cache_destroy(cache);
-                pthread_exit(1);
-                return 1;
+                pthread_kill(pthread_self(), 1);
+                return 0;
             }
             INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %d]", i, j, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
             locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
@@ -126,8 +126,8 @@ void* threadFn(void* arg) {
             LOCALISE_ALLOCATOR_ARG
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
             cache_destroy(cache);
-            pthread_exit(1);
-            return 1;
+            pthread_kill(pthread_self(), 1);
+            return 0;
         }
         INFO("[%d] Request result: %s with evicted: %p for [%s: %d]", i, requestResult == 1 ? "hit" : "miss", evicted, to_store[i], values[i]);
         locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
@@ -139,7 +139,6 @@ void* threadFn(void* arg) {
     }
     INFO("<><><><> END OF TEST <><><><>");
     pthread_exit(0);
-    return 0;
 }
 
 int main(int argc, char* argv[]) {
