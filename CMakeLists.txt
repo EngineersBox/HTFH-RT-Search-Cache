@@ -35,7 +35,7 @@ target_include_directories(htfh_rt_search_cache PRIVATE ${includeDirs})
 target_compile_definitions(
         htfh_rt_search_cache
         PRIVATE
-        HTFH_ALLOCATOR
+#        HTFH_ALLOCATOR
         cache_backing_t=DLIRS*
         DQHT_ENABLE_STRICT
         DLIRS_ENABLE_STRICT

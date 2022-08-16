@@ -1,5 +1,7 @@
 #include "lru.h"
 
+#include <string.h>
+
 LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, LRUCacheOptions* options) {
     LRUCache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {

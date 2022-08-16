@@ -227,38 +227,38 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
         return;
     }
-//    INFO("TABLE: %s", name);
-//    if (dqht->head != NULL) {
-//        printf(
-//            "[Head: [%lld] %s:%p]\n",
-//            dqht->head->index,
-//            dqht->head->key,
-//            dqht->head->ptr
-//        );
-//    } else {
-//        printf("[Head: (nil)]\n");
-//    }
-//    if (dqht->tail != NULL) {
-//        printf(
-//            "[Tail: [%lld] %s:%p]\n",
-//            dqht->tail->index,
-//            dqht->tail->key,
-//            dqht->tail->ptr
-//        );
-//    } else {
-//        printf("[Tail: (nil)]\n");
-//    }
-//    printf("{");
-//    DQHTEntry* entry = dqht->head;
-//    while (entry != NULL) {
-//        printf(
-//            " [%zu] %s: %p%s",
-//            entry->index,
-//            entry->key,
-//            entry->ptr,
-//            entry->next != NULL ? "," : " "
-//        );
-//        entry = entry->next;
-//    }
-//    printf(" }\n");
+    INFO("TABLE: %s", name);
+    if (dqht->head != NULL) {
+        printf(
+            "[Head: [%lld] %s:%p]\n",
+            dqht->head->index,
+            dqht->head->key,
+            dqht->head->ptr
+        );
+    } else {
+        printf("[Head: (nil)]\n");
+    }
+    if (dqht->tail != NULL) {
+        printf(
+            "[Tail: [%lld] %s:%p]\n",
+            dqht->tail->index,
+            dqht->tail->key,
+            dqht->tail->ptr
+        );
+    } else {
+        printf("[Tail: (nil)]\n");
+    }
+    printf("{");
+    DQHTEntry* entry = dqht->head;
+    while (entry != NULL) {
+        printf(
+            " [%zu] %s: %p%s",
+            entry->index,
+            entry->key,
+            entry->ptr,
+            entry->next != NULL ? "," : " "
+        );
+        entry = entry->next;
+    }
+    printf(" }\n");
 }

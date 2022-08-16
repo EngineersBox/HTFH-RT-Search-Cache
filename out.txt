@@ -1,64 +1,58 @@
-==== CMAKE INIT ====
--- Configuring done
--- Generating done
--- Build files have been written to: /mnt/e/HTFH-RT-Search-Cache
-==== BUILD CACHE ====
-/usr/bin/cmake -P /mnt/e/HTFH-RT-Search-Cache/CMakeFiles/VerifyGlobs.cmake
-/usr/bin/cmake -S/mnt/e/HTFH-RT-Search-Cache -B/mnt/e/HTFH-RT-Search-Cache --check-build-system CMakeFiles/Makefile.cmake 0
-/usr/bin/cmake -E cmake_progress_start /mnt/e/HTFH-RT-Search-Cache/CMakeFiles /mnt/e/HTFH-RT-Search-Cache//CMakeFiles/progress.marks
-make  -f CMakeFiles/Makefile2 all
-make[1]: Entering directory '/mnt/e/HTFH-RT-Search-Cache'
-make  -f CMakeFiles/htfh_rt_search_cache.dir/build.make CMakeFiles/htfh_rt_search_cache.dir/depend
-make[2]: Entering directory '/mnt/e/HTFH-RT-Search-Cache'
-cd /mnt/e/HTFH-RT-Search-Cache && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /mnt/e/HTFH-RT-Search-Cache /mnt/e/HTFH-RT-Search-Cache /mnt/e/HTFH-RT-Search-Cache /mnt/e/HTFH-RT-Search-Cache /mnt/e/HTFH-RT-Search-Cache/CMakeFiles/htfh_rt_search_cache.dir/DependInfo.cmake --color=
-Consolidate compiler generated dependencies of target htfh_rt_search_cache
-make[2]: Leaving directory '/mnt/e/HTFH-RT-Search-Cache'
-make  -f CMakeFiles/htfh_rt_search_cache.dir/build.make CMakeFiles/htfh_rt_search_cache.dir/build
-make[2]: Entering directory '/mnt/e/HTFH-RT-Search-Cache'
-make[2]: Nothing to be done for 'CMakeFiles/htfh_rt_search_cache.dir/build'.
-make[2]: Leaving directory '/mnt/e/HTFH-RT-Search-Cache'
-[100%] Built target htfh_rt_search_cache
-make[1]: Leaving directory '/mnt/e/HTFH-RT-Search-Cache'
-/usr/bin/cmake -E cmake_progress_start /mnt/e/HTFH-RT-Search-Cache/CMakeFiles 0
-==== PRUNE LOGS [Max: 20] ====
-Found 20 logs, below threshold. Skipping
-==== RUN CACHE ====
-Using HTFH allocator for cache entries
+Using core allocator for cache entries
 Created thread attributes
-======== BEFORE WAITING ========
 Created thread 0
-======== BEFORE WAITING ========
 Created thread 1
 ======== BEFORE BARRIER ========
+======== BEFORE WAITING ========
 ======== AFTER WAITING ========
 ======== REQUEST 1 ========
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
 Entry retrieval reached other, (nil)
 Miss before
 MISS ENTRY: other
-CREATED NEW DLIRSEntry: 0x4e82a80 [other: 0x119024]
+CREATED NEW DLIRSEntry: 0x4a70840 [other: 0x119024]
 Setting is_LIR true
-Inserting [other: 0x4e82a80]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Inserting [other: 0x4a70840]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
 [1:1] Request result: miss with evicted: (nil) for [other: 7345]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] other:0x4a70840]
+[Tail: [1] other:0x4a70840]
+{ [1] other: 0x4a70840  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 Cache is full? false 1
 ==== THREAD: 1 ====
@@ -66,40 +60,60 @@ Cache is full? false 1
 Entry retrieval reached more, (nil)
 Miss before
 MISS ENTRY: more
-CREATED NEW DLIRSEntry: 0x4e82b20 [more: 0x119028]
+CREATED NEW DLIRSEntry: 0x4a709b0 [more: 0x119028]
 Setting is_LIR true
-Inserting [more: 0x4e82b20]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e82b20]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [more: 0x4e82b20]
+Inserting [more: 0x4a709b0]
+Amending tail: [more: 0x4a709b0]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82ac8
+Entry->prev after: 0x4a708f0
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
 [2:1] Request result: miss with evicted: (nil) for [more: 5246]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] other:0x4a70840]
+[Tail: [6] more:0x4a709b0]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 Cache is full? false 2
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached more, 0x4e82b20
+Entry retrieval reached more, 0x4a709b0
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [2:2] Request result: hit with evicted: (nil) for [more: 5246]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] other:0x4a70840]
+[Tail: [6] more:0x4a709b0]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 Cache is full? false 2
 ==== THREAD: 1 ====
@@ -107,55 +121,87 @@ Cache is full? false 2
 Entry retrieval reached something, (nil)
 Miss before
 MISS ENTRY: something
-CREATED NEW DLIRSEntry: 0x4e82bc0 [something: 0x11902c]
+CREATED NEW DLIRSEntry: 0x4a70b20 [something: 0x11902c]
 Setting is_LIR true
-Inserting [something: 0x4e82bc0]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e82bc0]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [something: 0x4e82bc0]
+Inserting [something: 0x4a70b20]
+Amending tail: [something: 0x4a70b20]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82b68
+Entry->prev after: 0x4a70a60
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
 [3:1] Request result: miss with evicted: (nil) for [something: 16473]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] other:0x4a70840]
+[Tail: [7] something:0x4a70b20]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0, [7] something: 0x4a70b20  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 Cache is full? false 3
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached something, 0x4e82bc0
+Entry retrieval reached something, 0x4a70b20
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [3:2] Request result: hit with evicted: (nil) for [something: 16473]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] other:0x4a70840]
+[Tail: [7] something:0x4a70b20]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0, [7] something: 0x4a70b20  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 Cache is full? false 3
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached something, 0x4e82bc0
+Entry retrieval reached something, 0x4a70b20
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [3:3] Request result: hit with evicted: (nil) for [something: 16473]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] other:0x4a70840]
+[Tail: [7] something:0x4a70b20]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0, [7] something: 0x4a70b20  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 Cache is full? false 3
 ==== THREAD: 1 ====
@@ -163,136 +209,194 @@ Cache is full? false 3
 Entry retrieval reached yeahd, (nil)
 Miss before
 MISS ENTRY 2: yeahd
-CREATED NEW DLIRSEntry: 0x4e82c60 [yeahd: 0x119030]
-Inserting [yeahd: 0x4e82c60]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e82c60]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [yeahd: 0x4e82d00]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e82d00]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [yeahd: 0x4e82d00]
+CREATED NEW DLIRSEntry: 0x4a70c90 [yeahd: 0x119030]
+Inserting [yeahd: 0x4a70c90]
+Inserting [yeahd: 0x4a70e00]
+Amending tail: [yeahd: 0x4a70e00]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82c08
-Inserting [yeahd: 0x4e82da0]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e82da0]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Entry->prev after: 0x4a70bd0
+Inserting [yeahd: 0x4a70f70]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
 [4:1] Request result: miss with evicted: (nil) for [yeahd: 9537]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [0] yeahd:0x4a70f70]
+[Tail: [0] yeahd:0x4a70f70]
+{ [0] yeahd: 0x4a70f70  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] other:0x4a70840]
+[Tail: [0] yeahd:0x4a70e00]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a70c90]
+[Tail: [0] yeahd:0x4a70c90]
+{ [0] yeahd: 0x4a70c90  }
 [RWLOCK] Unlocking
 Cache is full? true 4
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached yeahd, 0x4e82d00
+Entry retrieval reached yeahd, 0x4a70e00
 Hit HIR in LIRS before
-Pointers [yeahd: 0x4e82d00] 0x4e82d48 0x4e82c08 (nil) 0x4e82ac8 0x4e82d48
-Before prev_entry check 0x4e82c08
-Non NULL prev_entry->next before 0x4e82d48
+TABLE: Before unlink
+[Head: [1] other:0x4a70840]
+[Tail: [0] yeahd:0x4a70e00]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00  }
+Unlink entry: 0x4a70eb0
+Unlink prev_entry check 0x4a70bd0
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82d48
-dqht->tail after: 0x4e82c08
+DQHT 0x4a702a0
+dqht->tail before 0x4a70eb0
+dqht->tail after: 0x4a70bd0
 End unlink
-Pointers [yeahd: 0x4e82da0] 0x4e82de8 (nil) (nil) 0x4e82de8 0x4e82de8
-Before prev_entry check (nil)
-dqht->head before 0x4e82de8
+TABLE: After unlink
+[Head: [1] other:0x4a70840]
+[Tail: [7] something:0x4a70b20]
+{ [1] other: 0x4a70840, [6] more: 0x4a709b0, [7] something: 0x4a70b20  }
+TABLE: Before unlink
+[Head: [0] yeahd:0x4a70f70]
+[Tail: [0] yeahd:0x4a70f70]
+{ [0] yeahd: 0x4a70f70  }
+Unlink entry: 0x4a71020
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a71020
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82de8
+DQHT 0x4a703e0
+dqht->tail before 0x4a71020
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82da0 [yeahd: 0x119030]
-Pointers [yeahd: 0x4e82c60] 0x4e82ca8 (nil) (nil) 0x4e82ca8 0x4e82ca8
-Before prev_entry check (nil)
-dqht->head before 0x4e82ca8
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a70f70 [yeahd: 0x119030]
+TABLE: Before unlink
+[Head: [0] yeahd:0x4a70c90]
+[Tail: [0] yeahd:0x4a70c90]
+{ [0] yeahd: 0x4a70c90  }
+Unlink entry: 0x4a70d40
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a70d40
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82ca8
+DQHT 0x4a70520
+dqht->tail before 0x4a70d40
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82c60 [yeahd: 0x119030]
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a70c90 [yeahd: 0x119030]
 Before eject lir loop
 Ejecting LIR: [Count: 3] [Limit: 3.000000]
-Front 0x4e82ac8
-Pointers [other: 0x4e82a80] 0x4e82ac8 (nil) 0x4e82b68 0x4e82ac8 0x4e82c08
-Before prev_entry check (nil)
-dqht->head before 0x4e82ac8
-dqht->head after 0x4e82b68
-Before next_entry check 0x4e82b68
-Non NULL next_entry->prev before 0x4e82ac8
+Front 0x4a708f0
+Unlink entry: 0x4a708f0
+Unlink prev_entry check (nil)
+DQHT 0x4a702a0
+dqht->head before 0x4a708f0
+dqht->head after 0x4a70a60
+Before next_entry check 0x4a70a60
+Non NULL next_entry->prev before 0x4a708f0
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Inserting [other: 0x4e82ac8]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82ac8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-DESTROYING DLIRSEntry: 0x4e82a80 [other: 0x119024]
+Inserting [other: 0x4a710e0]
+DESTROYING DLIRSEntry: 0x4a70840 [other: 0x119024]
 Incremented HIRS count
-Prune LIR entry 0x4e82b68
+Prune LIR entry 0x4a70a60
 After eject lir loop
 Before eject hir loop
 After eject hir loop
-Inserting [yeahd: 0x4e82d00]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e82d00]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [yeahd: 0x4e82d00]
+Inserting [yeahd: 0x4a70e00]
+Amending tail: [yeahd: 0x4a70e00]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82c08
+Entry->prev after: 0x4a70bd0
 Hit HIR in LIRS after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [4:2] Request result: hit with evicted: (nil) for [yeahd: 9537]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [6] more:0x4a709b0]
+[Tail: [0] yeahd:0x4a70e00]
+{ [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [1] other:0x4a710e0]
+[Tail: [1] other:0x4a710e0]
+{ [1] other: 0x4a710e0  }
 [RWLOCK] Unlocking
 Cache is full? true 4
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached yeahd, 0x4e82d00
+Entry retrieval reached yeahd, 0x4a70e00
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [4:3] Request result: hit with evicted: (nil) for [yeahd: 9537]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [6] more:0x4a709b0]
+[Tail: [0] yeahd:0x4a70e00]
+{ [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [1] other:0x4a710e0]
+[Tail: [1] other:0x4a710e0]
+{ [1] other: 0x4a710e0  }
 [RWLOCK] Unlocking
 Cache is full? true 4
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached yeahd, 0x4e82d00
+Entry retrieval reached yeahd, 0x4a70e00
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [4:4] Request result: hit with evicted: (nil) for [yeahd: 9537]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [6] more:0x4a709b0]
+[Tail: [0] yeahd:0x4a70e00]
+{ [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [1] other:0x4a710e0]
+[Tail: [1] other:0x4a710e0]
+{ [1] other: 0x4a710e0  }
 [RWLOCK] Unlocking
 Cache is full? true 4
 ==== THREAD: 1 ====
@@ -300,163 +404,235 @@ Cache is full? true 4
 Entry retrieval reached dgsdfs, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82c60
-Pointers [other: 0x4e82ac8] 0x4e82c60 (nil) (nil) 0x4e82c60 0x4e82c60
-Before prev_entry check (nil)
-dqht->head before 0x4e82c60
+Front 0x4a71190
+Unlink entry: 0x4a71190
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a71190
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82c60
+DQHT 0x4a70520
+dqht->tail before 0x4a71190
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: dgsdfs
-CREATED NEW DLIRSEntry: 0x4e82cd8 [dgsdfs: 0x119034]
-Inserting [dgsdfs: 0x4e82cd8]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e82cd8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [dgsdfs: 0x4e82d68]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e82d68]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [dgsdfs: 0x4e82d68]
+CREATED NEW DLIRSEntry: 0x4a71310 [dgsdfs: 0x119034]
+Inserting [dgsdfs: 0x4a71310]
+Inserting [dgsdfs: 0x4a71480]
+Amending tail: [dgsdfs: 0x4a71480]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82a80
-Inserting [dgsdfs: 0x4e82e08]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e82e08]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Entry->prev after: 0x4a71250
+Inserting [dgsdfs: 0x4a715f0]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[5:1] Request result: miss with evicted: 0x4e82ac8 for [dgsdfs: 24675]
+[5:1] Request result: miss with evicted: 0x4a710e0 for [dgsdfs: 24675]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [4] dgsdfs:0x4a715f0]
+[Tail: [4] dgsdfs:0x4a715f0]
+{ [4] dgsdfs: 0x4a715f0  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [6] more:0x4a709b0]
+[Tail: [4] dgsdfs:0x4a71480]
+{ [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a71310]
+[Tail: [4] dgsdfs:0x4a71310]
+{ [4] dgsdfs: 0x4a71310  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82ac8 [other: 0x119024]
+DESTROYING DLIRSEntry: 0x4a710e0 [other: 0x119024]
 Cache is full? true 5
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached dgsdfs, 0x4e82d68
+Entry retrieval reached dgsdfs, 0x4a71480
 Hit HIR in LIRS before
-Pointers [dgsdfs: 0x4e82d68] 0x4e82db0 0x4e82a80 (nil) 0x4e82b68 0x4e82db0
-Before prev_entry check 0x4e82a80
-Non NULL prev_entry->next before 0x4e82db0
+TABLE: Before unlink
+[Head: [6] more:0x4a709b0]
+[Tail: [4] dgsdfs:0x4a71480]
+{ [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480  }
+Unlink entry: 0x4a71530
+Unlink prev_entry check 0x4a71250
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82db0
-dqht->tail after: 0x4e82a80
+DQHT 0x4a702a0
+dqht->tail before 0x4a71530
+dqht->tail after: 0x4a71250
 End unlink
-Pointers [dgsdfs: 0x4e82e08] 0x4e82e50 (nil) (nil) 0x4e82e50 0x4e82e50
-Before prev_entry check (nil)
-dqht->head before 0x4e82e50
+TABLE: After unlink
+[Head: [6] more:0x4a709b0]
+[Tail: [0] yeahd:0x4a70e00]
+{ [6] more: 0x4a709b0, [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00  }
+TABLE: Before unlink
+[Head: [4] dgsdfs:0x4a715f0]
+[Tail: [4] dgsdfs:0x4a715f0]
+{ [4] dgsdfs: 0x4a715f0  }
+Unlink entry: 0x4a716a0
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a716a0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82e50
+DQHT 0x4a703e0
+dqht->tail before 0x4a716a0
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82e08 [dgsdfs: 0x119034]
-Pointers [dgsdfs: 0x4e82cd8] 0x4e82c80 (nil) (nil) 0x4e82c80 0x4e82c80
-Before prev_entry check (nil)
-dqht->head before 0x4e82c80
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a715f0 [dgsdfs: 0x119034]
+TABLE: Before unlink
+[Head: [4] dgsdfs:0x4a71310]
+[Tail: [4] dgsdfs:0x4a71310]
+{ [4] dgsdfs: 0x4a71310  }
+Unlink entry: 0x4a713c0
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a713c0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82c80
+DQHT 0x4a70520
+dqht->tail before 0x4a713c0
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82cd8 [dgsdfs: 0x119034]
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a71310 [dgsdfs: 0x119034]
 Before eject lir loop
 Ejecting LIR: [Count: 3] [Limit: 3.000000]
-Front 0x4e82b68
-Pointers [more: 0x4e82b20] 0x4e82b68 (nil) 0x4e82c08 0x4e82b68 0x4e82a80
-Before prev_entry check (nil)
-dqht->head before 0x4e82b68
-dqht->head after 0x4e82c08
-Before next_entry check 0x4e82c08
-Non NULL next_entry->prev before 0x4e82b68
+Front 0x4a70a60
+Unlink entry: 0x4a70a60
+Unlink prev_entry check (nil)
+DQHT 0x4a702a0
+dqht->head before 0x4a70a60
+dqht->head after 0x4a70bd0
+Before next_entry check 0x4a70bd0
+Non NULL next_entry->prev before 0x4a70a60
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Inserting [more: 0x4e82cd8]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e82cd8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-DESTROYING DLIRSEntry: 0x4e82b20 [more: 0x119028]
+Inserting [more: 0x4a71760]
+DESTROYING DLIRSEntry: 0x4a709b0 [more: 0x119028]
 Incremented HIRS count
-Prune LIR entry 0x4e82c08
+Prune LIR entry 0x4a70bd0
 After eject lir loop
 Before eject hir loop
 After eject hir loop
-Inserting [dgsdfs: 0x4e82d68]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e82d68]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [dgsdfs: 0x4e82d68]
+Inserting [dgsdfs: 0x4a71480]
+Amending tail: [dgsdfs: 0x4a71480]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82a80
+Entry->prev after: 0x4a71250
 Hit HIR in LIRS after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [5:2] Request result: hit with evicted: (nil) for [dgsdfs: 24675]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] something:0x4a70b20]
+[Tail: [4] dgsdfs:0x4a71480]
+{ [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] more:0x4a71760]
+[Tail: [6] more:0x4a71760]
+{ [6] more: 0x4a71760  }
 [RWLOCK] Unlocking
 Cache is full? true 5
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached dgsdfs, 0x4e82d68
+Entry retrieval reached dgsdfs, 0x4a71480
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [5:3] Request result: hit with evicted: (nil) for [dgsdfs: 24675]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] something:0x4a70b20]
+[Tail: [4] dgsdfs:0x4a71480]
+{ [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] more:0x4a71760]
+[Tail: [6] more:0x4a71760]
+{ [6] more: 0x4a71760  }
 [RWLOCK] Unlocking
 Cache is full? true 5
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached dgsdfs, 0x4e82d68
+Entry retrieval reached dgsdfs, 0x4a71480
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [5:4] Request result: hit with evicted: (nil) for [dgsdfs: 24675]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] something:0x4a70b20]
+[Tail: [4] dgsdfs:0x4a71480]
+{ [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] more:0x4a71760]
+[Tail: [6] more:0x4a71760]
+{ [6] more: 0x4a71760  }
 [RWLOCK] Unlocking
 Cache is full? true 5
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached dgsdfs, 0x4e82d68
+Entry retrieval reached dgsdfs, 0x4a71480
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [5:5] Request result: hit with evicted: (nil) for [dgsdfs: 24675]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] something:0x4a70b20]
+[Tail: [4] dgsdfs:0x4a71480]
+{ [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] more:0x4a71760]
+[Tail: [6] more:0x4a71760]
+{ [6] more: 0x4a71760  }
 [RWLOCK] Unlocking
 Cache is full? true 5
 ==== THREAD: 1 ====
@@ -464,178 +640,262 @@ Cache is full? true 5
 Entry retrieval reached ehjigdss, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82b68
-Pointers [more: 0x4e82cd8] 0x4e82b68 (nil) (nil) 0x4e82b68 0x4e82b68
-Before prev_entry check (nil)
-dqht->head before 0x4e82b68
+Front 0x4a71810
+Unlink entry: 0x4a71810
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a71810
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82b68
+DQHT 0x4a70520
+dqht->tail before 0x4a71810
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: ehjigdss
-CREATED NEW DLIRSEntry: 0x4e82ac8 [ehjigdss: 0x119038]
-Inserting [ehjigdss: 0x4e82ac8]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e82ac8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [ehjigdss: 0x4e82b68]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e82b68]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [ehjigdss: 0x4e82b68]
+CREATED NEW DLIRSEntry: 0x4a71990 [ehjigdss: 0x119038]
+Inserting [ehjigdss: 0x4a71990]
+Inserting [ehjigdss: 0x4a71b00]
+Amending tail: [ehjigdss: 0x4a71b00]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82c60
-Inserting [ehjigdss: 0x4e82e08]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e82e08]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Entry->prev after: 0x4a718d0
+Inserting [ehjigdss: 0x4a71c70]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[6:1] Request result: miss with evicted: 0x4e82cd8 for [ehjigdss: 55363]
+[6:1] Request result: miss with evicted: 0x4a71760 for [ehjigdss: 55363]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [0] ehjigdss:0x4a71c70]
+[Tail: [0] ehjigdss:0x4a71c70]
+{ [0] ehjigdss: 0x4a71c70  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] something:0x4a70b20]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a71990]
+[Tail: [0] ehjigdss:0x4a71990]
+{ [0] ehjigdss: 0x4a71990  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82cd8 [more: 0x119028]
+DESTROYING DLIRSEntry: 0x4a71760 [more: 0x119028]
 Cache is full? true 6
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ehjigdss, 0x4e82b68
+Entry retrieval reached ehjigdss, 0x4a71b00
 Hit HIR in LIRS before
-Pointers [ehjigdss: 0x4e82b68] 0x4e82db0 0x4e82c60 (nil) 0x4e82c08 0x4e82db0
-Before prev_entry check 0x4e82c60
-Non NULL prev_entry->next before 0x4e82db0
+TABLE: Before unlink
+[Head: [7] something:0x4a70b20]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
+Unlink entry: 0x4a71bb0
+Unlink prev_entry check 0x4a718d0
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82db0
-dqht->tail after: 0x4e82c60
+DQHT 0x4a702a0
+dqht->tail before 0x4a71bb0
+dqht->tail after: 0x4a718d0
 End unlink
-Pointers [ehjigdss: 0x4e82e08] 0x4e82e50 (nil) (nil) 0x4e82e50 0x4e82e50
-Before prev_entry check (nil)
-dqht->head before 0x4e82e50
+TABLE: After unlink
+[Head: [7] something:0x4a70b20]
+[Tail: [4] dgsdfs:0x4a71480]
+{ [7] something: 0x4a70b20, [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480  }
+TABLE: Before unlink
+[Head: [0] ehjigdss:0x4a71c70]
+[Tail: [0] ehjigdss:0x4a71c70]
+{ [0] ehjigdss: 0x4a71c70  }
+Unlink entry: 0x4a71d20
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a71d20
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82e50
+DQHT 0x4a703e0
+dqht->tail before 0x4a71d20
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82e08 [ehjigdss: 0x119038]
-Pointers [ehjigdss: 0x4e82ac8] 0x4e82b10 (nil) (nil) 0x4e82b10 0x4e82b10
-Before prev_entry check (nil)
-dqht->head before 0x4e82b10
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a71c70 [ehjigdss: 0x119038]
+TABLE: Before unlink
+[Head: [0] ehjigdss:0x4a71990]
+[Tail: [0] ehjigdss:0x4a71990]
+{ [0] ehjigdss: 0x4a71990  }
+Unlink entry: 0x4a71a40
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a71a40
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82b10
+DQHT 0x4a70520
+dqht->tail before 0x4a71a40
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82ac8 [ehjigdss: 0x119038]
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a71990 [ehjigdss: 0x119038]
 Before eject lir loop
 Ejecting LIR: [Count: 3] [Limit: 3.000000]
-Front 0x4e82c08
-Pointers [something: 0x4e82bc0] 0x4e82c08 (nil) 0x4e82a80 0x4e82c08 0x4e82c60
-Before prev_entry check (nil)
-dqht->head before 0x4e82c08
-dqht->head after 0x4e82a80
-Before next_entry check 0x4e82a80
-Non NULL next_entry->prev before 0x4e82c08
+Front 0x4a70bd0
+Unlink entry: 0x4a70bd0
+Unlink prev_entry check (nil)
+DQHT 0x4a702a0
+dqht->head before 0x4a70bd0
+dqht->head after 0x4a71250
+Before next_entry check 0x4a71250
+Non NULL next_entry->prev before 0x4a70bd0
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Inserting [something: 0x4e82cd8]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e82cd8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-DESTROYING DLIRSEntry: 0x4e82bc0 [something: 0x11902c]
+Inserting [something: 0x4a71de0]
+DESTROYING DLIRSEntry: 0x4a70b20 [something: 0x11902c]
 Incremented HIRS count
-Prune LIR entry 0x4e82a80
+Prune LIR entry 0x4a71250
 After eject lir loop
 Before eject hir loop
 After eject hir loop
-Inserting [ehjigdss: 0x4e82b68]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e82b68]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [ehjigdss: 0x4e82b68]
+Inserting [ehjigdss: 0x4a71b00]
+Amending tail: [ehjigdss: 0x4a71b00]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82c60
+Entry->prev after: 0x4a718d0
 Hit HIR in LIRS after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [6:2] Request result: hit with evicted: (nil) for [ehjigdss: 55363]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] something:0x4a71de0]
+[Tail: [6] something:0x4a71de0]
+{ [6] something: 0x4a71de0  }
 [RWLOCK] Unlocking
 Cache is full? true 6
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ehjigdss, 0x4e82b68
+Entry retrieval reached ehjigdss, 0x4a71b00
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [6:3] Request result: hit with evicted: (nil) for [ehjigdss: 55363]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] something:0x4a71de0]
+[Tail: [6] something:0x4a71de0]
+{ [6] something: 0x4a71de0  }
 [RWLOCK] Unlocking
 Cache is full? true 6
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ehjigdss, 0x4e82b68
+Entry retrieval reached ehjigdss, 0x4a71b00
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [6:4] Request result: hit with evicted: (nil) for [ehjigdss: 55363]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] something:0x4a71de0]
+[Tail: [6] something:0x4a71de0]
+{ [6] something: 0x4a71de0  }
 [RWLOCK] Unlocking
 Cache is full? true 6
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ehjigdss, 0x4e82b68
+Entry retrieval reached ehjigdss, 0x4a71b00
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [6:5] Request result: hit with evicted: (nil) for [ehjigdss: 55363]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] something:0x4a71de0]
+[Tail: [6] something:0x4a71de0]
+{ [6] something: 0x4a71de0  }
 [RWLOCK] Unlocking
 Cache is full? true 6
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ehjigdss, 0x4e82b68
+Entry retrieval reached ehjigdss, 0x4a71b00
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [6:6] Request result: hit with evicted: (nil) for [ehjigdss: 55363]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] something:0x4a71de0]
+[Tail: [6] something:0x4a71de0]
+{ [6] something: 0x4a71de0  }
 [RWLOCK] Unlocking
 Cache is full? true 6
 ==== THREAD: 1 ====
@@ -643,193 +903,289 @@ Cache is full? true 6
 Entry retrieval reached oijfguod, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82c08
-Pointers [something: 0x4e82cd8] 0x4e82c08 (nil) (nil) 0x4e82c08 0x4e82c08
-Before prev_entry check (nil)
-dqht->head before 0x4e82c08
+Front 0x4a71e90
+Unlink entry: 0x4a71e90
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a71e90
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82c08
+DQHT 0x4a70520
+dqht->tail before 0x4a71e90
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: oijfguod
-CREATED NEW DLIRSEntry: 0x4e82c08 [oijfguod: 0x11903c]
-Inserting [oijfguod: 0x4e82c08]
-NEW ENTRY [Key: oijfguod]
-NEW ENTRY [Ptr: 0x4e82c08]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [oijfguod: 0x4e82b40]
-NEW ENTRY [Key: oijfguod]
-NEW ENTRY [Ptr: 0x4e82b40]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [oijfguod: 0x4e82b40]
+CREATED NEW DLIRSEntry: 0x4a72010 [oijfguod: 0x11903c]
+Inserting [oijfguod: 0x4a72010]
+Inserting [oijfguod: 0x4a72180]
+Amending tail: [oijfguod: 0x4a72180]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82bc0
-Inserting [oijfguod: 0x4e82e28]
-NEW ENTRY [Key: oijfguod]
-NEW ENTRY [Ptr: 0x4e82e28]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Entry->prev after: 0x4a71f50
+Inserting [oijfguod: 0x4a722f0]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[7:1] Request result: miss with evicted: 0x4e82cd8 for [oijfguod: 426723]
+[7:1] Request result: miss with evicted: 0x4a71de0 for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [4] oijfguod:0x4a722f0]
+[Tail: [4] oijfguod:0x4a722f0]
+{ [4] oijfguod: 0x4a722f0  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [5] oijfguod:0x4a72180]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] oijfguod:0x4a72010]
+[Tail: [4] oijfguod:0x4a72010]
+{ [4] oijfguod: 0x4a72010  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82cd8 [something: 0x11902c]
+DESTROYING DLIRSEntry: 0x4a71de0 [something: 0x11902c]
 Cache is full? true 7
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached oijfguod, 0x4e82b40
+Entry retrieval reached oijfguod, 0x4a72180
 Hit HIR in LIRS before
-Pointers [oijfguod: 0x4e82b40] 0x4e82dd0 0x4e82bc0 (nil) 0x4e82a80 0x4e82dd0
-Before prev_entry check 0x4e82bc0
-Non NULL prev_entry->next before 0x4e82dd0
+TABLE: Before unlink
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [5] oijfguod:0x4a72180]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
+Unlink entry: 0x4a72230
+Unlink prev_entry check 0x4a71f50
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82dd0
-dqht->tail after: 0x4e82bc0
+DQHT 0x4a702a0
+dqht->tail before 0x4a72230
+dqht->tail after: 0x4a71f50
 End unlink
-Pointers [oijfguod: 0x4e82e28] 0x4e82e70 (nil) (nil) 0x4e82e70 0x4e82e70
-Before prev_entry check (nil)
-dqht->head before 0x4e82e70
+TABLE: After unlink
+[Head: [0] yeahd:0x4a70e00]
+[Tail: [1] ehjigdss:0x4a71b00]
+{ [0] yeahd: 0x4a70e00, [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00  }
+TABLE: Before unlink
+[Head: [4] oijfguod:0x4a722f0]
+[Tail: [4] oijfguod:0x4a722f0]
+{ [4] oijfguod: 0x4a722f0  }
+Unlink entry: 0x4a723a0
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a723a0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82e70
+DQHT 0x4a703e0
+dqht->tail before 0x4a723a0
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82e28 [oijfguod: 0x11903c]
-Pointers [oijfguod: 0x4e82c08] 0x4e82ae8 (nil) (nil) 0x4e82ae8 0x4e82ae8
-Before prev_entry check (nil)
-dqht->head before 0x4e82ae8
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a722f0 [oijfguod: 0x11903c]
+TABLE: Before unlink
+[Head: [4] oijfguod:0x4a72010]
+[Tail: [4] oijfguod:0x4a72010]
+{ [4] oijfguod: 0x4a72010  }
+Unlink entry: 0x4a720c0
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a720c0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82ae8
+DQHT 0x4a70520
+dqht->tail before 0x4a720c0
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82c08 [oijfguod: 0x11903c]
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a72010 [oijfguod: 0x11903c]
 Before eject lir loop
 Ejecting LIR: [Count: 3] [Limit: 3.000000]
-Front 0x4e82a80
-Pointers [yeahd: 0x4e82d00] 0x4e82a80 (nil) 0x4e82c60 0x4e82a80 0x4e82bc0
-Before prev_entry check (nil)
-dqht->head before 0x4e82a80
-dqht->head after 0x4e82c60
-Before next_entry check 0x4e82c60
-Non NULL next_entry->prev before 0x4e82a80
+Front 0x4a71250
+Unlink entry: 0x4a71250
+Unlink prev_entry check (nil)
+DQHT 0x4a702a0
+dqht->head before 0x4a71250
+dqht->head after 0x4a718d0
+Before next_entry check 0x4a718d0
+Non NULL next_entry->prev before 0x4a71250
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Inserting [yeahd: 0x4e82a80]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-DESTROYING DLIRSEntry: 0x4e82d00 [yeahd: 0x119030]
+Inserting [yeahd: 0x4a72460]
+DESTROYING DLIRSEntry: 0x4a70e00 [yeahd: 0x119030]
 Incremented HIRS count
-Prune LIR entry 0x4e82c60
+Prune LIR entry 0x4a718d0
 After eject lir loop
 Before eject hir loop
 After eject hir loop
-Inserting [oijfguod: 0x4e82b40]
-NEW ENTRY [Key: oijfguod]
-NEW ENTRY [Ptr: 0x4e82b40]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [oijfguod: 0x4e82b40]
+Inserting [oijfguod: 0x4a72180]
+Amending tail: [oijfguod: 0x4a72180]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82bc0
+Entry->prev after: 0x4a71f50
 Hit HIR in LIRS after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [7:2] Request result: hit with evicted: (nil) for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [5] oijfguod:0x4a72180]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a72460]
+[Tail: [0] yeahd:0x4a72460]
+{ [0] yeahd: 0x4a72460  }
 [RWLOCK] Unlocking
 Cache is full? true 7
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached oijfguod, 0x4e82b40
+Entry retrieval reached oijfguod, 0x4a72180
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [7:3] Request result: hit with evicted: (nil) for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [5] oijfguod:0x4a72180]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a72460]
+[Tail: [0] yeahd:0x4a72460]
+{ [0] yeahd: 0x4a72460  }
 [RWLOCK] Unlocking
 Cache is full? true 7
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached oijfguod, 0x4e82b40
+Entry retrieval reached oijfguod, 0x4a72180
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [7:4] Request result: hit with evicted: (nil) for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [5] oijfguod:0x4a72180]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a72460]
+[Tail: [0] yeahd:0x4a72460]
+{ [0] yeahd: 0x4a72460  }
 [RWLOCK] Unlocking
 Cache is full? true 7
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached oijfguod, 0x4e82b40
+Entry retrieval reached oijfguod, 0x4a72180
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [7:5] Request result: hit with evicted: (nil) for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [5] oijfguod:0x4a72180]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a72460]
+[Tail: [0] yeahd:0x4a72460]
+{ [0] yeahd: 0x4a72460  }
 [RWLOCK] Unlocking
 Cache is full? true 7
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached oijfguod, 0x4e82b40
+Entry retrieval reached oijfguod, 0x4a72180
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [7:6] Request result: hit with evicted: (nil) for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [5] oijfguod:0x4a72180]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a72460]
+[Tail: [0] yeahd:0x4a72460]
+{ [0] yeahd: 0x4a72460  }
 [RWLOCK] Unlocking
 Cache is full? true 7
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached oijfguod, 0x4e82b40
+Entry retrieval reached oijfguod, 0x4a72180
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [7:7] Request result: hit with evicted: (nil) for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [5] oijfguod:0x4a72180]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a72460]
+[Tail: [0] yeahd:0x4a72460]
+{ [0] yeahd: 0x4a72460  }
 [RWLOCK] Unlocking
 Cache is full? true 7
 ==== THREAD: 1 ====
@@ -837,208 +1193,316 @@ Cache is full? true 7
 Entry retrieval reached ngujhdw, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82cb8
-Pointers [yeahd: 0x4e82a80] 0x4e82cb8 (nil) (nil) 0x4e82cb8 0x4e82cb8
-Before prev_entry check (nil)
-dqht->head before 0x4e82cb8
+Front 0x4a72510
+Unlink entry: 0x4a72510
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a72510
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82cb8
+DQHT 0x4a70520
+dqht->tail before 0x4a72510
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: ngujhdw
-CREATED NEW DLIRSEntry: 0x4e82c28 [ngujhdw: 0x119040]
-Inserting [ngujhdw: 0x4e82c28]
-NEW ENTRY [Key: ngujhdw]
-NEW ENTRY [Ptr: 0x4e82c28]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [ngujhdw: 0x4e82b08]
-NEW ENTRY [Key: ngujhdw]
-NEW ENTRY [Ptr: 0x4e82b08]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [ngujhdw: 0x4e82b08]
+CREATED NEW DLIRSEntry: 0x4a72690 [ngujhdw: 0x119040]
+Inserting [ngujhdw: 0x4a72690]
+Inserting [ngujhdw: 0x4a72800]
+Amending tail: [ngujhdw: 0x4a72800]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82d00
-Inserting [ngujhdw: 0x4e82e48]
-NEW ENTRY [Key: ngujhdw]
-NEW ENTRY [Ptr: 0x4e82e48]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Entry->prev after: 0x4a725d0
+Inserting [ngujhdw: 0x4a72970]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[8:1] Request result: miss with evicted: 0x4e82a80 for [ngujhdw: 957357]
+[8:1] Request result: miss with evicted: 0x4a72460 for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [3] ngujhdw:0x4a72970]
+[Tail: [3] ngujhdw:0x4a72970]
+{ [3] ngujhdw: 0x4a72970  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [3] ngujhdw:0x4a72690]
+[Tail: [3] ngujhdw:0x4a72690]
+{ [3] ngujhdw: 0x4a72690  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82a80 [yeahd: 0x119030]
+DESTROYING DLIRSEntry: 0x4a72460 [yeahd: 0x119030]
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit HIR in LIRS before
-Pointers [ngujhdw: 0x4e82b08] 0x4e82df0 0x4e82d00 (nil) 0x4e82c60 0x4e82df0
-Before prev_entry check 0x4e82d00
-Non NULL prev_entry->next before 0x4e82df0
+TABLE: Before unlink
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
+Unlink entry: 0x4a728b0
+Unlink prev_entry check 0x4a725d0
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82df0
-dqht->tail after: 0x4e82d00
+DQHT 0x4a702a0
+dqht->tail before 0x4a728b0
+dqht->tail after: 0x4a725d0
 End unlink
-Pointers [ngujhdw: 0x4e82e48] 0x4e82e90 (nil) (nil) 0x4e82e90 0x4e82e90
-Before prev_entry check (nil)
-dqht->head before 0x4e82e90
+TABLE: After unlink
+[Head: [4] dgsdfs:0x4a71480]
+[Tail: [5] oijfguod:0x4a72180]
+{ [4] dgsdfs: 0x4a71480, [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180  }
+TABLE: Before unlink
+[Head: [3] ngujhdw:0x4a72970]
+[Tail: [3] ngujhdw:0x4a72970]
+{ [3] ngujhdw: 0x4a72970  }
+Unlink entry: 0x4a72a20
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a72a20
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82e90
+DQHT 0x4a703e0
+dqht->tail before 0x4a72a20
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82e48 [ngujhdw: 0x119040]
-Pointers [ngujhdw: 0x4e82c28] 0x4e82cb8 (nil) (nil) 0x4e82cb8 0x4e82cb8
-Before prev_entry check (nil)
-dqht->head before 0x4e82cb8
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a72970 [ngujhdw: 0x119040]
+TABLE: Before unlink
+[Head: [3] ngujhdw:0x4a72690]
+[Tail: [3] ngujhdw:0x4a72690]
+{ [3] ngujhdw: 0x4a72690  }
+Unlink entry: 0x4a72740
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a72740
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82cb8
+DQHT 0x4a70520
+dqht->tail before 0x4a72740
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82c28 [ngujhdw: 0x119040]
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a72690 [ngujhdw: 0x119040]
 Before eject lir loop
 Ejecting LIR: [Count: 3] [Limit: 3.000000]
-Front 0x4e82c60
-Pointers [dgsdfs: 0x4e82d68] 0x4e82c60 (nil) 0x4e82bc0 0x4e82c60 0x4e82d00
-Before prev_entry check (nil)
-dqht->head before 0x4e82c60
-dqht->head after 0x4e82bc0
-Before next_entry check 0x4e82bc0
-Non NULL next_entry->prev before 0x4e82c60
+Front 0x4a718d0
+Unlink entry: 0x4a718d0
+Unlink prev_entry check (nil)
+DQHT 0x4a702a0
+dqht->head before 0x4a718d0
+dqht->head after 0x4a71f50
+Before next_entry check 0x4a71f50
+Non NULL next_entry->prev before 0x4a718d0
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Inserting [dgsdfs: 0x4e82a80]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-DESTROYING DLIRSEntry: 0x4e82d68 [dgsdfs: 0x119034]
+Inserting [dgsdfs: 0x4a72ae0]
+DESTROYING DLIRSEntry: 0x4a71480 [dgsdfs: 0x119034]
 Incremented HIRS count
-Prune LIR entry 0x4e82bc0
+Prune LIR entry 0x4a71f50
 After eject lir loop
 Before eject hir loop
 After eject hir loop
-Inserting [ngujhdw: 0x4e82b08]
-NEW ENTRY [Key: ngujhdw]
-NEW ENTRY [Ptr: 0x4e82b08]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [ngujhdw: 0x4e82b08]
+Inserting [ngujhdw: 0x4a72800]
+Amending tail: [ngujhdw: 0x4a72800]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82d00
+Entry->prev after: 0x4a725d0
 Hit HIR in LIRS after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8:2] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a72ae0]
+[Tail: [4] dgsdfs:0x4a72ae0]
+{ [4] dgsdfs: 0x4a72ae0  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8:3] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a72ae0]
+[Tail: [4] dgsdfs:0x4a72ae0]
+{ [4] dgsdfs: 0x4a72ae0  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8:4] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a72ae0]
+[Tail: [4] dgsdfs:0x4a72ae0]
+{ [4] dgsdfs: 0x4a72ae0  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8:5] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a72ae0]
+[Tail: [4] dgsdfs:0x4a72ae0]
+{ [4] dgsdfs: 0x4a72ae0  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8:6] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a72ae0]
+[Tail: [4] dgsdfs:0x4a72ae0]
+{ [4] dgsdfs: 0x4a72ae0  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8:7] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a72ae0]
+[Tail: [4] dgsdfs:0x4a72ae0]
+{ [4] dgsdfs: 0x4a72ae0  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8:8] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a72ae0]
+[Tail: [4] dgsdfs:0x4a72ae0]
+{ [4] dgsdfs: 0x4a72ae0  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
@@ -1046,231 +1510,363 @@ Cache is full? true 8
 Entry retrieval reached doij42od, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82c28
-Pointers [dgsdfs: 0x4e82a80] 0x4e82c28 (nil) (nil) 0x4e82c28 0x4e82c28
-Before prev_entry check (nil)
-dqht->head before 0x4e82c28
+Front 0x4a72b90
+Unlink entry: 0x4a72b90
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a72b90
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82c28
+DQHT 0x4a70520
+dqht->tail before 0x4a72b90
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: doij42od
-CREATED NEW DLIRSEntry: 0x4e82c28 [doij42od: 0x119044]
-Inserting [doij42od: 0x4e82c28]
-NEW ENTRY [Key: doij42od]
-NEW ENTRY [Ptr: 0x4e82c28]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [doij42od: 0x4e82ca8]
-NEW ENTRY [Key: doij42od]
-NEW ENTRY [Ptr: 0x4e82ca8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [doij42od: 0x4e82ca8]
+CREATED NEW DLIRSEntry: 0x4a72d10 [doij42od: 0x119044]
+Inserting [doij42od: 0x4a72d10]
+Inserting [doij42od: 0x4a72e80]
+Amending tail: [doij42od: 0x4a72e80]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82d68
-Inserting [doij42od: 0x4e82e48]
-NEW ENTRY [Key: doij42od]
-NEW ENTRY [Ptr: 0x4e82e48]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Entry->prev after: 0x4a72c50
+Inserting [doij42od: 0x4a72ff0]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[9:1] Request result: miss with evicted: 0x4e82a80 for [doij42od: 64526]
+[9:1] Request result: miss with evicted: 0x4a72ae0 for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [5] doij42od:0x4a72ff0]
+[Tail: [5] doij42od:0x4a72ff0]
+{ [5] doij42od: 0x4a72ff0  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [6] doij42od:0x4a72e80]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [5] doij42od:0x4a72d10]
+[Tail: [5] doij42od:0x4a72d10]
+{ [5] doij42od: 0x4a72d10  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82a80 [dgsdfs: 0x119034]
+DESTROYING DLIRSEntry: 0x4a72ae0 [dgsdfs: 0x119034]
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit HIR in LIRS before
-Pointers [doij42od: 0x4e82ca8] 0x4e82df0 0x4e82d68 (nil) 0x4e82bc0 0x4e82df0
-Before prev_entry check 0x4e82d68
-Non NULL prev_entry->next before 0x4e82df0
+TABLE: Before unlink
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [6] doij42od:0x4a72e80]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
+Unlink entry: 0x4a72f30
+Unlink prev_entry check 0x4a72c50
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82df0
-dqht->tail after: 0x4e82d68
+DQHT 0x4a702a0
+dqht->tail before 0x4a72f30
+dqht->tail after: 0x4a72c50
 End unlink
-Pointers [doij42od: 0x4e82e48] 0x4e82e90 (nil) (nil) 0x4e82e90 0x4e82e90
-Before prev_entry check (nil)
-dqht->head before 0x4e82e90
+TABLE: After unlink
+[Head: [1] ehjigdss:0x4a71b00]
+[Tail: [3] ngujhdw:0x4a72800]
+{ [1] ehjigdss: 0x4a71b00, [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800  }
+TABLE: Before unlink
+[Head: [5] doij42od:0x4a72ff0]
+[Tail: [5] doij42od:0x4a72ff0]
+{ [5] doij42od: 0x4a72ff0  }
+Unlink entry: 0x4a730a0
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a730a0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82e90
+DQHT 0x4a703e0
+dqht->tail before 0x4a730a0
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82e48 [doij42od: 0x119044]
-Pointers [doij42od: 0x4e82c28] 0x4e82c50 (nil) (nil) 0x4e82c50 0x4e82c50
-Before prev_entry check (nil)
-dqht->head before 0x4e82c50
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a72ff0 [doij42od: 0x119044]
+TABLE: Before unlink
+[Head: [5] doij42od:0x4a72d10]
+[Tail: [5] doij42od:0x4a72d10]
+{ [5] doij42od: 0x4a72d10  }
+Unlink entry: 0x4a72dc0
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a72dc0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82c50
+DQHT 0x4a70520
+dqht->tail before 0x4a72dc0
 dqht->tail after: (nil)
 End unlink
-DESTROYING DLIRSEntry: 0x4e82c28 [doij42od: 0x119044]
+TABLE: After unlink
+[Head: (nil)]
+[Tail: (nil)]
+{ }
+DESTROYING DLIRSEntry: 0x4a72d10 [doij42od: 0x119044]
 Before eject lir loop
 Ejecting LIR: [Count: 3] [Limit: 3.000000]
-Front 0x4e82bc0
-Pointers [ehjigdss: 0x4e82b68] 0x4e82bc0 (nil) 0x4e82d00 0x4e82bc0 0x4e82d68
-Before prev_entry check (nil)
-dqht->head before 0x4e82bc0
-dqht->head after 0x4e82d00
-Before next_entry check 0x4e82d00
-Non NULL next_entry->prev before 0x4e82bc0
+Front 0x4a71f50
+Unlink entry: 0x4a71f50
+Unlink prev_entry check (nil)
+DQHT 0x4a702a0
+dqht->head before 0x4a71f50
+dqht->head after 0x4a725d0
+Before next_entry check 0x4a725d0
+Non NULL next_entry->prev before 0x4a71f50
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Inserting [ehjigdss: 0x4e82bc0]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e82bc0]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-DESTROYING DLIRSEntry: 0x4e82b68 [ehjigdss: 0x119038]
+Inserting [ehjigdss: 0x4a73160]
+DESTROYING DLIRSEntry: 0x4a71b00 [ehjigdss: 0x119038]
 Incremented HIRS count
-Prune LIR entry 0x4e82d00
+Prune LIR entry 0x4a725d0
 After eject lir loop
 Before eject hir loop
 After eject hir loop
-Inserting [doij42od: 0x4e82ca8]
-NEW ENTRY [Key: doij42od]
-NEW ENTRY [Ptr: 0x4e82ca8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [doij42od: 0x4e82ca8]
+Inserting [doij42od: 0x4a72e80]
+Amending tail: [doij42od: 0x4a72e80]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82d68
+Entry->prev after: 0x4a72c50
 Hit HIR in LIRS after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:2] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:3] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:4] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:5] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:6] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:7] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:8] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9:9] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 ======== CONTAINS ========
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [6] doij42od:0x4a72e80]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a73160]
+[Tail: [0] ehjigdss:0x4a73160]
+{ [0] ehjigdss: 0x4a73160  }
 [RWLOCK] Unlocking
 ==== THREAD: 1 ====
 [RWLOCK] Locking with read lock
@@ -1318,792 +1914,648 @@ Cache contains doij42od: true [Value: 0x119044]
 Entry retrieval reached test1, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82a80
-Pointers [ehjigdss: 0x4e82bc0] 0x4e82a80 (nil) (nil) 0x4e82a80 0x4e82a80
-Before prev_entry check (nil)
-dqht->head before 0x4e82a80
+Front 0x4a73210
+Unlink entry: 0x4a73210
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a73210
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82a80
+DQHT 0x4a70520
+dqht->tail before 0x4a73210
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: test1
-CREATED NEW DLIRSEntry: 0x4e82a80 [test1: 0x119020]
-Inserting [test1: 0x4e82a80]
-NEW ENTRY [Key: test1]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [test1: 0x4e82c48]
-NEW ENTRY [Key: test1]
-NEW ENTRY [Ptr: 0x4e82c48]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [test1: 0x4e82c48]
+CREATED NEW DLIRSEntry: 0x4a73390 [test1: 0x119020]
+Inserting [test1: 0x4a73390]
+Inserting [test1: 0x4a73500]
+Amending tail: [test1: 0x4a73500]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82b68
-Inserting [test1: 0x4e82e48]
-NEW ENTRY [Key: test1]
-NEW ENTRY [Ptr: 0x4e82e48]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
+Entry->prev after: 0x4a732d0
+Inserting [test1: 0x4a73670]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[0] Request result: miss with evicted: 0x4e82bc0 for [test1: 56135]
+[0] Request result: miss with evicted: 0x4a73160 for [test1: 56135]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [1] test1:0x4a73670]
+[Tail: [1] test1:0x4a73670]
+{ [1] test1: 0x4a73670  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [5] oijfguod:0x4a72180]
+[Tail: [1] test1:0x4a73500]
+{ [5] oijfguod: 0x4a72180, [3] ngujhdw: 0x4a72800, [6] doij42od: 0x4a72e80, [1] test1: 0x4a73500  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [1] test1:0x4a73390]
+[Tail: [1] test1:0x4a73390]
+{ [1] test1: 0x4a73390  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82bc0 [ehjigdss: 0x119038]
+DESTROYING DLIRSEntry: 0x4a73160 [ehjigdss: 0x119038]
 Cache is full? true 0
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
 Entry retrieval reached other, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82aa8
-Pointers [test1: 0x4e82a80] 0x4e82aa8 (nil) (nil) 0x4e82aa8 0x4e82aa8
-Before prev_entry check (nil)
-dqht->head before 0x4e82aa8
+Front 0x4a73440
+Unlink entry: 0x4a73440
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a73440
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82aa8
+DQHT 0x4a70520
+dqht->tail before 0x4a73440
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: other
-CREATED NEW DLIRSEntry: 0x4e82aa8 [other: 0x119024]
-Inserting [other: 0x4e82aa8]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82aa8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [other: 0x4e82f08]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82f08]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [other: 0x4e82f08]
+CREATED NEW DLIRSEntry: 0x4a737e0 [other: 0x119024]
+Inserting [other: 0x4a737e0]
+Inserting [other: 0x4a73950]
+Amending tail: [other: 0x4a73950]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82df0
-Inserting [other: 0x4e82ff8]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82ff8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [other: 0x4e82ff8]
+Entry->prev after: 0x4a735b0
+Inserting [other: 0x4a73b80]
+Amending tail: [other: 0x4a73b80]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82e90
+Entry->prev after: 0x4a73720
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[1] Request result: miss with evicted: 0x4e82a80 for [other: 7345]
+[1] Request result: miss with evicted: 0x4a73390 for [other: 7345]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [1] test1:0x4a73670]
+[Tail: [2] other:0x4a73b80]
+{ [1] test1: 0x4a73670, [2] other: 0x4a73b80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] oijfguod:0x4a72180]
+[Tail: [4] other:0x4a73950]
+{ [7] oijfguod: 0x4a72180, [12] ngujhdw: 0x4a72800, [3] doij42od: 0x4a72e80, [2] test1: 0x4a73500, [4] other: 0x4a73950  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [1] other:0x4a737e0]
+[Tail: [1] other:0x4a737e0]
+{ [1] other: 0x4a737e0  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82a80 [test1: 0x119020]
+DESTROYING DLIRSEntry: 0x4a73390 [test1: 0x119020]
 Cache is full? true 1
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
 Entry retrieval reached more, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82bc0
-Pointers [other: 0x4e82aa8] 0x4e82bc0 (nil) (nil) 0x4e82bc0 0x4e82bc0
-Before prev_entry check (nil)
-dqht->head before 0x4e82bc0
+Front 0x4a73890
+Unlink entry: 0x4a73890
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a73890
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82bc0
+DQHT 0x4a70520
+dqht->tail before 0x4a73890
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: more
-CREATED NEW DLIRSEntry: 0x4e82a80 [more: 0x119028]
-Inserting [more: 0x4e82a80]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [more: 0x4e83098]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e83098]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [more: 0x4e83098]
+CREATED NEW DLIRSEntry: 0x4a73cf0 [more: 0x119028]
+Inserting [more: 0x4a73cf0]
+Inserting [more: 0x4a73e60]
+Amending tail: [more: 0x4a73e60]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82908
-Inserting [more: 0x4e83138]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e83138]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [more: 0x4e83138]
+Entry->prev after: 0x4a73ac0
+Inserting [more: 0x4a73fd0]
+Amending tail: [more: 0x4a73fd0]
 Entry->prev before (nil)
-Entry->prev after: 0x4e83040
+Entry->prev after: 0x4a73c30
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[2] Request result: miss with evicted: 0x4e82aa8 for [more: 5246]
+[2] Request result: miss with evicted: 0x4a737e0 for [more: 5246]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [1] test1:0x4a73670]
+[Tail: [6] more:0x4a73fd0]
+{ [1] test1: 0x4a73670, [2] other: 0x4a73b80, [6] more: 0x4a73fd0  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] oijfguod:0x4a72180]
+[Tail: [5] more:0x4a73e60]
+{ [7] oijfguod: 0x4a72180, [12] ngujhdw: 0x4a72800, [3] doij42od: 0x4a72e80, [2] test1: 0x4a73500, [4] other: 0x4a73950, [5] more: 0x4a73e60  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] more:0x4a73cf0]
+[Tail: [6] more:0x4a73cf0]
+{ [6] more: 0x4a73cf0  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82aa8 [other: 0x119024]
+DESTROYING DLIRSEntry: 0x4a737e0 [other: 0x119024]
 Cache is full? true 2
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
 Entry retrieval reached something, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82bc0
-Pointers [more: 0x4e82a80] 0x4e82bc0 (nil) (nil) 0x4e82bc0 0x4e82bc0
-Before prev_entry check (nil)
-dqht->head before 0x4e82bc0
+Front 0x4a73da0
+Unlink entry: 0x4a73da0
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a73da0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82bc0
+DQHT 0x4a70520
+dqht->tail before 0x4a73da0
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: something
-CREATED NEW DLIRSEntry: 0x4e82aa8 [something: 0x11902c]
-Inserting [something: 0x4e82aa8]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e82aa8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [something: 0x4e831d8]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e831d8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [something: 0x4e831d8]
+CREATED NEW DLIRSEntry: 0x4a74140 [something: 0x11902c]
+Inserting [something: 0x4a74140]
+Inserting [something: 0x4a742b0]
+Amending tail: [something: 0x4a742b0]
 Entry->prev before (nil)
-Entry->prev after: 0x4e830e0
-Inserting [something: 0x4e83278]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e83278]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [something: 0x4e83278]
+Entry->prev after: 0x4a73f10
+Inserting [something: 0x4a74420]
+Amending tail: [something: 0x4a74420]
 Entry->prev before (nil)
-Entry->prev after: 0x4e83180
+Entry->prev after: 0x4a74080
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[3] Request result: miss with evicted: 0x4e82a80 for [something: 16473]
+[3] Request result: miss with evicted: 0x4a73cf0 for [something: 16473]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [1] test1:0x4a73670]
+[Tail: [7] something:0x4a74420]
+{ [1] test1: 0x4a73670, [2] other: 0x4a73b80, [6] more: 0x4a73fd0, [7] something: 0x4a74420  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] oijfguod:0x4a72180]
+[Tail: [9] something:0x4a742b0]
+{ [7] oijfguod: 0x4a72180, [12] ngujhdw: 0x4a72800, [3] doij42od: 0x4a72e80, [2] test1: 0x4a73500, [4] other: 0x4a73950, [5] more: 0x4a73e60, [9] something: 0x4a742b0  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [6] something:0x4a74140]
+[Tail: [6] something:0x4a74140]
+{ [6] something: 0x4a74140  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82a80 [more: 0x119028]
+DESTROYING DLIRSEntry: 0x4a73cf0 [more: 0x119028]
 Cache is full? true 3
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
 Entry retrieval reached yeahd, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82bc0
-Pointers [something: 0x4e82aa8] 0x4e82bc0 (nil) (nil) 0x4e82bc0 0x4e82bc0
-Before prev_entry check (nil)
-dqht->head before 0x4e82bc0
+Front 0x4a741f0
+Unlink entry: 0x4a741f0
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a741f0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82bc0
+DQHT 0x4a70520
+dqht->tail before 0x4a741f0
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: yeahd
-CREATED NEW DLIRSEntry: 0x4e82a80 [yeahd: 0x119030]
-Inserting [yeahd: 0x4e82a80]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [yeahd: 0x4e83318]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e83318]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [yeahd: 0x4e83318]
+CREATED NEW DLIRSEntry: 0x4a74590 [yeahd: 0x119030]
+Inserting [yeahd: 0x4a74590]
+Inserting [yeahd: 0x4a74700]
+Amending tail: [yeahd: 0x4a74700]
 Entry->prev before (nil)
-Entry->prev after: 0x4e83220
-Inserting [yeahd: 0x4e833b8]
-NEW ENTRY [Key: yeahd]
-NEW ENTRY [Ptr: 0x4e833b8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [yeahd: 0x4e833b8]
+Entry->prev after: 0x4a74360
+Inserting [yeahd: 0x4a74870]
+Amending tail: [yeahd: 0x4a74870]
 Entry->prev before (nil)
-Entry->prev after: 0x4e832c0
+Entry->prev after: 0x4a744d0
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[4] Request result: miss with evicted: 0x4e82aa8 for [yeahd: 9537]
+[4] Request result: miss with evicted: 0x4a74140 for [yeahd: 9537]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: [2] test1:0x4a73670]
+[Tail: [10] yeahd:0x4a74870]
+{ [2] test1: 0x4a73670, [3] other: 0x4a73b80, [4] more: 0x4a73fd0, [9] something: 0x4a74420, [10] yeahd: 0x4a74870  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [7] oijfguod:0x4a72180]
+[Tail: [10] yeahd:0x4a74700]
+{ [7] oijfguod: 0x4a72180, [12] ngujhdw: 0x4a72800, [3] doij42od: 0x4a72e80, [2] test1: 0x4a73500, [4] other: 0x4a73950, [5] more: 0x4a73e60, [9] something: 0x4a742b0, [10] yeahd: 0x4a74700  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] yeahd:0x4a74590]
+[Tail: [0] yeahd:0x4a74590]
+{ [0] yeahd: 0x4a74590  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82aa8 [something: 0x11902c]
+DESTROYING DLIRSEntry: 0x4a74140 [something: 0x11902c]
 Cache is full? true 4
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
 Entry retrieval reached dgsdfs, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82bc0
-Pointers [yeahd: 0x4e82a80] 0x4e82bc0 (nil) (nil) 0x4e82bc0 0x4e82bc0
-Before prev_entry check (nil)
-dqht->head before 0x4e82bc0
+Front 0x4a74640
+Unlink entry: 0x4a74640
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a74640
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82bc0
+DQHT 0x4a70520
+dqht->tail before 0x4a74640
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: dgsdfs
-CREATED NEW DLIRSEntry: 0x4e82aa8 [dgsdfs: 0x119034]
-Inserting [dgsdfs: 0x4e82aa8]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e82aa8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [dgsdfs: 0x4e834a8]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e834a8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [dgsdfs: 0x4e834a8]
+CREATED NEW DLIRSEntry: 0x4a74aa0 [dgsdfs: 0x119034]
+Inserting [dgsdfs: 0x4a74aa0]
+Inserting [dgsdfs: 0x4a74c10]
+Amending tail: [dgsdfs: 0x4a74c10]
 Entry->prev before (nil)
-Entry->prev after: 0x4e83360
-Inserting [dgsdfs: 0x4e82fa8]
-NEW ENTRY [Key: dgsdfs]
-NEW ENTRY [Ptr: 0x4e82fa8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [dgsdfs: 0x4e82fa8]
+Entry->prev after: 0x4a747b0
+Inserting [dgsdfs: 0x4a74ec0]
+Amending tail: [dgsdfs: 0x4a74ec0]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82990
-Front 0x4e82e90
-Pointers [test1: 0x4e82e48] 0x4e82e90 (nil) 0x4e83040 0x4e82e90 0x4e83618
-Before prev_entry check (nil)
-dqht->head before 0x4e82e90
-dqht->head after 0x4e83040
-Before next_entry check 0x4e83040
-Non NULL next_entry->prev before 0x4e82e90
+Entry->prev after: 0x4a749e0
+Front 0x4a73720
+Unlink entry: 0x4a73720
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a73720
+dqht->head after 0x4a73c30
+Before next_entry check 0x4a73c30
+Non NULL next_entry->prev before 0x4a73720
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Pointers [test1: 0x4e82c48] 0x4e82df0 0x4e82b68 0x4e82908 0x4e82d00 0x4e82f50
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e82df0
-Non NULL prev_entry->next after 0x4e82908
-Before next_entry check 0x4e82908
-Non NULL next_entry->prev before 0x4e82df0
-Non NULL next_entry->prev after 0x4e82b68
+TABLE: Before unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [22] test1: 0x4a73500, [9] other: 0x4a73950, [0] more: 0x4a73e60, [27] something: 0x4a742b0, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+Unlink entry: 0x4a735b0
+Unlink prev_entry check 0x4a732d0
+Next entry: 0x4a73ac0
+Non NULL prev_entry->next after 0x4a73ac0
+Before next_entry check 0x4a73ac0
+Non NULL next_entry->prev before 0x4a735b0
+Non NULL next_entry->prev after 0x4a732d0
 End unlink
-DESTROYING DLIRSEntry: 0x4e82e48 [test1: 0x119020]
-DESTROYING DLIRSEntry: 0x4e82c48 [test1: 0x119020]
-Front 0x4e83040
-Pointers [other: 0x4e82ff8] 0x4e83040 (nil) 0x4e83180 0x4e83040 0x4e83618
-Before prev_entry check (nil)
-dqht->head before 0x4e83040
-dqht->head after 0x4e83180
-Before next_entry check 0x4e83180
-Non NULL next_entry->prev before 0x4e83040
+TABLE: After unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [9] other: 0x4a73950, [0] more: 0x4a73e60, [27] something: 0x4a742b0, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+DESTROYING DLIRSEntry: 0x4a73670 [test1: 0x119020]
+DESTROYING DLIRSEntry: 0x4a73500 [test1: 0x119020]
+Front 0x4a73c30
+Unlink entry: 0x4a73c30
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a73c30
+dqht->head after 0x4a74080
+Before next_entry check 0x4a74080
+Non NULL next_entry->prev before 0x4a73c30
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Pointers [other: 0x4e82f08] 0x4e82908 0x4e82b68 0x4e830e0 0x4e82d00 0x4e82f50
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e82908
-Non NULL prev_entry->next after 0x4e830e0
-Before next_entry check 0x4e830e0
-Non NULL next_entry->prev before 0x4e82908
-Non NULL next_entry->prev after 0x4e82b68
+TABLE: Before unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [9] other: 0x4a73950, [0] more: 0x4a73e60, [27] something: 0x4a742b0, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+Unlink entry: 0x4a73ac0
+Unlink prev_entry check 0x4a732d0
+Next entry: 0x4a73f10
+Non NULL prev_entry->next after 0x4a73f10
+Before next_entry check 0x4a73f10
+Non NULL next_entry->prev before 0x4a73ac0
+Non NULL next_entry->prev after 0x4a732d0
 End unlink
-DESTROYING DLIRSEntry: 0x4e82ff8 [other: 0x119024]
-DESTROYING DLIRSEntry: 0x4e82f08 [other: 0x119024]
-Front 0x4e83180
-Pointers [more: 0x4e83138] 0x4e83180 (nil) 0x4e832c0 0x4e83180 0x4e83618
-Before prev_entry check (nil)
-dqht->head before 0x4e83180
-dqht->head after 0x4e832c0
-Before next_entry check 0x4e832c0
-Non NULL next_entry->prev before 0x4e83180
+TABLE: After unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [0] more: 0x4a73e60, [27] something: 0x4a742b0, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+DESTROYING DLIRSEntry: 0x4a73b80 [other: 0x119024]
+DESTROYING DLIRSEntry: 0x4a73950 [other: 0x119024]
+Front 0x4a74080
+Unlink entry: 0x4a74080
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a74080
+dqht->head after 0x4a744d0
+Before next_entry check 0x4a744d0
+Non NULL next_entry->prev before 0x4a74080
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Pointers [more: 0x4e83098] 0x4e830e0 0x4e82b68 0x4e83220 0x4e82d00 0x4e82f50
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e830e0
-Non NULL prev_entry->next after 0x4e83220
-Before next_entry check 0x4e83220
-Non NULL next_entry->prev before 0x4e830e0
-Non NULL next_entry->prev after 0x4e82b68
+TABLE: Before unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [0] more: 0x4a73e60, [27] something: 0x4a742b0, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+Unlink entry: 0x4a73f10
+Unlink prev_entry check 0x4a732d0
+Next entry: 0x4a74360
+Non NULL prev_entry->next after 0x4a74360
+Before next_entry check 0x4a74360
+Non NULL next_entry->prev before 0x4a73f10
+Non NULL next_entry->prev after 0x4a732d0
 End unlink
-DESTROYING DLIRSEntry: 0x4e83138 [more: 0x119028]
-DESTROYING DLIRSEntry: 0x4e83098 [more: 0x119028]
-Front 0x4e832c0
-Pointers [something: 0x4e83278] 0x4e832c0 (nil) 0x4e82990 0x4e832c0 0x4e83618
-Before prev_entry check (nil)
-dqht->head before 0x4e832c0
-dqht->head after 0x4e82990
-Before next_entry check 0x4e82990
-Non NULL next_entry->prev before 0x4e832c0
+TABLE: After unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [27] something: 0x4a742b0, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+DESTROYING DLIRSEntry: 0x4a73fd0 [more: 0x119028]
+DESTROYING DLIRSEntry: 0x4a73e60 [more: 0x119028]
+Front 0x4a744d0
+Unlink entry: 0x4a744d0
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a744d0
+dqht->head after 0x4a749e0
+Before next_entry check 0x4a749e0
+Non NULL next_entry->prev before 0x4a744d0
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Pointers [something: 0x4e831d8] 0x4e83220 0x4e82b68 0x4e83360 0x4e82d00 0x4e82f50
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e83220
-Non NULL prev_entry->next after 0x4e83360
-Before next_entry check 0x4e83360
-Non NULL next_entry->prev before 0x4e83220
-Non NULL next_entry->prev after 0x4e82b68
+TABLE: Before unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [27] something: 0x4a742b0, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+Unlink entry: 0x4a74360
+Unlink prev_entry check 0x4a732d0
+Next entry: 0x4a747b0
+Non NULL prev_entry->next after 0x4a747b0
+Before next_entry check 0x4a747b0
+Non NULL next_entry->prev before 0x4a74360
+Non NULL next_entry->prev after 0x4a732d0
 End unlink
-DESTROYING DLIRSEntry: 0x4e83278 [something: 0x11902c]
-DESTROYING DLIRSEntry: 0x4e831d8 [something: 0x11902c]
-Front 0x4e82990
-Pointers [yeahd: 0x4e833b8] 0x4e82990 (nil) 0x4e83618 0x4e82990 0x4e83618
-Before prev_entry check (nil)
-dqht->head before 0x4e82990
-dqht->head after 0x4e83618
-Before next_entry check 0x4e83618
-Non NULL next_entry->prev before 0x4e82990
+TABLE: After unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+DESTROYING DLIRSEntry: 0x4a74420 [something: 0x11902c]
+DESTROYING DLIRSEntry: 0x4a742b0 [something: 0x11902c]
+Front 0x4a749e0
+Unlink entry: 0x4a749e0
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a749e0
+dqht->head after 0x4a74f70
+Before next_entry check 0x4a74f70
+Non NULL next_entry->prev before 0x4a749e0
 Non NULL next_entry->prev after (nil)
 End unlink
 After unlink invocation
-Pointers [yeahd: 0x4e83318] 0x4e83360 0x4e82b68 0x4e82f50 0x4e82d00 0x4e82f50
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e83360
-Non NULL prev_entry->next after 0x4e82f50
-Before next_entry check 0x4e82f50
-Non NULL next_entry->prev before 0x4e83360
-Non NULL next_entry->prev after 0x4e82b68
+TABLE: Before unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [28] yeahd: 0x4a74700, [4] dgsdfs: 0x4a74c10  }
+Unlink entry: 0x4a747b0
+Unlink prev_entry check 0x4a732d0
+Next entry: 0x4a74e00
+Non NULL prev_entry->next after 0x4a74e00
+Before next_entry check 0x4a74e00
+Non NULL next_entry->prev before 0x4a747b0
+Non NULL next_entry->prev after 0x4a732d0
 End unlink
-DESTROYING DLIRSEntry: 0x4e833b8 [yeahd: 0x119030]
-DESTROYING DLIRSEntry: 0x4e83318 [yeahd: 0x119030]
-Front 0x4e83618
-Pointers [dgsdfs: 0x4e82fa8] 0x4e83618 (nil) (nil) 0x4e83618 0x4e83618
-Before prev_entry check (nil)
-dqht->head before 0x4e83618
+TABLE: After unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [4] dgsdfs: 0x4a74c10  }
+DESTROYING DLIRSEntry: 0x4a74870 [yeahd: 0x119030]
+DESTROYING DLIRSEntry: 0x4a74700 [yeahd: 0x119030]
+Front 0x4a74f70
+Unlink entry: 0x4a74f70
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a74f70
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e83618
+DQHT 0x4a703e0
+dqht->tail before 0x4a74f70
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
-Pointers [dgsdfs: 0x4e834a8] 0x4e82f50 0x4e82b68 (nil) 0x4e82d00 0x4e82f50
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e82f50
+TABLE: Before unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [4] dgsdfs:0x4a74c10]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [4] dgsdfs: 0x4a74c10  }
+Unlink entry: 0x4a74e00
+Unlink prev_entry check 0x4a732d0
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82f50
-dqht->tail after: 0x4e82b68
+DQHT 0x4a702a0
+dqht->tail before 0x4a74e00
+dqht->tail after: 0x4a732d0
 End unlink
-DESTROYING DLIRSEntry: 0x4e82fa8 [dgsdfs: 0x119034]
-DESTROYING DLIRSEntry: 0x4e834a8 [dgsdfs: 0x119034]
+TABLE: After unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [29] doij42od:0x4a72e80]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80  }
+DESTROYING DLIRSEntry: 0x4a74ec0 [dgsdfs: 0x119034]
+DESTROYING DLIRSEntry: 0x4a74c10 [dgsdfs: 0x119034]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[5] Request result: miss with evicted: 0x4e82a80 for [dgsdfs: 24675]
+[5] Request result: miss with evicted: 0x4a74590 for [dgsdfs: 24675]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [29] doij42od:0x4a72e80]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [4] dgsdfs:0x4a74aa0]
+[Tail: [4] dgsdfs:0x4a74aa0]
+{ [4] dgsdfs: 0x4a74aa0  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82a80 [yeahd: 0x119030]
+DESTROYING DLIRSEntry: 0x4a74590 [yeahd: 0x119030]
 Cache is full? true 5
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
 Entry retrieval reached ehjigdss, (nil)
 Miss before
 Evicting resident HIR
-Front 0x4e82bc0
-Pointers [dgsdfs: 0x4e82aa8] 0x4e82bc0 (nil) (nil) 0x4e82bc0 0x4e82bc0
-Before prev_entry check (nil)
-dqht->head before 0x4e82bc0
+Front 0x4a74b50
+Unlink entry: 0x4a74b50
+Unlink prev_entry check (nil)
+DQHT 0x4a70520
+dqht->head before 0x4a74b50
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82bc0
+DQHT 0x4a70520
+dqht->tail before 0x4a74b50
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
 MISS ENTRY 2: ehjigdss
-CREATED NEW DLIRSEntry: 0x4e82a80 [ehjigdss: 0x119038]
-Inserting [ehjigdss: 0x4e82a80]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [ehjigdss: 0x4e829b0]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e829b0]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [ehjigdss: 0x4e829b0]
+CREATED NEW DLIRSEntry: 0x4a75030 [ehjigdss: 0x119038]
+Inserting [ehjigdss: 0x4a75030]
+Inserting [ehjigdss: 0x4a751a0]
+Amending tail: [ehjigdss: 0x4a751a0]
 Entry->prev before (nil)
-Entry->prev after: 0x4e82b68
-Inserting [ehjigdss: 0x4e834c0]
-NEW ENTRY [Key: ehjigdss]
-NEW ENTRY [Ptr: 0x4e834c0]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Front 0x4e82c48
-Pointers [ehjigdss: 0x4e834c0] 0x4e82c48 (nil) (nil) 0x4e82c48 0x4e82c48
-Before prev_entry check (nil)
-dqht->head before 0x4e82c48
+Entry->prev after: 0x4a732d0
+Inserting [ehjigdss: 0x4a75310]
+Front 0x4a753c0
+Unlink entry: 0x4a753c0
+Unlink prev_entry check (nil)
+DQHT 0x4a703e0
+dqht->head before 0x4a753c0
 dqht->head after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e82c48
+DQHT 0x4a703e0
+dqht->tail before 0x4a753c0
 dqht->tail after: (nil)
 End unlink
 After unlink invocation
-Pointers [ehjigdss: 0x4e829b0] 0x4e83488 0x4e82b68 (nil) 0x4e82d00 0x4e83488
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e83488
+TABLE: Before unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [14] ehjigdss:0x4a751a0]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80, [14] ehjigdss: 0x4a751a0  }
+Unlink entry: 0x4a75250
+Unlink prev_entry check 0x4a732d0
+Next entry: (nil)
 Non NULL prev_entry->next after (nil)
 Before next_entry check (nil)
-dqht->tail before 0x4e83488
-dqht->tail after: 0x4e82b68
+DQHT 0x4a702a0
+dqht->tail before 0x4a75250
+dqht->tail after: 0x4a732d0
 End unlink
-DESTROYING DLIRSEntry: 0x4e834c0 [ehjigdss: 0x119038]
-DESTROYING DLIRSEntry: 0x4e829b0 [ehjigdss: 0x119038]
+TABLE: After unlink
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [29] doij42od:0x4a72e80]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80  }
+DESTROYING DLIRSEntry: 0x4a75310 [ehjigdss: 0x119038]
+DESTROYING DLIRSEntry: 0x4a751a0 [ehjigdss: 0x119038]
 Miss after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 0
-[6] Request result: miss with evicted: 0x4e82aa8 for [ehjigdss: 55363]
+[6] Request result: miss with evicted: 0x4a74aa0 for [ehjigdss: 55363]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [29] doij42od:0x4a72e80]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a75030]
+[Tail: [0] ehjigdss:0x4a75030]
+{ [0] ehjigdss: 0x4a75030  }
 [RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82aa8 [dgsdfs: 0x119034]
+DESTROYING DLIRSEntry: 0x4a74aa0 [dgsdfs: 0x119034]
 Cache is full? true 6
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached oijfguod, 0x4e82b40
+Entry retrieval reached oijfguod, 0x4a72180
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [7] Request result: hit with evicted: (nil) for [oijfguod: 426723]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [29] doij42od:0x4a72e80]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a75030]
+[Tail: [0] ehjigdss:0x4a75030]
+{ [0] ehjigdss: 0x4a75030  }
 [RWLOCK] Unlocking
 Cache is full? true 7
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached ngujhdw, 0x4e82b08
+Entry retrieval reached ngujhdw, 0x4a72800
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [8] Request result: hit with evicted: (nil) for [ngujhdw: 957357]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [29] doij42od:0x4a72e80]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a75030]
+[Tail: [0] ehjigdss:0x4a75030]
+{ [0] ehjigdss: 0x4a75030  }
 [RWLOCK] Unlocking
 Cache is full? true 8
 ==== THREAD: 1 ====
 [RWLOCK] Locking with write lock
-Entry retrieval reached doij42od, 0x4e82ca8
+Entry retrieval reached doij42od, 0x4a72e80
 Hit LIR before
 Hit LIR after
 [RWLOCK] Unlocking
 Lock result: 0, Request result 1
 [9] Request result: hit with evicted: (nil) for [doij42od: 64526]
 [RWLOCK] Locking with read lock
+TABLE: Non-Resident HIRS
+[Head: (nil)]
+[Tail: (nil)]
+{ }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: LIRS
+[Head: [30] oijfguod:0x4a72180]
+[Tail: [29] doij42od:0x4a72e80]
+{ [30] oijfguod: 0x4a72180, [31] ngujhdw: 0x4a72800, [29] doij42od: 0x4a72e80  }
 [RWLOCK] Unlocking
 [RWLOCK] Locking with read lock
+TABLE: Resident HIRS
+[Head: [0] ehjigdss:0x4a75030]
+[Tail: [0] ehjigdss:0x4a75030]
+{ [0] ehjigdss: 0x4a75030  }
 [RWLOCK] Unlocking
 Cache is full? true 9
 <><><><> END OF TEST <><><><>
-======== AFTER WAITING ========
-======== REQUEST 1 ========
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-==== THREAD: 0 ====
-[RWLOCK] Locking with write lock
-Entry retrieval reached other, (nil)
-Miss before
-Evicting resident HIR
-Front 0x4e82bc0
-Pointers [ehjigdss: 0x4e82a80] 0x4e82bc0 (nil) (nil) 0x4e82bc0 0x4e82bc0
-Before prev_entry check (nil)
-dqht->head before 0x4e82bc0
-dqht->head after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e82bc0
-dqht->tail after: (nil)
-End unlink
-After unlink invocation
-MISS ENTRY 2: other
-CREATED NEW DLIRSEntry: 0x4e82aa8 [other: 0x119024]
-Inserting [other: 0x4e82aa8]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82aa8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [other: 0x4e82908]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82908]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [other: 0x4e82908]
-Entry->prev before (nil)
-Entry->prev after: 0x4e82b68
-Inserting [other: 0x4e82c28]
-NEW ENTRY [Key: other]
-NEW ENTRY [Ptr: 0x4e82c28]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Front 0x4e82c70
-Pointers [other: 0x4e82c28] 0x4e82c70 (nil) (nil) 0x4e82c70 0x4e82c70
-Before prev_entry check (nil)
-dqht->head before 0x4e82c70
-dqht->head after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e82c70
-dqht->tail after: (nil)
-End unlink
-After unlink invocation
-Pointers [other: 0x4e82908] 0x4e83488 0x4e82b68 (nil) 0x4e82d00 0x4e83488
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e83488
-Non NULL prev_entry->next after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e83488
-dqht->tail after: 0x4e82b68
-End unlink
-DESTROYING DLIRSEntry: 0x4e82c28 [other: 0x119024]
-DESTROYING DLIRSEntry: 0x4e82908 [other: 0x119024]
-Miss after
-[RWLOCK] Unlocking
-Lock result: 0, Request result 0
-[1:1] Request result: miss with evicted: 0x4e82a80 for [other: 7345]
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82a80 [ehjigdss: 0x119038]
-Cache is full? true 1
-==== THREAD: 0 ====
-[RWLOCK] Locking with write lock
-Entry retrieval reached more, (nil)
-Miss before
-Evicting resident HIR
-Front 0x4e82990
-Pointers [other: 0x4e82aa8] 0x4e82990 (nil) (nil) 0x4e82990 0x4e82990
-Before prev_entry check (nil)
-dqht->head before 0x4e82990
-dqht->head after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e82990
-dqht->tail after: (nil)
-End unlink
-After unlink invocation
-MISS ENTRY 2: more
-CREATED NEW DLIRSEntry: 0x4e82be0 [more: 0x119028]
-Inserting [more: 0x4e82be0]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e82be0]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Inserting [more: 0x4e82908]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e82908]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [more: 0x4e82908]
-Entry->prev before (nil)
-Entry->prev after: 0x4e82b68
-Inserting [more: 0x4e82c28]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e82c28]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Front 0x4e82c70
-Pointers [more: 0x4e82c28] 0x4e82c70 (nil) (nil) 0x4e82c70 0x4e82c70
-Before prev_entry check (nil)
-dqht->head before 0x4e82c70
-dqht->head after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e82c70
-dqht->tail after: (nil)
-End unlink
-After unlink invocation
-Pointers [more: 0x4e82908] 0x4e83488 0x4e82b68 (nil) 0x4e82d00 0x4e83488
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e83488
-Non NULL prev_entry->next after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e83488
-dqht->tail after: 0x4e82b68
-End unlink
-DESTROYING DLIRSEntry: 0x4e82c28 [more: 0x119028]
-DESTROYING DLIRSEntry: 0x4e82908 [more: 0x119028]
-Miss after
-[RWLOCK] Unlocking
-Lock result: 0, Request result 0
-[2:1] Request result: miss with evicted: 0x4e82aa8 for [more: 5246]
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82aa8 [other: 0x119024]
-Cache is full? true 2
-==== THREAD: 0 ====
-[RWLOCK] Locking with write lock
-Entry retrieval reached more, (nil)
-Hit HIR in Q before
-Inserting [more: 0x4e82be0]
-Amending tail: [more: 0x4e82be0]
-Entry->prev before (nil)
-Entry->prev after: 0x4e82990
-Inserting [more: 0x4e82aa8]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e82aa8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [more: 0x4e82aa8]
-Entry->prev before (nil)
-Entry->prev after: 0x4e82b68
-Inserting [more: 0x4e834a8]
-NEW ENTRY [Key: more]
-NEW ENTRY [Ptr: 0x4e834a8]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Front 0x4e82c28
-Pointers [more: 0x4e834a8] 0x4e82c28 (nil) (nil) 0x4e82c28 0x4e82c28
-Before prev_entry check (nil)
-dqht->head before 0x4e82c28
-dqht->head after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e82c28
-dqht->tail after: (nil)
-End unlink
-After unlink invocation
-Pointers [more: 0x4e82aa8] 0x4e82908 0x4e82b68 (nil) 0x4e82d00 0x4e82908
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e82908
-Non NULL prev_entry->next after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e82908
-dqht->tail after: 0x4e82b68
-End unlink
-DESTROYING DLIRSEntry: 0x4e834a8 [more: 0x119028]
-DESTROYING DLIRSEntry: 0x4e82aa8 [more: 0x119028]
-Hit HIR in Q after
-[RWLOCK] Unlocking
-Lock result: 0, Request result 1
-[2:2] Request result: hit with evicted: (nil) for [more: 5246]
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-Cache is full? true 2
-==== THREAD: 0 ====
-[RWLOCK] Locking with write lock
-Entry retrieval reached something, (nil)
-Miss before
-Evicting resident HIR
-Front 0x4e82990
-Pointers [more: 0x4e82be0] 0x4e82990 0x4e82990 0x4e82990 0x4e82990 0x4e82990
-Before prev_entry check 0x4e82990
-Non NULL prev_entry->next before 0x4e82990
-Non NULL prev_entry->next after 0x4e82990
-Before next_entry check 0x4e82990
-Non NULL next_entry->prev before 0x4e82990
-Non NULL next_entry->prev after 0x4e82990
-End unlink
-After unlink invocation
-MISS ENTRY 2: something
-CREATED NEW DLIRSEntry: 0x4e82990 [something: 0x11902c]
-Inserting [something: 0x4e82990]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e82990]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [something: 0x4e82990]
-Entry->prev before (nil)
-Entry->prev after: 0x4e82990
-Inserting [something: 0x4e82a80]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e82a80]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Amending tail: [something: 0x4e82a80]
-Entry->prev before (nil)
-Entry->prev after: 0x4e82b68
-Inserting [something: 0x4e834c0]
-NEW ENTRY [Key: something]
-NEW ENTRY [Ptr: 0x4e834c0]
-NEW ENTRY [Prev: (nil)]
-NEW ENTRY [Next: (nil)]
-Front 0x4e82c48
-Pointers [something: 0x4e834c0] 0x4e82c48 (nil) (nil) 0x4e82c48 0x4e82c48
-Before prev_entry check (nil)
-dqht->head before 0x4e82c48
-dqht->head after (nil)
-Before next_entry check (nil)
-dqht->tail before 0x4e82c48
-dqht->tail after: (nil)
-End unlink
-After unlink invocation
-DESTROYING DLIRSEntry: 0x4e834c0 [)è: 0x11902c]
-Miss after
-[RWLOCK] Unlocking
-Lock result: 0, Request result 0
-[3:1] Request result: miss with evicted: 0x4e82be0 for [something: 16473]
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-[RWLOCK] Locking with read lock
-[RWLOCK] Unlocking
-DESTROYING DLIRSEntry: 0x4e82be0 [more: 0x119028]
-Cache is full? true 3
-==== THREAD: 0 ====
-[RWLOCK] Locking with write lock
-Entry retrieval reached something, 0x4e82a80
-Hit HIR in LIRS before
-Pointers [something: 0x4e82a80] 0x4e83488 0x4e82b68 (nil) 0x4e82d00 0x4e83488
-Before prev_entry check 0x4e82b68
-Non NULL prev_entry->next before 0x4e83488
-Non NULL prev_entry->next after (nil)
-Before next_ent
+======== BEFORE WAITING ========
+======== AFTER BARRIER ========
+======== BEFORE JOIN ========

@@ -14,7 +14,7 @@
 #define OR_OP '|'
 #define OR_OP_STR "|"
 
-#define THREAD_COUNT 2
+#define THREAD_COUNT 4
 
 int key_compare(const char* key1, const char* key2) {
     if (key1 == NULL && key2 == NULL) {
@@ -79,8 +79,9 @@ void* threadFn(void* arg) {
     Params* params = (Params*) arg;
     Cache* cache = (Cache*) params->cache;
     int index = params->index;
-    DEBUG("======== BEFORE WAITING ========");
-    DEBUG("======== AFTER WAITING ========");
+//    DEBUG("======== BEFORE WAITING ========");
+//    pthread_barrier_wait(&barrier);
+//    DEBUG("======== AFTER WAITING ========");
     INFO("======== REQUEST 1 ========");
     locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
     locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
@@ -148,14 +149,7 @@ int main(int argc, char* argv[]) {
         HEAP_SIZE,
         8,
         4,
-        (CacheBackingHandlers) {
-            .createHandler = (CacheBackingCreate) dlirs_create,
-            .destroyHandler = dlirs_destroy,
-            .containsHandler = dlirs_contains,
-            .isFullHandler = dlirs_is_full,
-            .requestHandler = (CacheBackingRequest) dlirs_request,
-            .getHandler = dlirs_get
-        },
+        DLIRS_CACHE_BACKING_HANDLERS,
         &(DLIRSOptions) {
             .hirs_ratio = 0.01f,
             .comparator = key_compare
@@ -182,8 +176,9 @@ int main(int argc, char* argv[]) {
         }
         DEBUG("Created thread %d", i);
     }
-    INFO("======== BEFORE BARRIER ========");
-    INFO("======== AFTER BARRIER ========");
+//    INFO("======== BEFORE BARRIER ========");
+//    pthread_barrier_wait(&barrier);
+//    INFO("======== AFTER BARRIER ========");
     INFO("======== BEFORE JOIN ========");
     int retVals[THREAD_COUNT];
     for (int i = 0; i < THREAD_COUNT; i++) {
@@ -201,8 +196,8 @@ int main(int argc, char* argv[]) {
     locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
     locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
     locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
-//    if (cache_destroy(cache) != 0) {
-//        FATAL("Could not destroy cache");
-//    }
+    if (cache_destroy(cache) != 0) {
+        FATAL("Could not destroy cache");
+    }
     return 0;
 }

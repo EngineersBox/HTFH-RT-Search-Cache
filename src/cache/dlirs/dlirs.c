@@ -97,6 +97,7 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
     if (dqht_remove(AM_ALLOCATOR_ARG cache->lirs, key) == NULL
         || (hirsEntry = dqht_remove(AM_ALLOCATOR_ARG cache->non_resident_hirs, key)) == NULL) {
         dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);
+        entry = NULL;
         return -1;
     }
     dlirs_entry_destroy(AM_ALLOCATOR_ARG hirsEntry);
@@ -280,7 +281,7 @@ int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DL
         return 0;
     }
     while ((cache->hirs_count + cache->lirs_count) >= cache->cache_size) {
-        while (cache->lirs_count > (unsigned long long) cache->lirs_limit) {
+        while (cache->lirs_count > cache->lirs_limit) {
             TRACE("Evicting LIR");
             dlirs_evict_lir(AM_ALLOCATOR_ARG cache);
         }

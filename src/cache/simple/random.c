@@ -1,5 +1,7 @@
 #include "./random.h"
 
+#include <string.h>
+
 RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, RandomCacheOptions* options) {
     RandomCache* cache = malloc(sizeof(*cache));
     if (cache == NULL) {
