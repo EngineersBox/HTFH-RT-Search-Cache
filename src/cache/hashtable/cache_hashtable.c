@@ -113,6 +113,17 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
     return NULL;
 }
 
+void* ht_delete_entry(AM_ALLOCATOR_PARAM HashTable* ht, int index) {
+    if (ht == NULL || ht->items == NULL || ht->items[index] == NULL) {
+        return NULL;
+    }
+    void* value = ht->items[index]->ptr;
+    dqhtentry_destroy(AM_ALLOCATOR_ARG ht->items[index]);
+    ht->count--;
+    ht->items[index] = NULL;
+    return value;
+}
+
 void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key) {
     if (ht == NULL
         || ht->items == NULL
@@ -126,11 +137,7 @@ void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL
             && strcmp(key, ht->items[index]->key) == 0) {
-            void* value = ht->items[index]->ptr;
-            dqhtentry_destroy(AM_ALLOCATOR_ARG ht->items[index]);
-            ht->count--;
-            ht->items[index] = NULL;
-            return value;
+            return ht_delete_entry(AM_ALLOCATOR_ARG ht, index);
         }
         index = (index + 1) % ht->size;
     }

@@ -28,6 +28,8 @@ int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht);
 
 DQHTEntry* ht_get(HashTable* ht, const char* key);
 DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value);
+
+void* ht_delete_entry(AM_ALLOCATOR_PARAM HashTable* ht, int index);
 void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key);
 
 #ifdef __cplusplus

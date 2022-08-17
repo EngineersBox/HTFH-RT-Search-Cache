@@ -12,8 +12,8 @@
 #define HEAP_SIZE (16 * 10000)
 
 #define AND_OP '^'
-#define OR_OP '|'
 #define OR_OP_STR "|"
+#define OR_OP OR_OP_STR[0]
 
 #define THREAD_COUNT 2
 

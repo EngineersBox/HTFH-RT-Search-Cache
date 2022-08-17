@@ -68,7 +68,7 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
 
 void dump(void *myStruct, long size) {
     unsigned int i;
-    const unsigned char * const px = (unsigned char*)myStruct;
+    const unsigned char* const px = (unsigned char*) myStruct;
     for (i = 0; i < size; ++i) {
         if( i % (sizeof(int) * 8) == 0){
             printf("\n%08X ", i);
@@ -151,10 +151,7 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
             dqht_print_table("Before unlink", dqht);
             dqht_unlink(dqht, dqht->ht->items[index]);
             dqht_print_table("After unlink", dqht);
-            dqhtentry_destroy(AM_ALLOCATOR_ARG dqht->ht->items[index]);
-            dqht->ht->items[index] = NULL;
-            dqht->ht->count--;
-            return value;
+            return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, index);
         }
         index = (index + 1) % dqht->ht->size;
     }
@@ -190,15 +187,9 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
         return NULL;
     }
     DQHTEntry* front = dqht->head;
-    printf("Front %p\n", dqht->head);
-    void* value = front->ptr;
-    int index = front->index;
-    dqht_unlink(dqht, dqht->head);
-    TRACE("After unlink invocation");
-    dqhtentry_destroy(AM_ALLOCATOR_ARG front);
-    dqht->ht->items[index] = NULL;
-    dqht->ht->count--;
-    return value;
+    printf("Front %p\n", front);
+    dqht_unlink(dqht, front);
+    return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, front->index);
 }
 
 void* dqht_get_last(DequeueHashTable* dqht) {
@@ -214,13 +205,9 @@ void* dqht_pop_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
         return NULL;
     }
     DQHTEntry* back = dqht->tail;
-    void* value = back->ptr;
-    int index = back->index;
-    dqht_unlink(dqht, dqht->tail);
-    dqhtentry_destroy(AM_ALLOCATOR_ARG back);
-    dqht->ht->items[index] = NULL;
-    dqht->ht->count--;
-    return value;
+    printf("Back %p\n", back);
+    dqht_unlink(dqht, back);
+    return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, back->index);
 }
 
 void dqht_print_table(char* name, DequeueHashTable* dqht) {
