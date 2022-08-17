@@ -6,6 +6,7 @@
 
 #define cache_backing_t DLIRS*
 #include "cache/cache.h"
+#include "cache/cache_backing.h"
 #include "allocator/error/allocator_errno.h"
 
 #define HEAP_SIZE (16 * 10000)
