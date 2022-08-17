@@ -188,7 +188,10 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     }
     DQHTEntry* front = dqht->head;
     printf("Front %p\n", front);
+    // BUG: This shows a huge amount of the same entry duplicated
+//    dqht_print_table("PRE FRONT", dqht);
     dqht_unlink(dqht, front);
+    dqht_print_table("POST FRONT", dqht);
     return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, front->index);
 }
 
@@ -239,10 +242,14 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     DQHTEntry* entry = dqht->head;
     while (entry != NULL) {
         printf(
-            " [%zu] %s: %p%s",
+            " [%zu] %s: %p (N: %s %p, P: %s %p)%s",
             entry->index,
             entry->key,
             entry->ptr,
+            entry->next == NULL ? "" : entry->next->key,
+            entry->next == NULL ? NULL : entry->next->ptr,
+            entry->prev == NULL ? "" : entry->prev->key,
+            entry->prev == NULL ? NULL : entry->prev->ptr,
             entry->next != NULL ? "," : " "
         );
         entry = entry->next;
