@@ -14,7 +14,7 @@
 #define OR_OP '|'
 #define OR_OP_STR "|"
 
-#define THREAD_COUNT 4
+#define THREAD_COUNT 2
 
 int key_compare(const char* key1, const char* key2) {
     if (key1 == NULL && key2 == NULL) {
