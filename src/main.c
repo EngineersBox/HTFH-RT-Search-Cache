@@ -176,9 +176,9 @@ int main(int argc, char* argv[]) {
         }
         DEBUG("Created thread %d", i);
     }
-    INFO("======== BEFORE BARRIER ========");
-    pthread_barrier_wait(&barrier);
-    INFO("======== AFTER BARRIER ========");
+//    INFO("======== BEFORE BARRIER ========");
+//    pthread_barrier_wait(&barrier);
+//    INFO("======== AFTER BARRIER ========");
     INFO("======== BEFORE JOIN ========");
     int retVals[THREAD_COUNT];
     for (int i = 0; i < THREAD_COUNT; i++) {
