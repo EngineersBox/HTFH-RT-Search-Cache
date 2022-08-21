@@ -35,7 +35,7 @@
 ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **
 ** =============================================================================
-** Modified and restructured by EngineersBox for use in HTFH
+** Modified and restructured by Jack Kilrain (EngineersBox) for use in HTFH
 */
 
 #pragma once
