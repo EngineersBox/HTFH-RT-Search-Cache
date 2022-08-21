@@ -39,7 +39,7 @@ typedef struct CacheBackingHandlers {
     .createHandler = (CacheBackingCreate) dlirs_create, \
     .destroyHandler = dlirs_destroy, \
     .requestHandler = (CacheBackingRequest) dlirs_request, \
-    .getHandler = dlirs_get \
+    .getHandler = dlirs_get, \
     .containsHandler = dlirs_contains, \
     .isFullHandler = dlirs_is_full, \
 })
@@ -48,7 +48,7 @@ typedef struct CacheBackingHandlers {
     .createHandler = (CacheBackingCreate) rc_create, \
     .destroyHandler = rc_destroy, \
     .requestHandler = (CacheBackingRequest) rc_request, \
-    .getHandler = rc_get \
+    .getHandler = rc_get, \
     .containsHandler = rc_contains, \
     .isFullHandler = rc_is_full, \
 })
@@ -57,7 +57,7 @@ typedef struct CacheBackingHandlers {
     .createHandler = (CacheBackingCreate) lru_create, \
     .destroyHandler = lru_destroy, \
     .requestHandler = (CacheBackingRequest) lru_request, \
-    .getHandler = lru_get \
+    .getHandler = lru_get, \
     .containsHandler = lru_contains, \
     .isFullHandler = lru_is_full, \
 })
