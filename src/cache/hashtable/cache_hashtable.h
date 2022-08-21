@@ -10,7 +10,7 @@ extern "C" {
 #include <inttypes.h>
 #include <stddef.h>
 
-#include "dq_ht_entry.h"
+#include "../dequeue_hashtable/dq_ht_entry.h"
 #include "../allocator/alloc_manager.h"
 
 typedef int (*KeyComparator)(const char* key1, const char* key2);
