@@ -11,7 +11,7 @@ extern "C" {
 #include <stddef.h>
 
 #include "../dequeue_hashtable/dq_ht_entry.h"
-#include "../allocator/alloc_manager.h"
+#include "../../allocator/alloc_manager.h"
 
 typedef int (*KeyComparator)(const char* key1, const char* key2);
 
