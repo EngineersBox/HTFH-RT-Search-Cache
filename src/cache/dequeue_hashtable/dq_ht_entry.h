@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
-#include "../allocator/alloc_manager.h"
+#include "../../allocator/alloc_manager.h"
 
 typedef struct DQHTEntry {
     char* key;
