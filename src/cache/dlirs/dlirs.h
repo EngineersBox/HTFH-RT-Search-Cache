@@ -12,7 +12,7 @@ extern "C" {
 #include "../../allocator/thread/lock.h"
 #include "dlirs_entry.h"
 
-#include "../allocator/alloc_manager.h"
+#include "../../allocator/alloc_manager.h"
 
 typedef struct DLIRS {
     size_t cache_size;

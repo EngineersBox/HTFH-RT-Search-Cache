@@ -11,7 +11,7 @@ extern "C" {
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include "../allocator/alloc_manager.h"
+#include "../../allocator/alloc_manager.h"
 
 typedef struct DLIRSEntry {
     bool is_LIR;

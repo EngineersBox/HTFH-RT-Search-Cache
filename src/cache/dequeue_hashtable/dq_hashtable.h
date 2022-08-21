@@ -12,7 +12,7 @@ extern "C" {
 
 #include "../hashtable/cache_hashtable.h"
 #include "dq_ht_entry.h"
-#include "../allocator/alloc_manager.h"
+#include "../../allocator/alloc_manager.h"
 
 typedef struct DequeueHashTable {
     DQHTEntry* head;
