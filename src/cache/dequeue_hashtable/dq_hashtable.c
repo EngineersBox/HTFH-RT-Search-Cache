@@ -220,7 +220,7 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     INFO("TABLE: %s", name);
     if (dqht->head != NULL) {
         printf(
-            "[Head: [%lld] %s:%p]\n",
+            "[Head: [%zu] %s:%p]\n",
             dqht->head->index,
             dqht->head->key,
             dqht->head->ptr
@@ -230,7 +230,7 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     }
     if (dqht->tail != NULL) {
         printf(
-            "[Tail: [%lld] %s:%p]\n",
+            "[Tail: [%zu] %s:%p]\n",
             dqht->tail->index,
             dqht->tail->key,
             dqht->tail->ptr
