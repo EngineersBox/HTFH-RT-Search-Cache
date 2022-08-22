@@ -5,7 +5,7 @@
 #include <inttypes.h>
 #include <string.h>
 
-#include "../logging/logging.h"
+#include "../../logging/logging.h"
 #include "../hashtable/hashing.h"
 
 DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {

@@ -10,7 +10,7 @@
 
 #include "../../math_utils.h"
 #include "../../logging/logging.h"
-#include "../preprocessor/lambda.h"
+#include "../../preprocessor/lambda.h"
 
 DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSOptions* options) {
     DLIRS* cache = am_malloc(sizeof(*cache));

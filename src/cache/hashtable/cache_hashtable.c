@@ -48,7 +48,7 @@ DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* va
     return ht->items[index];
 }
 
-inline int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {
+int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {
     while(items[index] != NULL) {
         if (strcmp(entry->key, items[index]->key) == 0) {
             return -1;

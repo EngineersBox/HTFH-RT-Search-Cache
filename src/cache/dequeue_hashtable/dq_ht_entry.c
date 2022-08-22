@@ -1,5 +1,4 @@
 #include "dq_ht_entry.h"
-#include "logging.h"
 
 #include <string.h>
 //#include <stdio.h>
