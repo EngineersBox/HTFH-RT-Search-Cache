@@ -189,7 +189,7 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     DQHTEntry* front = dqht->head;
     printf("Front %p\n", front);
     // BUG: This shows a huge amount of the same entry duplicated
-//    dqht_print_table("PRE FRONT", dqht);
+    dqht_print_table("PRE FRONT", dqht);
     dqht_unlink(dqht, front);
     dqht_print_table("POST FRONT", dqht);
     return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, front->index);
