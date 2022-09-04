@@ -13,6 +13,7 @@ extern "C" {
 #include "../allocator/alloc_manager.h"
 #include "dlirs/dlirs.h"
 #include "simple/random.h"
+#include "lru/lru.h"
 
 #ifndef cache_backing_t
 #define cache_backing_t void*
@@ -37,29 +38,29 @@ typedef struct CacheBackingHandlers {
 
 #define DLIRS_CACHE_BACKING_HANDLERS ((CacheBackingHandlers) { \
     .createHandler = (CacheBackingCreate) dlirs_create, \
-    .destroyHandler = dlirs_destroy, \
+    .destroyHandler = (CacheBackingDestroy) dlirs_destroy, \
     .requestHandler = (CacheBackingRequest) dlirs_request, \
-    .getHandler = dlirs_get, \
-    .containsHandler = dlirs_contains, \
-    .isFullHandler = dlirs_is_full, \
+    .getHandler = (CacheBackingGet) dlirs_get ,\
+    .containsHandler = (CacheBackingContains) dlirs_contains, \
+    .isFullHandler = (CacheBackingIsFull) dlirs_is_full \
 })
 
 #define RANDOM_CACHE_BACKING_HANDLERS ((CacheBackingHandlers) { \
     .createHandler = (CacheBackingCreate) rc_create, \
-    .destroyHandler = rc_destroy, \
+    .destroyHandler = (CacheBackingDestroy) rc_destroy, \
     .requestHandler = (CacheBackingRequest) rc_request, \
-    .getHandler = rc_get, \
-    .containsHandler = rc_contains, \
-    .isFullHandler = rc_is_full, \
+    .getHandler = (CacheBackingGet) rc_get, \
+    .containsHandler = (CacheBackingContains) rc_contains, \
+    .isFullHandler = (CacheBackingIsFull) rc_is_full \
 })
 
 #define LRU_CACHE_BACKING_HANDLERS ((CacheBackingHandlers) { \
     .createHandler = (CacheBackingCreate) lru_create, \
-    .destroyHandler = lru_destroy, \
+    .destroyHandler = (CacheBackingDestroy) lru_destroy, \
     .requestHandler = (CacheBackingRequest) lru_request, \
-    .getHandler = lru_get, \
-    .containsHandler = lru_contains, \
-    .isFullHandler = lru_is_full, \
+    .getHandler = (CacheBackingGet) lru_get, \
+    .containsHandler = (CacheBackingContains) lru_contains, \
+    .isFullHandler = (CacheBackingIsFull) lru_is_full \
 })
 
 #ifdef __cplusplus
