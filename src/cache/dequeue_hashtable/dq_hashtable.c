@@ -87,18 +87,13 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     }
     DQHTEntry* prev_entry = entry->prev;
     DQHTEntry* next_entry = entry->next;
-    printf("Unlink entry: %p\n", entry);
-    printf("Unlink prev_entry check %p\n", prev_entry);
     if (prev_entry != NULL) {
 //        dump(prev_entry, sizeof(DQHTEntry));
-        printf("Next entry: %p\n", next_entry);
         prev_entry->next = next_entry;
-        printf("Non NULL prev_entry->next after %p\n", prev_entry->next);
     } else {
         printf("DQHT %p\n", dqht);
         printf("dqht->head before %p\n", dqht->head);
         dqht->head = next_entry;
-        printf("dqht->head after %p\n", dqht->head);
     }
     printf("Before next_entry check %p\n", next_entry);
     if (next_entry != NULL) {
