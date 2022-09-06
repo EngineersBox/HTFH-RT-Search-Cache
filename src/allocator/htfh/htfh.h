@@ -90,16 +90,8 @@ __attribute__((hot, malloc, alloc_size(2, 3)
 , malloc (htfh_free, 2)
 #endif
 )) void* htfh_calloc(Allocator* alloc, size_t count, size_t bytes);
-__attribute__((hot, alloc_align(2)
-#ifdef gnu_version_10
-, malloc (htfh_free, 2)
-#endif
-)) void* htfh_memalign(Allocator* alloc, size_t align, size_t bytes);
-__attribute__((hot, alloc_size(3)
-#ifdef gnu_version_10
-, malloc (htfh_free, 2)
-#endif
-)) void* htfh_realloc(Allocator* alloc, void* ptr, size_t size);
+__attribute__((hot, alloc_align(2))) void* htfh_memalign(Allocator* alloc, size_t align, size_t bytes);
+__attribute__((hot, alloc_size(3))) void* htfh_realloc(Allocator* alloc, void* ptr, size_t size);
 
 #ifdef gnu_version_10
 #undef gnu_version_10
