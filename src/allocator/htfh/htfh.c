@@ -111,7 +111,7 @@ int htfh_destroy(Allocator* alloc) {
     return 0;
 }
 
-static size_t adjust_request_size(size_t size, size_t align) {
+static size_t adjust_request_size(size_t size, size_t align) __attribute__((pure)) {
     if (!size) {
         return 0;
     }
