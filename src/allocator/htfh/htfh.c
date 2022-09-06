@@ -6,41 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-static size_t adjust_request_size(size_t size, size_t align) {
-    if (!size) {
-        return 0;
-    }
-    const size_t aligned = align_up(size, align);
-    if (aligned < block_size_max) {
-        return htfh_max(aligned, block_size_min);
-    }
-    return 0;
-}
-
-inline size_t htfh_size(void) {
-    return sizeof(Controller);
-}
-
-inline size_t htfh_align_size(void) {
-    return ALIGN_SIZE;
-}
-
-inline size_t htfh_block_size_min(void) {
-    return block_size_min;
-}
-
-inline size_t htfh_block_size_max(void) {
-    return block_size_max;
-}
-
-inline size_t htfh_pool_overhead(void) {
-    return 2 * block_header_overhead;
-}
-
-inline size_t htfh_alloc_overhead(void) {
-    return block_header_overhead;
-}
-
 void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
     if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
@@ -144,6 +109,41 @@ int htfh_destroy(Allocator* alloc) {
     }
     free(alloc);
     return 0;
+}
+
+static size_t adjust_request_size(size_t size, size_t align) {
+    if (!size) {
+        return 0;
+    }
+    const size_t aligned = align_up(size, align);
+    if (aligned < block_size_max) {
+        return htfh_max(aligned, block_size_min);
+    }
+    return 0;
+}
+
+inline size_t htfh_size(void) {
+    return sizeof(Controller);
+}
+
+inline size_t htfh_align_size(void) {
+    return ALIGN_SIZE;
+}
+
+inline size_t htfh_block_size_min(void) {
+    return block_size_min;
+}
+
+inline size_t htfh_block_size_max(void) {
+    return block_size_max;
+}
+
+inline size_t htfh_pool_overhead(void) {
+    return 2 * block_header_overhead;
+}
+
+inline size_t htfh_alloc_overhead(void) {
+    return block_header_overhead;
 }
 
 void* htfh_malloc(Allocator* alloc, size_t size) {
