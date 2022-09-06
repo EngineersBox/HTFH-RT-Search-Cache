@@ -82,12 +82,12 @@ void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes);
 __attribute__((hot)) int htfh_free(Allocator* alloc, void* ptr);
 __attribute__((hot, malloc, alloc_size(2)
 #ifdef gnu_version_10
-, malloc (htfh_free, 2)
+, malloc(htfh_free, 2)
 #endif
 )) void* htfh_malloc(Allocator* alloc, size_t bytes);
 __attribute__((hot, malloc, alloc_size(2, 3)
 #ifdef gnu_version_10
-, malloc (htfh_free, 2)
+, malloc(htfh_free, 2)
 #endif
 )) void* htfh_calloc(Allocator* alloc, size_t count, size_t bytes);
 __attribute__((hot, alloc_align(2))) void* htfh_memalign(Allocator* alloc, size_t align, size_t bytes);
