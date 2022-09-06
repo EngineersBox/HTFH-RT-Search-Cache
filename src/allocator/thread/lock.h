@@ -12,7 +12,7 @@ extern "C" {
 
 // ==== MUTEX ====
 
-typedef pthread_mutex_t htfh_lock_t;
+typedef pthread_mutex_t __attribute__((__may_alias__)) htfh_lock_t;
 
 #define htfh_lock_init(lock, type) ({ \
     int result = 0; \

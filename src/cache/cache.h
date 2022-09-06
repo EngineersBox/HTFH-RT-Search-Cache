@@ -29,11 +29,11 @@ typedef struct Cache {
 Cache* cache_create(size_t heap_size, size_t ht_size, size_t cache_size, CacheBackingHandlers handlers, void* options);
 int cache_destroy(Cache* cache);
 
-bool cache_contains(Cache* cache, const char* key);
+__attribute__((hot, access(read_only, 2))) bool cache_contains(Cache* cache, const char* key);
 bool cache_is_full(Cache* cache);
 
-int cache_request(Cache* cache, const char* key, void* value, void** evicted);
-void* cache_get(Cache* cache, const char* key);
+__attribute__((hot, access(read_only, 2))) int cache_request(Cache* cache, const char* key, void* value, void** evicted);
+__attribute__((hot, access(read_only, 2))) void* cache_get(Cache* cache, const char* key);
 
 #ifdef __cplusplus
 };
