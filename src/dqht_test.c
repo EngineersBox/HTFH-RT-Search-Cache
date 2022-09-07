@@ -16,10 +16,14 @@ struct TestStruct {
 #define HEAP_SIZE (16 * 10000)
 
 int dqht_test_main(int argc, char* argv[]) {
-#ifdef HTFH_ALLOCATOR
+#if ALLOCATOR_TYPE > 0
+#if ALLOCATOR_TYPE == 1
     Allocator* allocator = htfh_create(HEAP_SIZE);
+#elif AALLOCATOR_TYPE == 2
+    GlibcAllocator* allocator = gca_create(HEAP_SIZE);
+#endif
     if (allocator == NULL) {
-        printf("Unable to create HTFH with size of %d", HEAP_SIZE);
+        printf("Unable to create allocator with heap size of %d", HEAP_SIZE);
         return 1;
     }
 #endif
@@ -115,5 +119,18 @@ int dqht_test_main(int argc, char* argv[]) {
     printf("== Deleted entries ==\n");
     printf("Table: "); dqht_print_table("Table:", table);
     dqht_destroy(AM_ALLOCATOR_ARG table);
+
+#if ALLOCATOR_TYPE == 1
+    if (htfh_destroy(allocator) != 0) {
+        printf("Unable to destroy allocator");
+        return 1;
+    }
+#elif AALLOCATOR_TYPE == 2
+    if (gca_destroy(allocator) != 0) {
+        printf("Unable to destroy allocator");
+        return 1;
+    }
+#endif
+
     return 0;
 }

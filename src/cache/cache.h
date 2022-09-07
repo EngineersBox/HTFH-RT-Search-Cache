@@ -13,10 +13,12 @@ extern "C" {
 #include "../allocator/alloc_manager.h"
 #include "cache_backing.h"
 
-#ifdef HTFH_ALLOCATOR
-#define LOCALISE_ALLOCATOR_ARG Allocator* allocator = cache->alloc;
-#else
+#if ALLOCATOR_TYPE == 0
 #define LOCALISE_ALLOCATOR_ARG
+#elif ALLOCATOR_TYPE == 1
+#define LOCALISE_ALLOCATOR_ARG Allocator* allocator = cache->alloc;
+#elif ALLOCATOR_TYPE == 2
+#define LOCALISE_ALLOCATOR_ARG GlibcAllocator* allocator = cache->alloc;
 #endif
 
 typedef struct Cache {

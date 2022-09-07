@@ -7,10 +7,14 @@
 #define HEAP_SIZE (16 * 10000)
 
 int random_test_main(int argc, char* argv[]) {
-#ifdef HTFH_ALLOCATOR
+#if ALLOCATOR_TYPE > 0
+#if ALLOCATOR_TYPE == 1
     Allocator* allocator = htfh_create(HEAP_SIZE);
+#elif ALLOCATOR_TYPE == 2
+    GlibcAllocator* allocator = gca_create(HEAP_SIZE);
+#endif
     if (allocator == NULL) {
-        printf("Unable to create HTFH with size of %d", HEAP_SIZE);
+        printf("Unable to create allocator with heap size of %d", HEAP_SIZE);
         return 1;
     }
 #endif

@@ -19,15 +19,16 @@ Cache* cache_create(size_t heap_size, size_t ht_size, size_t cache_size, CacheBa
         set_alloc_errno_msg(RWLOCK_LOCK_INIT, strerror(lock_result));
         return NULL;
     }
-#ifdef HTFH_ALLOCATOR
-    DEBUG("Using HTFH allocator for cache entries");
+#if ALLOCATOR_TYPE > 0
+#if ALLOCATOR_TYPE == 1
     Allocator* allocator = htfh_create(heap_size);
+#elif ALLOCATOR_TYPE == 2
+    GlibcAllocator* allocator = gca_create(heap_size);
+#endif
     if (allocator == NULL) {
         return NULL;
     }
     cache->alloc = allocator;
-#else
-    DEBUG("Using core allocator for cache entries");
 #endif
     cache->backing = handlers.createHandler(AM_ALLOCATOR_ARG ht_size, cache_size, options);
     if (cache->backing == NULL) {
@@ -46,8 +47,12 @@ int cache_destroy(Cache* cache) {
     if (cache->handlers.destroyHandler(AM_ALLOCATOR_ARG cache->backing) != 0) {
         return -1;
     }
-#ifdef HTFH_ALLOCATOR
+#if ALLOCATOR_TYPE == 1
     if (htfh_destroy(cache->alloc) != 0) {
+        return -1;
+    }
+#elif ALLOCATOR_TYPE == 2
+    if (gca_destroy(cache->alloc) != 0) {
         return -1;
     }
 #endif
