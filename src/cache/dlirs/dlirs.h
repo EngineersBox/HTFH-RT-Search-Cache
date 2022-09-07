@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 #include "../../allocator/htfh/htfh.h"
+#include "../../allocator/glibc/glibc.h"
 #include "../dequeue_hashtable/dq_hashtable.h"
 #include "../../allocator/thread/lock.h"
 #include "dlirs_entry.h"

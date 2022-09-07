@@ -30,14 +30,14 @@ extern "C" {
 #define am_realloc(ptr, size) htfh_realloc(AM_ALLOCATOR_ARG ptr, size)
 #define am_free(ptr) htfh_free(AM_ALLOCATOR_ARG ptr)
 #elif ALLOCATOR_TYPE == 2
-#include "glibc/allocator.h
+#include "glibc/glibc.h"
 #define AM_ALLOCATOR_PARAM GlibcAllocator* allocator,
 #define AM_ALLOCATOR_ARG allocator,
-#define am_malloc(size) gca_malloc(size)
-#define am_calloc(count, size) gca_calloc(count, size)
+#define am_malloc(size) gca_malloc(AM_ALLOCATOR_ARG size)
+#define am_calloc(count, size) gca_calloc(AM_ALLOCATOR_ARG count, size)
 #define am_memalign(align, size) NULL
 #define am_realloc(ptr, size) NULL
-#define am_free(ptr) gca_free(ptr)
+#define am_free(ptr) gca_free(AM_ALLOCATOR_ARG ptr)
 #endif
 
 #ifdef __cplusplus

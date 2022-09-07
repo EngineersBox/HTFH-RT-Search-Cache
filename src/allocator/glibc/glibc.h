@@ -41,7 +41,7 @@ typedef struct GlibcAllocator {
     void* heap;
 } GlibcAllocator;
 
-int gca_create(size_t heapSize);
+GlibcAllocator* gca_create(size_t heapSize);
 int gca_destroy(GlibcAllocator* alloc);
 
 #if defined(__GNUC__) \

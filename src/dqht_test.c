@@ -19,7 +19,7 @@ int dqht_test_main(int argc, char* argv[]) {
 #if ALLOCATOR_TYPE > 0
 #if ALLOCATOR_TYPE == 1
     Allocator* allocator = htfh_create(HEAP_SIZE);
-#elif AALLOCATOR_TYPE == 2
+#elif ALLOCATOR_TYPE == 2
     GlibcAllocator* allocator = gca_create(HEAP_SIZE);
 #endif
     if (allocator == NULL) {

@@ -4,12 +4,13 @@
 #include <sys/mman.h>
 
 #include "../error/allocator_errno.h"
+#include "../../preprocessor/checks.h"
 
-int gca_create(size_t heapSize) {
+GlibcAllocator* gca_create(size_t heapSize) {
     GlibcAllocator* alloc = malloc(sizeof(*alloc));
     if (alloc == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
-        return -1;
+        return NULL;
     }
     init_check(int, lock_result, htfh_lock_init(&alloc->mutex, PTHREAD_MUTEX_RECURSIVE), != 0) {
         set_alloc_errno_msg(MUTEX_LOCK_INIT, strerror(lock_result));
@@ -23,7 +24,7 @@ int gca_create(size_t heapSize) {
     alloc->heap_size = heapSize;
     alloc->current_brk = alloc->heap = mmap(
         NULL,
-        heap_size,
+        heapSize,
         PROT_READ | PROT_WRITE,
         MAP_PRIVATE | MAP_ANONYMOUS,
         -1,
@@ -32,9 +33,9 @@ int gca_create(size_t heapSize) {
     if (alloc->heap == NULL) {
         set_alloc_errno(HEAP_MMAP_FAILED);
         htfh_lock_unlock_handled(&alloc->mutex);
-        return -1;
+        return NULL;
     }
-    return htfh_lock_unlock_handled(&alloc->mutex);
+    return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? alloc : NULL;
 }
 
 int gca_destroy(GlibcAllocator* alloc) {
@@ -79,7 +80,7 @@ void* gca_sbrk(GlibcAllocator* alloc, intptr_t increment) {
     return oldbrk;
 }
 
-int cfh_free(GlibcAllocator* alloc, void* ap) {
+int gca_free(GlibcAllocator* alloc, void* ap) {
     if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return -1;
     }
@@ -159,6 +160,6 @@ void* gca_calloc(GlibcAllocator* alloc, unsigned count, unsigned nbytes) {
     if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
     }
-    void* ptr = cfh_malloc(alloc, count * nbytes);
+    void* ptr = gca_malloc(alloc, count * nbytes);
     return htfh_lock_unlock_handled(&alloc->mutex) != 0 || ptr == NULL ? NULL : memset(ptr, 0, count * nbytes);
 }

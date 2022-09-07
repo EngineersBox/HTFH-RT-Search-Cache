@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../../preprocessor/checks.h"
+
 void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
     if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
@@ -111,7 +113,7 @@ int htfh_destroy(Allocator* alloc) {
     return 0;
 }
 
-static size_t adjust_request_size(size_t size, size_t align) __attribute__((pure)) {
+__attribute__((pure)) static size_t adjust_request_size(size_t size, size_t align) {
     if (!size) {
         return 0;
     }

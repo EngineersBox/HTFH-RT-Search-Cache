@@ -4,7 +4,6 @@
 #include "logging/logging.h"
 //LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 
-#define cache_backing_t DLIRS*
 #include "cache/cache.h"
 #include "cache/cache_backing.h"
 #include "allocator/error/allocator_errno.h"
@@ -15,7 +14,7 @@
 #define OR_OP_STR "|"
 #define OR_OP OR_OP_STR[0]
 
-#define THREAD_COUNT 2
+#define THREAD_COUNT 1
 
 int key_compare(const char* key1, const char* key2) {
     if (key1 == NULL && key2 == NULL) {
