@@ -43,17 +43,17 @@ int gca_destroy(GlibcAllocator* alloc);
 #define gnu_version_10
 #endif
 
-__attribute__((hot)) int gca_free(GlibcAllocator* alloc, void* ap);
+__attribute__((hot)) int gca_free(GlibcAllocator* alloc, void* ptr);
 __attribute__((hot, malloc, alloc_size(2)
 #ifdef gnu_version_10
-, malloc(htfh_free, 2)
+, malloc(gca_free, 2)
 #endif
-)) void* gca_malloc(GlibcAllocator* alloc, size_t nbytes);
+)) void* gca_malloc(GlibcAllocator* alloc, size_t bytes);
 __attribute__((hot, malloc, alloc_size(2, 3)
 #ifdef gnu_version_10
-, malloc(htfh_free, 2)
+, malloc(gca_free, 2)
 #endif
-)) void* gca_calloc(GlibcAllocator* alloc, size_t count, size_t nbytes);
+)) void* gca_calloc(GlibcAllocator* alloc, size_t count, size_t bytes);
 __attribute__((hot, alloc_size(3))) void* gca_realloc(GlibcAllocator* alloc, void* ptr, size_t size);
 
 bool gca_handled_sbrk(GlibcAllocator* alloc, size_t delta, void** orig_brk, void** new_brk);
