@@ -18,9 +18,8 @@ GlibcAllocator* gca_create(size_t heapSize) {
     } else if (htfh_lock_lock_handled(&alloc->mutex) != 0) {
         return NULL;
     }
-    alloc->freep = NULL;
     alloc->heap = NULL;
-    alloc->method = FIRST_FIT;
+    alloc->free_list = NULL;
     alloc->heap_size = heapSize;
     alloc->current_brk = alloc->heap = mmap(
         NULL,
@@ -35,6 +34,24 @@ GlibcAllocator* gca_create(size_t heapSize) {
         htfh_lock_unlock_handled(&alloc->mutex);
         return NULL;
     }
+    void* orig_brk;
+    void* new_brk;
+    if (!gca_handled_sbrk(alloc, GCA_SBRK_ALIGN, &orig_brk, &new_brk)) {
+        set_alloc_errno(HEAP_MMAP_FAILED);
+        htfh_lock_unlock_handled(&alloc->mutex);
+        return NULL;
+    }
+    Header* bottom = gca_as_header(orig_brk);
+    gca_set_size(prev, bottom, 0);
+    gca_set_used(prev, bottom, 1);
+    Header* top = gca_data_to_header(new_brk);
+    gca_set_size(curr, top, 0);
+    gca_set_used(curr, top, 1);
+    gca_set_size(curr, bottom, GCA_SBRK_ALIGN - 2 * GCA_INFO_SIZE);
+    gca_set_used(curr, bottom, 0);
+    gca_set_size(prev, top, GCA_SBRK_ALIGN - 2 * GCA_INFO_SIZE);
+    gca_set_used(prev, top, 0);
+    gca_add_free_list(alloc, bottom);
     return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? alloc : NULL;
 }
 
@@ -53,6 +70,29 @@ int gca_destroy(GlibcAllocator* alloc) {
     }
     free(alloc);
     return 0;
+}
+
+void gca_add_free_list(GlibcAllocator* alloc, Header* header) {
+    header->prev_free = NULL;
+    header->next_free = alloc->free_list;
+    if (alloc->free_list != NULL) {
+        alloc->free_list->prev_free = header;
+    }
+    alloc->free_list = header;
+}
+
+void gca_remove_free_list(GlibcAllocator* alloc, Header* header) {
+    Header* prev_free = header->prev_free;
+    Header* next_free = header->next_free;
+    if (alloc->free_list == header) {
+        alloc->free_list = next_free;
+    }
+    if (prev_free != NULL) {
+        prev_free->next_free = next_free;
+    }
+    if (next_free != NULL) {
+        next_free->prev_free = prev_free;
+    }
 }
 
 int gca_brk(GlibcAllocator* alloc, void* addr) {
@@ -80,86 +120,184 @@ void* gca_sbrk(GlibcAllocator* alloc, intptr_t increment) {
     return oldbrk;
 }
 
-int gca_free(GlibcAllocator* alloc, void* ap) {
-    if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
-        return -1;
+bool gca_handled_sbrk(GlibcAllocator* alloc, size_t delta, void** orig_brk, void** new_brk) {
+    if ((size_t)alloc->current_brk + delta < (size_t)alloc->current_brk) {
+        return false;
     }
-
-    Header*bp = (Header*) ap - 1;
-    Header* p;
-    for (p = alloc->freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
-        if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
-            break;
-        }
+    void *last_brk;
+    if ((last_brk = gca_sbrk(alloc, delta)) == (void *)-1) {
+        return false;
     }
-    if (bp + bp->s.size == p->s.ptr) {
-        bp->s.size += p->s.ptr->s.size;
-        bp->s.ptr = p->s.ptr->s.ptr;
-    } else {
-        bp->s.ptr = p->s.ptr;
-    }
-    if (p + p->s.size == bp) {
-        p->s.size += bp->s.size;
-        p->s.ptr = bp->s.ptr;
-    } else {
-        p->s.ptr = bp;
-    }
-    alloc->freep = p;
-    return htfh_lock_unlock_handled(&alloc->mutex);
+    alloc->current_brk = (void *)((char *)last_brk + delta);
+    *orig_brk = last_brk;
+    *new_brk = alloc->current_brk;
+    return true;
 }
 
-Header* more_core(GlibcAllocator* alloc, unsigned int nu) {
-    if (nu < NALLOC) {
-        nu = NALLOC;
+bool gca_coalesce_next(GlibcAllocator* alloc, Header *header) {
+    Header* next_adj = gca_next(header);
+    if (gca_used(curr, next_adj)) {
+        return false;
     }
-    char* cp = gca_sbrk(alloc, nu * sizeof(Header));
-    if (cp == (char*) - 1) {
-        return NULL;
-    }
-    Header* up = (Header*) cp;
-    up->s.size = nu;
-    if (gca_free(alloc, (void*)(up + 1)) != 0) {
-        return NULL;
-    }
-    return alloc->freep;
+    gca_remove_free_list(alloc, next_adj);
+    size_t new_size = gca_size(curr, header) + GCA_INFO_SIZE + gca_size(curr, next_adj);
+    Header* next_next_adj = gca_next(next_adj);
+    gca_set_used(prev, next_next_adj, gca_used(curr, header));
+    gca_set_size(prev, next_next_adj, new_size);
+    gca_set_size(curr, header, new_size);
+    return true;
 }
 
-void* gca_malloc(GlibcAllocator* alloc, unsigned nbytes) {
-    if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
+Header* gca_coalesce_prev(GlibcAllocator* alloc, Header* header) {
+    if (!gca_used(prev, header)) {
+        header = gca_prev(header);
+        gca_coalesce_next(alloc, header);
+    }
+    return header;
+}
+
+Header* gca_coalesce(GlibcAllocator* alloc, Header* header) {
+    gca_coalesce_next(alloc, header);
+    return gca_coalesce_prev(alloc, header);
+}
+
+Header* gca_find_free_block(GlibcAllocator* alloc, size_t aligned_size) {
+    Header* header = alloc->free_list;
+    while (header != NULL) {
+        if (gca_size(curr, header) >= aligned_size) {
+            return header;
+        }
+        header = header->next_free;
+    }
+    return NULL;
+}
+
+Header* gca_sbrk_new_block(GlibcAllocator* alloc, size_t aligned_size) {
+    size_t page_size = gca_round_up(aligned_size + GCA_INFO_SIZE, GCA_SBRK_ALIGN);
+    void *orig_brk, *new_brk;
+    if (!gca_handled_sbrk(alloc, page_size, &orig_brk, &new_brk)) {
         return NULL;
     }
-    unsigned nunits = (nbytes + sizeof(Header) + 1) / sizeof(Header) + 1;
-    Header* prevp;
+    Header* header = gca_data_to_header(orig_brk);
+    gca_set_size(curr, header, page_size - GCA_INFO_SIZE);
+    gca_set_used(curr, header, 0);
+    Header* sentinel = gca_data_to_header(new_brk);
+    gca_set_size(prev, sentinel, page_size - GCA_INFO_SIZE);
+    gca_set_used(prev, sentinel, 0);
+    gca_set_size(curr, sentinel, 0);
+    gca_set_used(curr, sentinel, 1);
+    gca_add_free_list(alloc, header);
+    return gca_coalesce_prev(alloc, header);
+}
 
-    if ((prevp = alloc->freep) == NULL) {
-        alloc->base.s.ptr = alloc->freep = prevp = &alloc->base;
-        alloc->base.s.size = 0;
+Header* gca_split_block(GlibcAllocator* alloc, Header* header, size_t aligned_size) {
+    size_t curr_size = gca_size(curr, header);
+    if (curr_size < aligned_size + GCA_INFO_SIZE + GCA_DATA_ALIGN) {
+        return NULL;
+    }
+    size_t split_size = curr_size - aligned_size - GCA_INFO_SIZE;
+    Header* next_header = gca_next(header);
+    gca_set_size(prev, next_header, split_size);
+    gca_set_used(prev, next_header, 0);
+    gca_set_size(curr, header, aligned_size);
+    Header* split_header = gca_next(header);
+    gca_set_size(prev, split_header, aligned_size);
+    gca_set_used(prev, split_header, gca_used(curr, header));
+    gca_set_size(curr, split_header, split_size);
+    gca_set_used(curr, split_header, 0);
+    gca_add_free_list(alloc, split_header);
+    gca_coalesce_next(alloc, split_header);
+    return split_header;
+}
+
+void* gca_malloc(GlibcAllocator* alloc, size_t size) {
+    if (alloc == NULL || alloc->heap == NULL || size == 0) {
+        set_alloc_errno(MALLOC_FAILED);
+        return NULL;
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
+        return NULL;
+    }
+    size_t aligned_size = gca_round_up(size, GCA_DATA_ALIGN);
+    if (aligned_size == 0) {
+        set_alloc_errno(MALLOC_FAILED);
+        htfh_lock_unlock_handled(&alloc->mutex);
+        return NULL;
     }
 
-    for (Header* p = prevp->s.ptr;; prevp = p, p = p->s.ptr) {
-        if (p->s.size >= nunits) {
-            if (p->s.size == nunits) {
-                prevp->s.ptr = p->s.ptr;
-            } else {
-                p->s.size -= nunits;
-                p += p->s.size;
-                p->s.size = nunits;
-            }
-            alloc->freep = prevp;
-            return htfh_lock_unlock_handled(&alloc->mutex) == 0 ? (void*) (p+1) : NULL;
-        }
-        if (p == alloc->freep && ((p = more_core(alloc, nunits)) == NULL)) {
+    Header *header = gca_find_free_block(alloc, aligned_size);
+    if (header == NULL) {
+        header = gca_sbrk_new_block(alloc, aligned_size);
+        if (header == NULL) {
             set_alloc_errno(MALLOC_FAILED);
             htfh_lock_unlock_handled(&alloc->mutex);
             return NULL;
         }
     }
+
+    gca_split_block(alloc, header, aligned_size);
+    gca_remove_free_list(alloc, header);
+    gca_set_used(curr, header, 1);
+    gca_set_used(prev, gca_next(header), 1);
+    return htfh_lock_unlock_handled(&alloc->mutex) != 0 ? NULL : gca_header_to_data(header);
 }
 
-void* gca_calloc(GlibcAllocator* alloc, unsigned count, unsigned nbytes) {
-    if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
+int gca_free(GlibcAllocator* alloc, void* ptr) {
+    if (alloc == NULL || alloc->heap == NULL || ptr == NULL) {
+        return -1;
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
+        return -1;
+    }
+    Header* header = gca_data_to_header(ptr);
+    gca_set_used(curr, header, 0);
+    gca_set_used(prev, gca_next(header), 0);
+    gca_add_free_list(alloc, header);
+    gca_coalesce(alloc, header);
+    return htfh_lock_unlock_handled(&alloc->mutex);
+}
+
+void* gca_calloc(GlibcAllocator* alloc, size_t num, size_t size) {
+    if (alloc == NULL || alloc->heap == NULL || size == 0 || num == 0 || num > SIZE_MAX / size) {
+        return NULL;
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
     }
-    void* ptr = gca_malloc(alloc, count * nbytes);
-    return htfh_lock_unlock_handled(&alloc->mutex) != 0 || ptr == NULL ? NULL : memset(ptr, 0, count * nbytes);
+    void* ptr = gca_malloc(alloc, num * size);
+    if (ptr != NULL) {
+        memset(ptr, 0, num * size);
+    }
+    return htfh_lock_unlock_handled(&alloc->mutex) != 0 ? NULL : ptr;
+}
+
+void* gca_realloc(GlibcAllocator* alloc, void *ptr, size_t size) {
+    if (alloc == NULL || alloc->heap == NULL || size == 0) {
+        return NULL;
+    } else if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
+        return NULL;
+    } if (ptr == NULL) {
+        void* new_ptr = gca_malloc(alloc, size);
+        return htfh_lock_unlock_handled(&alloc->mutex) != 0 ? NULL : new_ptr;
+    }
+    size_t aligned_size = gca_round_up(size, GCA_DATA_ALIGN);
+    Header* header = gca_data_to_header(ptr);
+    size_t orig_size = gca_size(curr, header);
+    if (aligned_size <= orig_size) {
+        gca_split_block(alloc, header, aligned_size);
+        return htfh_lock_unlock_handled(&alloc->mutex) != 0 ? NULL : ptr;
+    } else if (gca_coalesce_next(alloc, header) && aligned_size <= gca_size(curr, header)) {
+        gca_split_block(alloc, header, aligned_size);
+        return htfh_lock_unlock_handled(&alloc->mutex) != 0 ? NULL : ptr;
+    } else if (gca_is_sentinel(curr, gca_next(header))) {
+        Header* next_alloc = gca_sbrk_new_block(alloc, aligned_size - gca_size(curr, header));
+        if (next_alloc != NULL) {
+            gca_coalesce_next(alloc, header);
+            gca_split_block(alloc, header, aligned_size);
+            return htfh_lock_unlock_handled(&alloc->mutex) != 0 ? NULL : ptr;
+        }
+    }
+    void* new_ptr = gca_malloc(alloc, size);
+    if (new_ptr != NULL) {
+        memcpy(new_ptr, ptr, orig_size);
+        gca_free(alloc, ptr);
+    }
+    return htfh_lock_unlock_handled(&alloc->mutex) != 0 ? NULL : new_ptr;
 }
