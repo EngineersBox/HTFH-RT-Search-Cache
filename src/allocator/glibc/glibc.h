@@ -13,7 +13,6 @@ extern "C" {
 #include "../thread/lock.h"
 
 #define GCA_INFO_SIZE (2 * sizeof(size_t))
-
 #define GCA_DATA_ALIGN (2 * sizeof(size_t))
 #define GCA_SBRK_ALIGN 4096
 #define GCA_MASK_SIZE ~0x7
@@ -25,23 +24,6 @@ typedef struct Header {
     struct Header *prev_free;
     struct Header *next_free;
 } Header;
-
-#define gca_round_up(x, align) (((x) + (align) - 1) & -(align))
-
-#define gca_as_bytes(x) ((char *)(x))
-#define gca_as_header(x) ((Header*)(x))
-#define gca_data_to_header(d) (gca_as_header(gca_as_bytes(d) - GCA_INFO_SIZE))
-#define gca_header_to_data(h) (gca_as_bytes(h) + GCA_INFO_SIZE)
-
-#define gca_info(w, h) (h->w##_info)
-#define gca_size(w, h) (gca_info(w, h) & GCA_MASK_SIZE)
-#define gca_used(w, h) (gca_info(w, h) & GCA_FLAG_USED)
-#define gca_set_size(w, h, v) (gca_info(w, h) = (gca_info(w, h) & ~GCA_MASK_SIZE) | (v))
-#define gca_set_used(w, h, v) (gca_info(w, h) = (gca_info(w, h) & ~GCA_FLAG_USED) | (v))
-#define gca_is_sentinel(w, h) (gca_size(w, h) == 0)
-
-#define gca_next(h) (gca_as_header(gca_header_to_data(h) + gca_size(curr, h)))
-#define gca_prev(h) (gca_data_to_header(gca_as_bytes(h) - gca_size(prev, h)))
 
 typedef struct GlibcAllocator {
     htfh_lock_t mutex;

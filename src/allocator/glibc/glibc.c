@@ -6,6 +6,20 @@
 #include "../error/allocator_errno.h"
 #include "../../preprocessor/checks.h"
 
+#define gca_round_up(x, align) (((x) + (align) - 1) & -(align))
+#define gca_as_bytes(x) ((char *)(x))
+#define gca_as_header(x) ((Header*)(x))
+#define gca_data_to_header(d) (gca_as_header(gca_as_bytes(d) - GCA_INFO_SIZE))
+#define gca_header_to_data(h) (gca_as_bytes(h) + GCA_INFO_SIZE)
+#define gca_info(w, h) (h->w##_info)
+#define gca_size(w, h) (gca_info(w, h) & GCA_MASK_SIZE)
+#define gca_used(w, h) (gca_info(w, h) & GCA_FLAG_USED)
+#define gca_set_size(w, h, v) (gca_info(w, h) = (gca_info(w, h) & ~GCA_MASK_SIZE) | (v))
+#define gca_set_used(w, h, v) (gca_info(w, h) = (gca_info(w, h) & ~GCA_FLAG_USED) | (v))
+#define gca_is_sentinel(w, h) (gca_size(w, h) == 0)
+#define gca_next(h) (gca_as_header(gca_header_to_data(h) + gca_size(curr, h)))
+#define gca_prev(h) (gca_data_to_header(gca_as_bytes(h) - gca_size(prev, h)))
+
 GlibcAllocator* gca_create(size_t heapSize) {
     GlibcAllocator* alloc = malloc(sizeof(*alloc));
     if (alloc == NULL) {
