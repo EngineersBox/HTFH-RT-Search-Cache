@@ -336,6 +336,9 @@ int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DL
     }
     TRACE("MISS ENTRY 2: %s", key);
     DLIRSEntry* entry = dlirs_entry_create(AM_ALLOCATOR_ARG key, value);
+    if (entry == NULL) {
+        return -1;
+    }
     DLIRSEntry* overriddenEntry = NULL;
     int result;
 #define INSERT_DQHT_TIER(table, entryToInsert) \

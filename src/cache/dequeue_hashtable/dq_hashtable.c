@@ -104,7 +104,7 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
     if ((result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, overriddenValue)) == -1) {
         return -1;
     } else if (result == 0) {
-        // Updated an existing entry, nothing to do
+        // Updated an existing entry, no need set links
         return 0;
     }
     if (dqht->tail != NULL) {
@@ -131,7 +131,6 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
         if (dqht->ht->items[index] != NULL
             && dqht->ht->items[index]->key != NULL
             && strcmp(key, dqht->ht->items[index]->key) == 0) {
-            void* value = dqht->ht->items[index]->ptr;
             dqht_print_table("Before unlink", dqht);
             dqht_unlink(dqht, dqht->ht->items[index]);
             dqht_print_table("After unlink", dqht);
@@ -176,7 +175,6 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     }
     DQHTEntry* front = dqht->head;
     printf("Front %p\n", front);
-    // BUG: This shows a huge amount of the same entry duplicated
     dqht_print_table("PRE FRONT", dqht);
     dqht_unlink(dqht, front);
     dqht_print_table("POST FRONT", dqht);
