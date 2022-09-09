@@ -88,11 +88,27 @@ void* threadFn(void* arg) {
     locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
         for (int j = 1; j < i + 1; j++) {
+            DLIRSEntry* match = NULL;
             DLIRSEntry* evicted = NULL;
             int requestResult;
             printf("==== THREAD: %d ====\n", index);
+            if ((requestResult = cache_get(cache, to_store[i], (void**) &match, (void**) &evicted)) == -1) {
+                ERROR("[%d:%d] Failure occurred while retrieving cache entry for %s", i, j, to_store[i]);
+                dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+                cache_destroy(cache);
+                pthread_kill(pthread_self(), 1);
+                return 0;
+            } else if (requestResult == 1) {
+                INFO("[%d:%d] Cache contains entry already for %s", i, j, to_store[i]);
+                LOCALISE_ALLOCATOR_ARG
+                dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+                continue;
+            }
+            INFO("[%d:%d] Cache does not contain entry for %s, requesting population", i, j, to_store[i]);
+            LOCALISE_ALLOCATOR_ARG
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
             if ((requestResult = cache_request(cache, to_store[i], &values[i], (void**) &evicted)) == -1) {
-                INFO("[%d:%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, j, to_store[i], values[i], evicted);
+                ERROR("[%d:%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, j, to_store[i], values[i], evicted);
                 LOCALISE_ALLOCATOR_ARG
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
                 cache_destroy(cache);
@@ -105,7 +121,7 @@ void* threadFn(void* arg) {
             locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
             LOCALISE_ALLOCATOR_ARG
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
-            TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
+            TRACE("[%d:%d] Cache is full? %s", i, j, cache_is_full(cache) ? "true" : "false");
         }
     }
     INFO("======== CONTAINS ========");
@@ -116,14 +132,32 @@ void* threadFn(void* arg) {
         INFO("==== THREAD: %d ====", index);
         void* match = cache_get(cache, to_store[i]);
         INFO("Cache contains %s: %s [Value: %p]", to_store[i], match != NULL ? "true" : "false", match);
+        LOCALISE_ALLOCATOR_ARG
+        dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
     }
     INFO("======== REQUEST 2 ========");
     for (int i = 0; i < 10; i++) {
-        DLIRSEntry* evicted;
+        DLIRSEntry* match = NULL;
+        DLIRSEntry* evicted = NULL;
         int requestResult;
-        INFO("==== THREAD: %d ====", index);
+        printf("==== THREAD: %d ====\n", index);
+        if ((requestResult = cache_get(cache, to_store[i], (void**) &match, (void**) &evicted)) == -1) {
+            ERROR("[%d] Failure occurred while retrieving cache entry for %s", i, to_store[i]);
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            cache_destroy(cache);
+            pthread_kill(pthread_self(), 1);
+            return 0;
+        } else if (requestResult == 1) {
+            INFO("[%d] Cache contains entry already for %s", i, to_store[i]);
+            LOCALISE_ALLOCATOR_ARG
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            continue;
+        }
+        INFO("[%d] Cache does not contain entry for %s, requesting population", i, to_store[i]);
+        LOCALISE_ALLOCATOR_ARG
+        dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
         if ((requestResult = cache_request(cache, to_store[i], &values[i], (void**) &evicted)) == -1) {
-            INFO("Unable to request cache population for [%s: %d] [Evicted: %p]", to_store[i], values[i], evicted);
+            ERROR("[%d] Unable to request cache population for [%s: %d] [Evicted: %p]", i, to_store[i], values[i], evicted);
             LOCALISE_ALLOCATOR_ARG
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
             cache_destroy(cache);
@@ -136,7 +170,7 @@ void* threadFn(void* arg) {
         locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
         LOCALISE_ALLOCATOR_ARG
         dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
-        TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
+        TRACE("[%d] Cache is full? %s", i, cache_is_full(cache) ? "true" : "false");
     }
     INFO("<><><><> END OF TEST <><><><>");
     pthread_exit(0);

@@ -25,12 +25,12 @@ typedef struct LRUCacheOptions {
 LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, LRUCacheOptions* options);
 void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache);
 
-bool lru_contains(LRUCache* cache, const char* key);
+bool lru_contains(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key);
 bool lru_is_full(LRUCache* cache);
 
-// -1 = failure, 0 = miss, 1 = hit
 int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted);
-void* lru_get(LRUCache* cache, const char* key);
+// -1 = failure, 0 = miss, 1 = hit
+int lru_get(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void** hitEntry, void** evicted);
 
 int lru_evict(AM_ALLOCATOR_PARAM LRUCache* cache, void** evicted);
 

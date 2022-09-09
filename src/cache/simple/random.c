@@ -25,8 +25,10 @@ void rc_destroy(AM_ALLOCATOR_PARAM RandomCache* cache) {
     free(cache);
 }
 
-bool rc_contains(RandomCache* cache, const char* key) {
-    return rc_get(cache, key) != NULL;
+bool rc_contains(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key) {
+    void* entry;
+    void* ignoredEvicted;
+    return rc_get(AM_ALLOCATOR_ARG cache, key, &entry, &ignoredEvicted) == 0 && entry != NULL;
 }
 
 bool rc_is_full(RandomCache* cache) {
@@ -36,25 +38,24 @@ bool rc_is_full(RandomCache* cache) {
     return cache->ht->count == cache->cache_size;
 }
 
-// -1 = failure, 0 = miss, 1 = hit
 int rc_request(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* value, void** evicted) {
     if (cache == NULL || cache->ht == NULL || key == NULL) {
         return -1;
     }
     *evicted = NULL;
-    int ret_val = 0;
     if (cache->ht->count >= cache->cache_size) {
         *evicted = rc_evict_random(AM_ALLOCATOR_ARG cache);
-        ret_val = 1;
     }
-    return ht_insert(AM_ALLOCATOR_ARG cache->ht, key, value) != NULL ? ret_val : -1;
+    DQHTEntry* ignoredEntry;
+    return ht_insert(AM_ALLOCATOR_ARG cache->ht, key, value, &ignoredEntry) != -1 ? 0 : -1;
 }
 
-void* rc_get(RandomCache* cache, const char* key) {
+// -1 = failure, 0 = miss, 1 = hit
+int rc_get(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void** hitEntry, void** evicted) {
     if (cache == NULL || cache->ht == NULL || key == NULL) {
-        return NULL;
+        return -1;
     }
-    return ht_get(cache->ht, key);
+    return (*hitEntry = ht_get(cache->ht, key)) == NULL;
 }
 
 void* rc_evict_random(AM_ALLOCATOR_PARAM RandomCache* cache) {

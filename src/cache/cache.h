@@ -35,7 +35,7 @@ __attribute__((hot, access(read_only, 2))) bool cache_contains(Cache* cache, con
 bool cache_is_full(Cache* cache);
 
 __attribute__((hot, access(read_only, 2))) int cache_request(Cache* cache, const char* key, void* value, void** evicted);
-__attribute__((hot, access(read_only, 2))) void* cache_get(Cache* cache, const char* key);
+__attribute__((hot, access(read_only, 2))) int cache_get(Cache* cache, const char* key, void** hitEntry, void** evicted);
 
 #ifdef __cplusplus
 };

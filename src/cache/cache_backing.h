@@ -23,8 +23,8 @@ extern "C" {
 typedef cache_backing_t (*CacheBackingCreate)(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, void* opts);
 typedef int (*CacheBackingDestroy)(AM_ALLOCATOR_PARAM cache_backing_t cache);
 typedef int (*CacheBackingRequest)(AM_ALLOCATOR_PARAM cache_backing_t cache, const char* key, void* value, void** evicted);
-typedef void* (*CacheBackingGet)(cache_backing_t cache, const char* key);
-typedef bool (*CacheBackingContains)(cache_backing_t cache, const char* key);
+typedef void* (*CacheBackingGet)(AM_ALLOCATOR_PARAM cache_backing_t cache, const char* key, void** hitEntry, void** evicted);
+typedef bool (*CacheBackingContains)(AM_ALLOCATOR_PARAM cache_backing_t cache, const char* key);
 typedef bool (*CacheBackingIsFull)(cache_backing_t cache);
 
 typedef struct CacheBackingHandlers {
