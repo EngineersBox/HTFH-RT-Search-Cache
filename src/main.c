@@ -37,11 +37,11 @@ int key_compare(const char* key1, const char* key2) {
 }
 
 static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable* dqht) {
-//    if (htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
-//        return;
-//    }
-//    dqht_print_table(prefix, dqht);
-//    htfh_rwlock_unlock_handled(&cache->rwlock);
+    if (htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
+        return;
+    }
+    dqht_print_table(prefix, dqht);
+    htfh_rwlock_unlock_handled(&cache->rwlock);
 }
 
 static pthread_barrier_t barrier;
@@ -95,6 +95,7 @@ void* threadFn(void* arg) {
             if ((requestResult = cache_query(cache, to_store[i], (void**) &match, (void**) &evicted)) == -1) {
                 ERROR("[%d:%d] Failure occurred while retrieving cache entry for %s", i, j, to_store[i]);
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+                dlirs_entry_destroy(AM_ALLOCATOR_ARG match);
                 cache_destroy(cache);
                 pthread_kill(pthread_self(), 1);
                 return 0;
@@ -143,6 +144,7 @@ void* threadFn(void* arg) {
         if ((requestResult = cache_query(cache, to_store[i], (void**) &match, (void**) &evicted)) == -1) {
             ERROR("[%d] Failure occurred while retrieving cache entry for %s", i, to_store[i]);
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG match);
             cache_destroy(cache);
             pthread_kill(pthread_self(), 1);
             return 0;

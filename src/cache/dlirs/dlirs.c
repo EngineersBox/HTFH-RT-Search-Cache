@@ -112,14 +112,14 @@ void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
     }
 }
 
-// -1 = failure, 0 = in cache, 1 = not in cache
+// -1 = failure, 0 = not in cache, 1 = in cache
 int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** evicted) {
     if (cache == NULL || key == NULL || DLIRS_STRICT_CHECK(cache)) {
         return -1;
     }
     DLIRSEntry* entry = dqht_get(cache->lirs, key);
     if (entry == NULL) {
-        return 1;
+        return 0;
     }
     bool in_cache = entry->in_cache;
     entry->is_LIR = true;
@@ -159,7 +159,7 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
     dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry, (void**) &overriddenEntry);
     dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry);
     cache->lirs_count++;
-    return !in_cache;
+    return in_cache;
 }
 
 void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
@@ -269,17 +269,17 @@ void dlirs_hit_hir_in_resident_hirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char*
     }
     DLIRSEntry* overriddenEntry = NULL;
     int result;
-#define INSERT_DQHT_TIER(table, entryToInsert) \
+#define INSERT_IRR_BLOCK(table, entryToInsert) \
     overriddenEntry = NULL; \
     result = dqht_insert(AM_ALLOCATOR_ARG table, key, entryToInsert, (void**) &overriddenEntry); \
     dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry); \
     if (result == -1) { \
         return; \
     }
-    INSERT_DQHT_TIER(cache->resident_hirs, entry)
-    INSERT_DQHT_TIER(cache->lirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
-    INSERT_DQHT_TIER(cache->non_resident_hirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
-#undef INSERT_DQHT_TIER
+    INSERT_IRR_BLOCK(cache->resident_hirs, entry)
+    INSERT_IRR_BLOCK(cache->lirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+    INSERT_IRR_BLOCK(cache->non_resident_hirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+#undef INSERT_IRR_BLOCK
     dlirs_limit_stack(AM_ALLOCATOR_ARG cache);
 }
 
@@ -341,16 +341,16 @@ int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DL
     }
     DLIRSEntry* overriddenEntry = NULL;
     int result;
-#define INSERT_DQHT_TIER(table, entryToInsert) \
+#define INSERT_IRR_BLOCK(table, entryToInsert) \
     result = dqht_insert(AM_ALLOCATOR_ARG table, key, entryToInsert, (void**) &overriddenEntry); \
     dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry); \
     if (result == -1) { \
         return -1; \
     }
-    INSERT_DQHT_TIER(cache->resident_hirs, entry)
-    INSERT_DQHT_TIER(cache->lirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
-    INSERT_DQHT_TIER(cache->non_resident_hirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
-#undef INSERT_DQHT_TIER
+    INSERT_IRR_BLOCK(cache->resident_hirs, entry)
+    INSERT_IRR_BLOCK(cache->lirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+    INSERT_IRR_BLOCK(cache->non_resident_hirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+#undef INSERT_IRR_BLOCK
     cache->hirs_count++;
     dlirs_limit_stack(AM_ALLOCATOR_ARG cache);
     return 0;
