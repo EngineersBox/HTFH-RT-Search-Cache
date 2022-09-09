@@ -28,7 +28,7 @@ int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht);
 
 DQHTEntry* ht_get(HashTable* ht, const char* key);
 // Failure: -1, Updated entry: 0, New entry: 1
-int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entry);
+int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entry, void** overriddenValue);
 
 void* ht_delete_entry(AM_ALLOCATOR_PARAM HashTable* ht, int index);
 void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key);

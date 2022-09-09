@@ -81,20 +81,28 @@ bool cache_is_full(Cache* cache) {
     return htfh_rwlock_unlock_handled(&cache->rwlock) != 0 ? false : result;
 }
 
+void* cache_get(Cache* cache, const char* key) {
+    if (cache == NULL || htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
+        return NULL;
+    }
+    void* result = cache->handlers.getHandler(cache->backing, key);
+    return htfh_rwlock_unlock_handled(&cache->rwlock) != 0 ? NULL : result;
+}
+
 int cache_request(Cache* cache, const char* key, void* value, void** evicted) {
     if (cache == NULL || htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
         return -1;
     }
     LOCALISE_ALLOCATOR_ARG
     int result = cache->handlers.requestHandler(AM_ALLOCATOR_ARG cache->backing, key, value, evicted);
-    int lockResult = htfh_rwlock_unlock_handled(&cache->rwlock);
-    return lockResult != 0 ? -1 : result;
+    return htfh_rwlock_unlock_handled(&cache->rwlock) != 0 ? -1 : result;
 }
 
-int cache_get(Cache* cache, const char* key, void** hitEntry, void** evicted) {
+int cache_query(Cache* cache, const char* key, void** hitEntry, void** evicted) {
     if (cache == NULL || htfh_rwlock_wrlock_handled(&cache->rwlock) != 0) {
         return -1;
     }
-    void* result = cache->handlers.getHandler(cache->backing, key, hitEntry, evicted);
+    LOCALISE_ALLOCATOR_ARG
+    void* result = cache->handlers.queryHandler(cache->backing, key, hitEntry, evicted);
     return htfh_rwlock_unlock_handled(&cache->rwlock) != 0 ? -1 : result;
 }

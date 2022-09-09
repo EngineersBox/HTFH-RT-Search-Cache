@@ -58,7 +58,7 @@ int dqht_test_main(int argc, char* argv[]) {
         64526
     };
     for (int i = 0; i < 10; i++) {
-        if (dqht_push_front(AM_ALLOCATOR_ARG table, to_store[i], &values[i]) != 0) {
+        if (dqht_push_front(AM_ALLOCATOR_ARG table, to_store[i], &values[i], NULL) != 0) {
             printf("Could not insert entry: [%s: %d]\n", to_store[i], values[i]);
             return 1;
         }

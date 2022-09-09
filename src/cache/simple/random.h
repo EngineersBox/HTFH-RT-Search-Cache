@@ -31,7 +31,8 @@ bool rc_is_full(RandomCache* cache);
 
 int rc_request(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* value, void** evicted);
 // -1 = failure, 0 = miss, 1 = hit
-int rc_get(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void** hitEntry, void** evicted);
+int rc_query(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void** hitEntry, void** evicted);
+void* rc_get(RandomCache* cache, const char* key);
 
 void* rc_evict_random(AM_ALLOCATOR_PARAM RandomCache* cache);
 void* rc_evict_by_key(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key);

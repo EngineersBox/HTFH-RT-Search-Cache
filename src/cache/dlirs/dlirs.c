@@ -41,9 +41,7 @@ DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSO
 }
 
 bool dlirs_contains(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
-    DLIRSEntry* entry;
-    DLIRSEntry* ignoredEvicted; // Ignored
-    return dlirs_get(AM_ALLOCATOR_ARG cache, key, &entry, &ignoredEvicted) == 0 && entry != NULL;
+    return dlirs_get(AM_ALLOCATOR_ARG cache, key) != NULL;
 }
 
 bool dlirs_is_full(DLIRS* cache) {
@@ -53,8 +51,19 @@ bool dlirs_is_full(DLIRS* cache) {
     return (cache->hirs_count + cache->lirs_count) == cache->cache_size;
 }
 
+void* dlirs_get(DLIRS* cache, const char* key) {
+    if (cache == NULL || key == NULL || DLIRS_STRICT_CHECK(cache)) {
+        return false;
+    }
+    DLIRSEntry* value;
+    if ((value = dqht_get(cache->lirs, key)) != NULL && value->in_cache) {
+        return value->value;
+    }
+    return (value = dqht_get(cache->resident_hirs, key)) != NULL ? value->value : NULL;
+}
+
 // -1 = failure, 0 = miss, 1 = hit
-int dlirs_get(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** hitEntry, DLIRSEntry** evicted) {
+int dlirs_query(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** hitEntry, DLIRSEntry** evicted) {
     if (cache == NULL || key == NULL || DLIRS_STRICT_CHECK(cache)) {
         return -1;
     }
@@ -92,7 +101,10 @@ void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
     if (value == NULL) {
         return;
     }
-    if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, value) != 0) {
+    DLIRSEntry* overriddenEntry = NULL;
+    int result = dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, value, (void**) &overriddenEntry);
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry);
+    if (result != 0) {
         return;
     }
     if ((uintptr_t) lru_lir == (uintptr_t) value) {
@@ -143,7 +155,9 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
         *evicted = dlirs_evict_resident_hir(AM_ALLOCATOR_ARG cache);
     }
     TRACE("After eject hir loop");
-    dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry);
+    DLIRSEntry* overriddenEntry = NULL;
+    dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry, (void**) &overriddenEntry);
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry);
     cache->lirs_count++;
     return !in_cache;
 }
@@ -209,7 +223,10 @@ void dlirs_evict_lir(AM_ALLOCATOR_PARAM DLIRS* cache) {
     lru->is_LIR = false;
     lru->is_demoted = true;
     cache->demoted++;
-    if (dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, lru->key, dlirs_entry_copy(AM_ALLOCATOR_ARG lru)) != 0) {
+    DLIRSEntry* overriddenEntry = NULL;
+    int result = dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, lru->key, dlirs_entry_copy(AM_ALLOCATOR_ARG lru), (void**) &overriddenEntry);
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry);
+    if (result != 0) {
         return;
     }
     dlirs_entry_destroy(AM_ALLOCATOR_ARG lru);
@@ -250,11 +267,19 @@ void dlirs_hit_hir_in_resident_hirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char*
         entry->is_demoted = true;
         cache->demoted--;
     }
-    if (dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, key, entry) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, dlirs_entry_copy(AM_ALLOCATOR_ARG entry)) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, dlirs_entry_copy(AM_ALLOCATOR_ARG entry)) != 0) {
-        return;
+    DLIRSEntry* overriddenEntry = NULL;
+    int result;
+#define INSERT_DQHT_TIER(table, entryToInsert) \
+    overriddenEntry = NULL; \
+    result = dqht_insert(AM_ALLOCATOR_ARG table, key, entryToInsert, (void**) &overriddenEntry); \
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry); \
+    if (result == -1) { \
+        return; \
     }
+    INSERT_DQHT_TIER(cache->resident_hirs, entry)
+    INSERT_DQHT_TIER(cache->lirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+    INSERT_DQHT_TIER(cache->non_resident_hirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+#undef INSERT_DQHT_TIER
     dlirs_limit_stack(AM_ALLOCATOR_ARG cache);
 }
 
@@ -291,7 +316,10 @@ int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DL
         }
         TRACE("Setting is_LIR true");
         entry->is_LIR = true;
-        if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry) != 0) {
+        DLIRSEntry* overriddenEntry = NULL;
+        int result = dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry, (void**) &overriddenEntry);
+        dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry);
+        if (result == -1) {
             return -1;
         }
         cache->lirs_count++;
@@ -308,12 +336,18 @@ int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DL
     }
     TRACE("MISS ENTRY 2: %s", key);
     DLIRSEntry* entry = dlirs_entry_create(AM_ALLOCATOR_ARG key, value);
-    if (entry == NULL
-        || dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, key, entry) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, dlirs_entry_copy(AM_ALLOCATOR_ARG entry)) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, dlirs_entry_copy(AM_ALLOCATOR_ARG entry)) != 0) {
-        return -1;
+    DLIRSEntry* overriddenEntry = NULL;
+    int result;
+#define INSERT_DQHT_TIER(table, entryToInsert) \
+    result = dqht_insert(AM_ALLOCATOR_ARG table, key, entryToInsert, (void**) &overriddenEntry); \
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG overriddenEntry); \
+    if (result == -1) { \
+        return -1; \
     }
+    INSERT_DQHT_TIER(cache->resident_hirs, entry)
+    INSERT_DQHT_TIER(cache->lirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+    INSERT_DQHT_TIER(cache->non_resident_hirs, dlirs_entry_copy(AM_ALLOCATOR_ARG entry))
+#undef INSERT_DQHT_TIER
     cache->hirs_count++;
     dlirs_limit_stack(AM_ALLOCATOR_ARG cache);
     return 0;

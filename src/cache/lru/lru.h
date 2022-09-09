@@ -30,7 +30,8 @@ bool lru_is_full(LRUCache* cache);
 
 int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value, void** evicted);
 // -1 = failure, 0 = miss, 1 = hit
-int lru_get(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void** hitEntry, void** evicted);
+int lru_query(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void** hitEntry, void** evicted);
+void* lru_get(LRUCache* cache, const char* key);
 
 int lru_evict(AM_ALLOCATOR_PARAM LRUCache* cache, void** evicted);
 

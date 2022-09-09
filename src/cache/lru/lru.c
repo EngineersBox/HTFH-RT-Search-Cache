@@ -25,9 +25,7 @@ void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache) {
 }
 
 bool lru_contains(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key) {
-    void* entry;
-    void* ignoredEvicted;
-    return lru_get(AM_ALLOCATOR_ARG cache, key, &entry, &ignoredEvicted) == 0 && entry != NULL;
+    return lru_get(AM_ALLOCATOR_ARG cache, key) != NULL;
 }
 
 bool lru_is_full(LRUCache* cache) {
@@ -47,11 +45,11 @@ int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value
             return -1;
         }
     }
-    return dqht_insert(AM_ALLOCATOR_ARG cache->dqht, key, value);
+    return dqht_insert(AM_ALLOCATOR_ARG cache->dqht, key, value, evicted);
 }
 
 // -1 = failure, 0 = miss, 1 = hit
-int lru_get(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void** hitEntry, void** evicted) {
+int lru_query(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void** hitEntry, void** evicted) {
     if (cache == NULL || cache->dqht == NULL || key == NULL) {
         return -1;
     }
@@ -59,7 +57,14 @@ int lru_get(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void** hitEntry
     if (*hitEntry == NULL) {
         return 0;
     }
-    return dqht_insert(AM_ALLOCATOR_ARG cache->dqht, key, *hitEntry) == 0 ? 1 : -1;
+    return dqht_insert(AM_ALLOCATOR_ARG cache->dqht, key, *hitEntry, evicted) == 0 ? 1 : -1;
+}
+
+void* lru_get(LRUCache* cache, const char* key) {
+    if (cache == NULL || cache->dqht == NULL || key == NULL) {
+        return NULL;
+    }
+    return dqht_get(cache->dqht, key);
 }
 
 int lru_evict(AM_ALLOCATOR_PARAM LRUCache* cache, void** evicted) {

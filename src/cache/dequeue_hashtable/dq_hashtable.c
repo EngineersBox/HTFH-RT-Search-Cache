@@ -109,14 +109,14 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     printf("End unlink\n");
 }
 
-int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
+int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value, void** overriddenValue) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
     printf("Inserting [%s: %p]\n", key, value);
     DQHTEntry* entry;
     int result;
-    if ((result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry)) == -1) {
+    if ((result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, overriddenValue)) == -1) {
         return -1;
     } else if (result == 0) {
         // Updated an existing entry, nothing to do
@@ -161,13 +161,13 @@ void* dqht_get_front(DequeueHashTable* dqht) {
     return dqht != NULL || DQHT_STRICT_CHECK(dqht) ? dqht->head : NULL;
 }
 
-int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
+int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value, void** overriddenValue) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
     DQHTEntry* entry;
     int result;
-    if ((result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry)) == -1) {
+    if ((result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, overriddenValue)) == -1) {
         return -1;
     } else if (result == 0) {
         // Updated an existing entry, nothing to do
@@ -203,7 +203,7 @@ void* dqht_get_last(DequeueHashTable* dqht) {
 }
 
 int dqht_push_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
-    return dqht_insert(AM_ALLOCATOR_ARG dqht, key, value);
+    return dqht_insert(AM_ALLOCATOR_ARG dqht, key, value, NULL);
 }
 
 void* dqht_pop_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {

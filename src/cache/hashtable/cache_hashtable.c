@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
 #include "hashing.h"
+#include "../../logging/logging.h"
 
 HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {
     HashTable* ht = am_malloc(sizeof(*ht));
@@ -22,12 +24,11 @@ void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
     am_free(ht);
 }
 
-int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entry) {
+int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entry, void** overriddenValue) {
     if (ht == NULL
         || ht->items == NULL
         || value == NULL
         || ht->count >= (ht->size / 2) && ht_resize(AM_ALLOCATOR_ARG ht) != 0) {
-        *entry = NULL;
         return -1;
     }
     uint64_t hash = fnv1a_hash(key);
@@ -35,19 +36,27 @@ int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQ
 
     while(ht->items[index] != NULL) {
         if (ht->items[index]->key != NULL && strcmp(key, ht->items[index]->key) == 0) {
+            if (overriddenValue != NULL && ht->items[index]->ptr != value) {
+                *overriddenValue = ht->items[index]->ptr;
+                INFO("[CACHE HASHTABLE] overridden value set: %p", *overriddenValue);
+            }
             ht->items[index]->ptr = value;
-            *entry = ht->items[index];
+            INFO("[CACHE HASHTABLE] New value: %p, Overridden value: %p", ht->items[index]->ptr, overriddenValue != NULL ? *overriddenValue : NULL);
+            if (entry != NULL) {
+                *entry = ht->items[index];
+            }
             return 0;
         }
         index = (index + 1) % ht->size;
     }
     ht->items[index] = dqhtentry_create(AM_ALLOCATOR_ARG key, value);
     if (ht->items[index] == NULL) {
-        *entry = NULL;
         return -1;
     }
     ht->items[index]->index = index;
-    *entry = ht->items[index];
+    if (entry != NULL) {
+        *entry = ht->items[index];
+    }
     ht->count++;
     return 1;
 }
