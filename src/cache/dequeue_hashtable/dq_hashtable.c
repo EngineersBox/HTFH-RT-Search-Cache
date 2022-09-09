@@ -66,21 +66,6 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
     return entry != NULL ? entry->ptr : NULL;
 }
 
-void dump(void* ptr, long size) {
-    printf("[START DUMP] Target: %p\n", ptr);
-    unsigned int i;
-    const unsigned char* const px = (unsigned char*) ptr;
-    for (i = 0; i < size; ++i) {
-        if( i % (sizeof(int) * 8) == 0){
-            printf("\n%08X ", i);
-        } else if( i % 4 == 0){
-            printf(" ");
-        }
-        printf("%02X", px[i]);
-    }
-    printf("\n[END DUMP] Target: %p\n", ptr);
-}
-
 void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     if (dqht == NULL || entry == NULL) {
         return;
