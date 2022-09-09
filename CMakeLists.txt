@@ -39,6 +39,7 @@ target_compile_definitions(
         cache_backing_t=DLIRS*
         DQHT_ENABLE_STRICT
         DLIRS_ENABLE_STRICT
+        HASH_FUNC=MEIYAN
         ENABLE_LOGGING
         LOG_DATETIME_PREFIX
 )
