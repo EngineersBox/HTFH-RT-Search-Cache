@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void dump(void* ptr, long size) {
+static void dump(void* ptr, long size) {
     printf("[START DUMP] Target: %p\n", ptr);
     const unsigned char* const struct_bytes = (unsigned char*) ptr;
     for (unsigned int i = 0; i < size; i++) {

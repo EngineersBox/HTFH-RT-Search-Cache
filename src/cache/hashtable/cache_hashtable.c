@@ -31,7 +31,7 @@ int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQ
         || ht->count >= (ht->size / 2) && ht_resize(AM_ALLOCATOR_ARG ht) != 0) {
         return -1;
     }
-    uint64_t hash = fnv1a_hash(key);
+    uint64_t hash = hash_key(key);
     size_t index = (size_t)(hash % ((uint64_t)(ht->size - 1)));
 
     while(ht->items[index] != NULL) {
@@ -94,7 +94,7 @@ int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht) {
         if (ht->items[i] == NULL) {
             continue;
         }
-        hash = fnv1a_hash(ht->items[i]->key);
+        hash = hash_key(ht->items[i]->key);
         index = (size_t)(hash % ((uint64_t)(new_size - 1)));
         if (ht_resize_insert(new_items, new_size, ht->items[i], index) != 0) {
             return -1;
@@ -112,7 +112,7 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
         || key == NULL) {
         return NULL;
     }
-    uint64_t hash = fnv1a_hash(key);
+    uint64_t hash = hash_key(key);
     size_t index = (size_t)(hash & (uint64_t)(ht->size - 1));
 
     for (int i = 0; i < ht->size; i++) {
@@ -143,7 +143,7 @@ void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key) {
         || key == NULL) {
         return NULL;
     }
-    uint64_t hash = fnv1a_hash(key);
+    uint64_t hash = hash_key(key);
     size_t index = (size_t)(hash & (uint64_t)(ht->size - 1));
 
     for (int i = 0; i < ht->size; i++) {

@@ -124,7 +124,7 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
-    uint64_t hash = fnv1a_hash(key);
+    uint64_t hash = hash_key(key);
     size_t index = (size_t)(hash & (uint64_t)(dqht->ht->size - 1));
 
     for (int i = 0; i < dqht->ht->size; i++) {
