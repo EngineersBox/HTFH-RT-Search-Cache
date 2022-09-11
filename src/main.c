@@ -93,7 +93,7 @@ void* threadFn(void* arg) {
             int requestResult;
             printf("==== THREAD: %d ====\n", index);
             if ((requestResult = cache_query(cache, to_store[i], (void**) &match, (void**) &evicted)) == -1) {
-                ERROR("[%d:%d] Failure occurred while retrieving cache entry for %s", i, j, to_store[i]);
+                ERROR("[%d:%d] Failure occurred while retrieving cache entry for %s", i, j, to_store[i])
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG match);
                 cache_destroy(cache);

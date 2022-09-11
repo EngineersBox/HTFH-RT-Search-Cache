@@ -42,7 +42,7 @@ typedef struct CacheBackingHandlers {
     .createHandler = (CacheBackingCreate) dlirs_create, \
     .destroyHandler = (CacheBackingDestroy) dlirs_destroy, \
     .requestHandler = (CacheBackingRequest) dlirs_request, \
-    .getHandler = (CacheBackingQuery) dlirs_get , \
+    .getHandler = (CacheBackingGet) dlirs_get , \
     .queryHandler = (CacheBackingQuery) dlirs_query ,\
     .containsHandler = (CacheBackingContains) dlirs_contains, \
     .isFullHandler = (CacheBackingIsFull) dlirs_is_full \
