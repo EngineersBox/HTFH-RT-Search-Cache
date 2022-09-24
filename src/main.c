@@ -16,7 +16,7 @@
 #define OR_OP_STR "|"
 #define OR_OP OR_OP_STR[0]
 
-#define THREAD_COUNT 2
+#define THREAD_COUNT 1
 
 int key_compare(const char* key1, const char* key2) {
     if (key1 == NULL && key2 == NULL) {
@@ -83,6 +83,12 @@ void createTestData() {
     }
 }
 
+void destroyTestData() {
+    for (int i = 0; i < 10; i++) {
+        free(to_store[i]);
+    }
+}
+
 typedef struct Params {
     int index;
     Cache* cache;
@@ -107,17 +113,23 @@ void* threadFn(void* arg) {
             if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
                 INFO("[%d:%d] Unable to request cache population for [%s: %p] [Evicted: %p]", i, j, key_sprint(to_store[i % 10]), &values[i], evicted);
                 LOCALISE_ALLOCATOR_ARG
+                am_free(((Result*) evicted->value)->results);
+                am_free(evicted->value);
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
                 cache_destroy(cache);
                 pthread_kill(pthread_self(), 1);
-                return 0;
+                return NULL;
             }
             INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %p]", i, j, requestResult == 1 ? "hit" : "miss", evicted, key_sprint(to_store[i % 10]), &values[i]);
             locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
             locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
             locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
-            LOCALISE_ALLOCATOR_ARG
-            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            if (evicted != NULL) {
+                LOCALISE_ALLOCATOR_ARG
+                am_free(((Result*) evicted->value)->results);
+                am_free(evicted->value);
+                dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            }
             TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
         }
     }
@@ -127,7 +139,7 @@ void* threadFn(void* arg) {
     locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
         INFO("==== THREAD: %d ====", index);
-        void* match = cache_get(cache, to_store[i]);
+        void* match = cache_get(cache, to_store[i % 10]);
         INFO("Cache contains %s: %s [Value: %p]", key_sprint(to_store[i]), match != NULL ? "true" : "false", match);
     }
     INFO("======== REQUEST 2 ========");
@@ -138,17 +150,23 @@ void* threadFn(void* arg) {
         if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
             INFO("Unable to request cache population for [%s: %p] [Evicted: %p]", key_sprint(to_store[i % 10]), &values[i], evicted);
             LOCALISE_ALLOCATOR_ARG
+            am_free(((Result*) evicted->value)->results);
+            am_free(evicted->value);
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
             cache_destroy(cache);
             pthread_kill(pthread_self(), 1);
-            return 0;
+            return NULL;
         }
         INFO("[%d] Request result: %s with evicted: %p for [%s: %p]", i, requestResult == 1 ? "hit" : "miss", evicted, key_sprint(to_store[i]), &values[i]);
         locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
         locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
         locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
-        LOCALISE_ALLOCATOR_ARG
-        dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+        if (evicted != NULL) {
+            LOCALISE_ALLOCATOR_ARG
+            am_free(((Result*) evicted->value)->results);
+            am_free(evicted->value);
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+        }
         TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
     }
     INFO("<><><><> END OF TEST <><><><>");
@@ -210,5 +228,6 @@ int main(int argc, char* argv[]) {
     if (cache_destroy(cache) != 0) {
         FATAL("Could not destroy cache");
     }
+    destroyTestData();
     return 0;
 }

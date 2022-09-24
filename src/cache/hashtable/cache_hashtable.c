@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "hashing.h"
 #include "../cache_key.h"
+#include "../../logging/logging.h"
 
 int default_comparator(const char* key1, const char* key2, void* _ignored) {
     return key_cmp(key1, key2);
@@ -79,9 +80,9 @@ int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t in
 }
 
 void print_table(HashTable* ht) {
-//    for (int i = 0; i < ht->size; i++) {
-//        printf("Entry %d: %p\n", i, ht->items[i]);
-//    }
+    for (int i = 0; i < ht->size; i++) {
+        DEBUG("Entry %d: %p", i, ht->items[i]);
+    }
 }
 
 int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht) {

@@ -13,6 +13,7 @@
 #include "../../preprocessor/lambda.h"
 #include "../../result.h"
 #include "../cache_key.h"
+#include "../../memory_utils.h"
 
 DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSOptions* options) {
     DLIRS* cache = (DLIRS*) am_malloc(sizeof(*cache));
@@ -155,8 +156,6 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
     DLIRSEntry* entry1;
     DLIRSEntry* entry2;
     while (cache->lirs->ht->count > 0) {
-        dqht_print_table("==== LIRS =====", cache->lirs);
-        printf("Current condition: %zu\n", cache->lirs->ht->count);
         entry = (DLIRSEntry*) dqht_get_front(cache->lirs);
         if (entry->is_LIR) {
             break;
@@ -387,25 +386,22 @@ int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value,
     return !miss;
 }
 
-void destroy_hirs(AM_ALLOCATOR_PARAM DLIRSEntry* entry, DLIRS* dlirs) {
+void destroy_hirs(AM_ALLOCATOR_PARAM DLIRSEntry* entry, void* _ignored) {
     if (entry == NULL || entry->key == NULL) {
         return;
-    } else if (dqht_get(dlirs->lirs, entry->key) == NULL
-               && dqht_get(dlirs->non_resident_hirs, entry->key) == NULL) {
-        am_free(((Result*) entry->value)->results);
-        am_free(entry->value);
-        dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);
     }
+    am_free(((Result*) entry->value)->results);
+    am_free(entry->value);
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);
 }
 
-void destroy_resident_hirs(AM_ALLOCATOR_PARAM DLIRSEntry* entry, DLIRS* dlirs) {
+void destroy_resident_hirs(AM_ALLOCATOR_PARAM DLIRSEntry* entry, void* _ignored) {
     if (entry == NULL || entry->key == NULL) {
         return;
-    } else if (dqht_get(dlirs->lirs, entry->key) == NULL) {
-        am_free(((Result*) entry->value)->results);
-        am_free(entry->value);
-        dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);
     }
+    am_free(((Result*) entry->value)->results);
+    am_free(entry->value);
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);
 }
 
 void destroy_lirs(AM_ALLOCATOR_PARAM DLIRSEntry* entry, void* _ignored) {
