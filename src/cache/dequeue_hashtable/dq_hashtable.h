@@ -40,7 +40,7 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
 void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key);
 
 void* dqht_get_front(DequeueHashTable* dqht);
-int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value);
+int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value, void** overriddenValue);
 void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht);
 
 void* dqht_get_last(DequeueHashTable* dqht);

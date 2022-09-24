@@ -39,11 +39,11 @@ int key_compare(const char* key1, const char* key2) {
 }
 
 static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable* dqht) {
-//    if (htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
-//        return;
-//    }
-//    dqht_print_table(prefix, dqht);
-//    htfh_rwlock_unlock_handled(&cache->rwlock);
+    if (htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
+        return;
+    }
+    dqht_print_table(prefix, dqht);
+    htfh_rwlock_unlock_handled(&cache->rwlock);
 }
 
 static pthread_barrier_t barrier;
@@ -107,6 +107,7 @@ void* threadFn(void* arg) {
     locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < ENTRY_COUNT; i++) {
         for (int j = 1; j < i + 1; j++) {
+            DLIRSEntry* match = NULL;
             DLIRSEntry* evicted = NULL;
             int requestResult;
             INFO("==== THREAD: %d ====\n", index);

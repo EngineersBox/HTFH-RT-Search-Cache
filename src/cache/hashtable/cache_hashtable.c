@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
 #include "hashing.h"
 #include "../cache_key.h"
 #include "../../logging/logging.h"
@@ -34,7 +35,7 @@ void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
     am_free(ht);
 }
 
-DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value) {
+int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entry, void** overriddenValue) {
     if (ht == NULL
         || ht->items == NULL
         || value == NULL) {
@@ -54,17 +55,24 @@ DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* va
     while(ht->items[index] != NULL) {
         if (ht->items[index]->key != NULL && key_cmp(key, ht->items[index]->key) == 0) {
             ht->items[index]->ptr = value;
-            return ht->items[index];
+            INFO("[CACHE HASHTABLE] New value: %p, Overridden value: %p", ht->items[index]->ptr, overriddenValue != NULL ? *overriddenValue : NULL);
+            if (entry != NULL) {
+                *entry = ht->items[index];
+            }
+            return 0;
         }
         index = (index + 1) % ht->size;
     }
     ht->items[index] = dqhtentry_create(AM_ALLOCATOR_ARG key, value);
     if (ht->items[index] == NULL) {
-        return NULL;
+        return -1;
     }
     ht->items[index]->index = index;
+    if (entry != NULL) {
+        *entry = ht->items[index];
+    }
     ht->count++;
-    return ht->items[index];
+    return 1;
 }
 
 int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {
