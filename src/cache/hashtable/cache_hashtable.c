@@ -4,19 +4,30 @@
 #include <string.h>
 #include <stdio.h>
 #include "hashing.h"
+#include "../cache_key.h"
+
+int default_comparator(const char* key1, const char* key2, void* _ignored) {
+    return key_cmp(key1, key2);
+}
 
 HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {
-    HashTable* ht = am_malloc(sizeof(*ht));
+    HashTable* ht = (HashTable*) am_malloc(sizeof(*ht));
     ht->size = size;
     ht->count = 0;
-    ht->comparator = comparator == NULL ? strcmp : comparator;
-    ht->items = am_calloc(ht->size, sizeof(DQHTEntry*));
+    ht->comparator = comparator == NULL ? default_comparator : comparator;
+    ht->items = (DQHTEntry**) am_calloc(ht->size, sizeof(DQHTEntry*));
     return ht;
 }
 
 void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
     if (ht == NULL || ht->items == NULL) {
         return;
+    }
+    for (int i = 0; i < ht->size; i++) {
+        if (ht->items[i] == NULL) {
+            continue;
+        }
+        dqhtentry_destroy(ht->items[i]);
     }
     am_free(ht->items);
     am_free(ht);
@@ -25,15 +36,22 @@ void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
 DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value) {
     if (ht == NULL
         || ht->items == NULL
-        || value == NULL
-        || ht->count >= (ht->size / 2) && ht_resize(AM_ALLOCATOR_ARG ht) != 0) {
+        || value == NULL) {
         return NULL;
+    } else if (ht->count >= (ht->size / 2)) {
+        if (ht_resize(AM_ALLOCATOR_ARG ht) != 0) {
+            return NULL;
+        }
     }
-    uint64_t hash = fnv1a_hash(key);
-    size_t index = (size_t)(hash % ((uint64_t)(ht->size - 1)));
+#if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
+    size_t hash = meiyan_hash(key);
+#else
+    size_t hash = fnv1a_hash(key);
+#endif
+    size_t index = hash % ht->size;
 
     while(ht->items[index] != NULL) {
-        if (ht->items[index]->key != NULL && strcmp(key, ht->items[index]->key) == 0) {
+        if (ht->items[index]->key != NULL && key_cmp(key, ht->items[index]->key) == 0) {
             ht->items[index]->ptr = value;
             return ht->items[index];
         }
@@ -50,7 +68,7 @@ DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* va
 
 int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {
     while(items[index] != NULL) {
-        if (strcmp(entry->key, items[index]->key) == 0) {
+        if (key_cmp(entry->key, items[index]->key) == 0) {
             return -1;
         }
         index = index + 1 % size;
@@ -61,9 +79,9 @@ int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t in
 }
 
 void print_table(HashTable* ht) {
-    for (int i = 0; i < ht->size; i++) {
-        printf("Entry %d: %p\n", i, ht->items[i]);
-    }
+//    for (int i = 0; i < ht->size; i++) {
+//        printf("Entry %d: %p\n", i, ht->items[i]);
+//    }
 }
 
 int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht) {
@@ -71,18 +89,22 @@ int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht) {
     if (new_size < ht->size) {
         return -1;
     }
-    DQHTEntry** new_items = am_calloc(new_size, sizeof(DQHTEntry*));
+    DQHTEntry** new_items = (DQHTEntry**) am_calloc(new_size, sizeof(DQHTEntry*));
     if (new_items == NULL) {
         return -1;
     }
-    uint64_t hash;
+    size_t hash;
     size_t index;
     for (int i = 0; i < ht->size; i++) {
         if (ht->items[i] == NULL) {
             continue;
         }
+#if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
+        hash = meiyan_hash(ht->items[i]->key);
+#else
         hash = fnv1a_hash(ht->items[i]->key);
-        index = (size_t)(hash % ((uint64_t)(new_size - 1)));
+#endif
+        index = hash % new_size;
         if (ht_resize_insert(new_items, new_size, ht->items[i], index) != 0) {
             return -1;
         }
@@ -99,13 +121,41 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
         || key == NULL) {
         return NULL;
     }
-    uint64_t hash = fnv1a_hash(key);
-    size_t index = (size_t)(hash & (uint64_t)(ht->size - 1));
+#if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
+    size_t hash = meiyan_hash(key);
+#else
+    size_t hash = fnv1a_hash(key);
+#endif
+    size_t index = hash % ht->size;
 
     for (int i = 0; i < ht->size; i++) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL
-            && strcmp(key, ht->items[index]->key) == 0) {
+            && key_cmp(key, ht->items[index]->key) == 0) {
+            return ht->items[index];
+        }
+        index = (index + 1) % ht->size;
+    }
+    return NULL;
+}
+
+DQHTEntry* ht_get_custom(HashTable* ht, const char* key) {
+    if (ht == NULL
+        || ht->items == NULL
+        || key == NULL) {
+        return NULL;
+    }
+#if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
+    size_t hash = meiyan_hash(key);
+#else
+    size_t hash = fnv1a_hash(key);
+#endif
+    size_t index = hash % ht->size;
+
+    for (int i = 0; i < ht->size; i++) {
+        if (ht->items[index] != NULL
+            && ht->items[index]->key != NULL
+            && ht->comparator(key, ht->items[index]->key, ht->items[index]) == 0) {
             return ht->items[index];
         }
         index = (index + 1) % ht->size;
@@ -130,13 +180,17 @@ void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key) {
         || key == NULL) {
         return NULL;
     }
-    uint64_t hash = fnv1a_hash(key);
-    size_t index = (size_t)(hash & (uint64_t)(ht->size - 1));
+#if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
+    size_t hash = meiyan_hash(key);
+#else
+    size_t hash = fnv1a_hash(key);
+#endif
+    size_t index = hash % ht->size;
 
     for (int i = 0; i < ht->size; i++) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL
-            && strcmp(key, ht->items[index]->key) == 0) {
+            && key_cmp(key, ht->items[index]->key) == 0) {
             return ht_delete_entry(AM_ALLOCATOR_ARG ht, index);
         }
         index = (index + 1) % ht->size;

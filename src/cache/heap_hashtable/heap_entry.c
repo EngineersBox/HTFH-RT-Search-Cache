@@ -3,12 +3,12 @@
 #include <string.h>
 
 HeapEntry* he_create(const char* key, void* value) {
-    HeapEntry* entry = malloc(sizeof(*entry));
+    HeapEntry* entry = (HeapEntry*) malloc(sizeof(*entry));
     if (entry == NULL) {
         return NULL;
     }
     entry->length = strlen(key);
-    entry->key = calloc(entry->length + 1, sizeof(char));
+    entry->key = (char*) calloc(entry->length + 1, sizeof(char));
     if (entry->key == NULL) {
         return NULL;
     }

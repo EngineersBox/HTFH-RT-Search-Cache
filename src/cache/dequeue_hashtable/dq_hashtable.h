@@ -15,6 +15,7 @@ extern "C" {
 #include "../../allocator/alloc_manager.h"
 
 typedef struct DequeueHashTable {
+    KeyComparator keyComparator;
     DQHTEntry* head;
     DQHTEntry* tail;
 
@@ -34,6 +35,7 @@ void dqht_destroy_handled(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, EntryValueD
 void dqht_destroy(AM_ALLOCATOR_PARAM DequeueHashTable* dqht);
 
 void* dqht_get(DequeueHashTable* dqht, const char* key);
+void* dqht_get_custom(DequeueHashTable* dqht, const char* key);
 int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value);
 void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key);
 

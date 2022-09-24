@@ -22,9 +22,11 @@ typedef struct DLIRSEntry {
     void* value;
 } DLIRSEntry;
 
+typedef void* (*ValueCopy)(AM_ALLOCATOR_PARAM void* old_value);
+
 DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* value, bool is_LIR, bool in_cache);
 DLIRSEntry* dlirs_entry_create(AM_ALLOCATOR_PARAM const char* key, void* value);
-DLIRSEntry* dlirs_entry_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other);
+DLIRSEntry* dlirs_entry_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other, ValueCopy copy_handler);
 void dlirs_entry_destroy(AM_ALLOCATOR_PARAM DLIRSEntry* entry);
 
 #ifdef __cplusplus

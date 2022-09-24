@@ -10,7 +10,7 @@
 #include "../logging/logging.h"
 
 Cache* cache_create(size_t heap_size, size_t ht_size, size_t cache_size, CacheBackingHandlers handlers, void* options) {
-    Cache* cache = malloc(sizeof(*cache));
+    Cache* cache = (Cache*) malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
@@ -19,17 +19,16 @@ Cache* cache_create(size_t heap_size, size_t ht_size, size_t cache_size, CacheBa
         set_alloc_errno_msg(RWLOCK_LOCK_INIT, strerror(lock_result));
         return NULL;
     }
-#if ALLOCATOR_TYPE > 0
 #if ALLOCATOR_TYPE == 1
-    Allocator* allocator = htfh_create(heap_size);
-#elif ALLOCATOR_TYPE == 2
-    GlibcAllocator* allocator = gca_create(heap_size);
-#endif
-    if (allocator == NULL) {
+    if ((cache->alloc = htfh_create(heap_size)) == NULL) {
         return NULL;
     }
-    cache->alloc = allocator;
+#elif ALLOCATOR_TYPE == 2
+    if ((cache->alloc = gca_create(heap_size)) == NULL) {
+        return NULL;
+    }
 #endif
+    LOCALISE_ALLOCATOR_ARG
     cache->backing = handlers.createHandler(AM_ALLOCATOR_ARG ht_size, cache_size, options);
     if (cache->backing == NULL) {
         return NULL;

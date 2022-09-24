@@ -17,5 +17,5 @@ echo "==== RUN CACHE ===="
 #./htfh_rt_search_cache
 #lldb ./htfh_rt_search_cache
 #cvalgrind --tool=drd -s ./htfh_rt_search_cache
-#valgrind --tool=helgrind --delta-stacktrace=yes --ignore-thread-creation=yes --free-is-write=yes -s ./htfh_rt_search_cache
+#cvalgrind --tool=helgrind --delta-stacktrace=yes --ignore-thread-creation=yes --free-is-write=yes -s ./htfh_rt_search_cache
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./htfh_rt_search_cache

@@ -8,7 +8,6 @@ extern "C" {
 #endif
 
 #include "../../allocator/htfh/htfh.h"
-#include "../../allocator/glibc/glibc.h"
 #include "../dequeue_hashtable/dq_hashtable.h"
 #include "../../allocator/thread/lock.h"
 #include "dlirs_entry.h"
@@ -28,6 +27,8 @@ typedef struct DLIRS {
     size_t demoted;
     size_t non_resident;
 
+    ValueCopy value_copy_handler;
+
     DequeueHashTable* lirs;
     DequeueHashTable* non_resident_hirs;
     DequeueHashTable* resident_hirs;
@@ -41,6 +42,7 @@ typedef struct DLIRS {
 
 typedef struct DLIRSOptions {
     float hirs_ratio;
+    ValueCopy value_copy_handler;
     KeyComparator comparator;
 } DLIRSOptions;
 
