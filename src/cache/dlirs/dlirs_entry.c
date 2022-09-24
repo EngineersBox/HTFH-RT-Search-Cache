@@ -6,6 +6,7 @@
 #include "../../logging/logging.h"
 #include "../cache_key.h"
 #include "../result.h"
+#include "../../allocator/error/allocator_errno.h"
 
 DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* value, bool is_LIR, bool in_cache) {
     DLIRSEntry* entry = (DLIRSEntry*) am_malloc(sizeof(*entry));

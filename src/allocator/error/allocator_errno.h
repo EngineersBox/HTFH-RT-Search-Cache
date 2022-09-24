@@ -93,10 +93,10 @@ extern void get_alloc_errmsg(AllocatorErrno err);
         stderr, \
         "%s%s%s\n\tat %s(%s:%d)\n\tat %s\n", \
         trunc_prefix, \
-        __alloc__errno_msg, \
-        __alloc__errno_strerr, \
+        alloc_errno_msg, \
+        alloc_errno_strerr, \
         __func__, __FILE__, __LINE__, \
-        __alloc__errno_location \
+        alloc_errno_location \
     ); \
 })
 

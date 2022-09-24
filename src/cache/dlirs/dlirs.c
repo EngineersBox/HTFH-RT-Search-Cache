@@ -155,6 +155,8 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
     DLIRSEntry* entry1;
     DLIRSEntry* entry2;
     while (cache->lirs->ht->count > 0) {
+        dqht_print_table("==== LIRS =====", cache->lirs);
+        printf("Current condition: %zu\n", cache->lirs->ht->count);
         entry = (DLIRSEntry*) dqht_get_front(cache->lirs);
         if (entry->is_LIR) {
             break;
@@ -165,15 +167,15 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
         if (!inCache) {
             cache->non_resident--;
         }
-        if (entry1 != NULL) {
-            am_free(((Result*) entry1->value)->results);
-            am_free(entry1->value);
-            dlirs_entry_destroy(AM_ALLOCATOR_ARG entry1);
-        }
         if (entry2 != NULL) {
             am_free(((Result*) entry2->value)->results);
             am_free(entry2->value);
             dlirs_entry_destroy(AM_ALLOCATOR_ARG entry2);
+        }
+        if (entry1 != NULL) {
+            am_free(((Result*) entry1->value)->results);
+            am_free(entry1->value);
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG entry1);
         }
         TRACE("Destroyed hir-lir");
     }

@@ -83,6 +83,7 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     }
     DQHTEntry* prev_entry = entry->prev;
     DQHTEntry* next_entry = entry->next;
+    dqht_print_table("[DQHT] Unlink before: ", dqht);
 //    printf("Unlink entry: %p\n", entry);
 //    printf("Unlink prev_entry check %p\n", prev_entry);
     if (prev_entry != NULL) {
@@ -106,6 +107,7 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
         dqht->tail = prev_entry;
 //        printf("dqht->tail after: %p\n", dqht->tail);
     }
+    dqht_print_table("[DQHT] Unlink after: ", dqht);
 //    printf("End unlink\n");
 }
 
@@ -142,6 +144,7 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
 #endif
     size_t index = hash % dqht->ht->size;
     for (int i = 0; i < dqht->ht->size; i++) {
+        printf("[DQHT] Removing: %s %zu\n", key_sprint(key), index);
         if (dqht->ht->items[index] != NULL
             && dqht->ht->items[index]->key != NULL
             && key_cmp(key, dqht->ht->items[index]->key) == 0) {
@@ -156,7 +159,7 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
 }
 
 void* dqht_get_front(DequeueHashTable* dqht) {
-    return dqht != NULL || DQHT_STRICT_CHECK(dqht) ? dqht->head : NULL;
+    return dqht == NULL || DQHT_STRICT_CHECK(dqht) ? NULL : dqht->head;
 }
 
 int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
