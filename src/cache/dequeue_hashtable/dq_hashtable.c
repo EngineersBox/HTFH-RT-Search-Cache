@@ -73,7 +73,7 @@ void* dqht_get_custom(DequeueHashTable* dqht, const char* key) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
-    DQHTEntry* entry = ht_get(dqht->ht, key);
+    DQHTEntry* entry = ht_get_custom(dqht->ht, key);
     return entry != NULL ? entry->ptr : NULL;
 }
 
