@@ -4,18 +4,21 @@
 #include <string.h>
 
 #include "../../logging/logging.h"
+#include "../cache_key.h"
+#include "../result.h"
+#include "../../allocator/error/allocator_errno.h"
 
 DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* value, bool is_LIR, bool in_cache) {
-    DLIRSEntry* entry = am_malloc(sizeof(*entry));
+    DLIRSEntry* entry = (DLIRSEntry*) am_malloc(sizeof(*entry));
     if (entry == NULL) {
         return NULL;
     }
-    entry->length = strlen(key);
-    entry->key = am_calloc(entry->length + 1, sizeof(char));
+    entry->length = key_size(key);
+    entry->key = (char*) am_malloc(entry->length);
     if (entry->key == NULL) {
         return NULL;
     }
-    strncpy(entry->key, key, entry->length);
+    memcpy(entry->key, key, entry->length);
     entry->value = value;
     entry->is_LIR = is_LIR;
     entry->in_cache = in_cache;
@@ -24,19 +27,21 @@ DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* va
 }
 
 DLIRSEntry* dlirs_entry_create(AM_ALLOCATOR_PARAM const char* key, void* value) {
-    DLIRSEntry* entry = dlirs_entry_create_full(AM_ALLOCATOR_ARG key, value, false, true);
-    TRACE("CREATED NEW DLIRSEntry: %p [%s: %p]", entry, key, value);
-    return entry;
+    return dlirs_entry_create_full(AM_ALLOCATOR_ARG key, value, false, true);
 }
 
-DLIRSEntry* dlirs_entry_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other) {
+void* default_copy_handler(AM_ALLOCATOR_PARAM void* old_value) {
+    return old_value;
+}
+
+DLIRSEntry* dlirs_entry_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other, ValueCopy copy_handler) {
     if (other == NULL || other->key == NULL) {
         return NULL;
     }
     DLIRSEntry* entry = dlirs_entry_create_full(
         AM_ALLOCATOR_ARG
         other->key,
-        other->value,
+        copy_handler == NULL ? default_copy_handler(AM_ALLOCATOR_ARG other->value) : copy_handler(AM_ALLOCATOR_ARG other->value),
         other->is_LIR,
         other->in_cache
     );
@@ -49,7 +54,7 @@ void dlirs_entry_destroy(AM_ALLOCATOR_PARAM DLIRSEntry* entry) {
     if (entry == NULL || entry->key == NULL) {
         return;
     }
-//    TRACE("DESTROYING DLIRSEntry: %p [%s: %p]", entry, entry->key, entry->value);
+    TRACE("DESTROYING DLIRSEntry: %p [%s: %p]", entry, key_sprint(entry->key), entry->value);
     am_free(entry->key);
     entry->key = NULL;
     am_free(entry);

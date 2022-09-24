@@ -1,13 +1,14 @@
 #include "lru.h"
 
 #include <string.h>
+#include "../../preprocessor/lambda.h"
 
 LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, LRUCacheOptions* options) {
-    LRUCache* cache = malloc(sizeof(*cache));
+    LRUCache* cache = (LRUCache*) malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
-    cache->dqht = dqht_create(AM_ALLOCATOR_ARG ht_size, options == NULL ? strcmp : options->comparator);
+    cache->dqht = dqht_create(AM_ALLOCATOR_ARG ht_size, options == NULL ? NULL : options->comparator);
     if (cache->dqht == NULL) {
         return NULL;
     }
@@ -15,12 +16,23 @@ LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, LRUCa
     return cache;
 }
 
-void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache) {
-    if (cache == NULL) {
+void destroy_dqht(AM_ALLOCATOR_PARAM void* entry, void* _ignored) {
+    if (entry == NULL) {
         return;
-    } else if (cache->dqht != NULL) {
-        dqht_destroy(AM_ALLOCATOR_ARG cache->dqht);
     }
+    am_free(entry);
+}
+
+void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache) {
+    if (cache == NULL || cache->dqht == NULL) {
+        return;
+    }
+    dqht_destroy_handled(
+        AM_ALLOCATOR_ARG
+        cache->dqht,
+        (EntryValueDestroyHandler) destroy_dqht,
+    NULL
+    );
     free(cache);
 }
 

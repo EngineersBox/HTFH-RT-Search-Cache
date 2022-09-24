@@ -13,11 +13,11 @@ extern "C" {
 #include "../dequeue_hashtable/dq_ht_entry.h"
 #include "../../allocator/alloc_manager.h"
 
-typedef int (*KeyComparator)(const char* key1, const char* key2);
+typedef int (*KeyComparator)(const char* key1, const char* key2, void* key2Value);
 
 typedef struct HashTable {
-    int size;
-    int count;
+    size_t size;
+    size_t count;
     KeyComparator comparator;
     DQHTEntry** items;
 } HashTable;
@@ -27,8 +27,8 @@ void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht);
 int ht_resize(AM_ALLOCATOR_PARAM HashTable* ht);
 
 DQHTEntry* ht_get(HashTable* ht, const char* key);
-// Failure: -1, Updated entry: 0, New entry: 1
-int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entry, void** overriddenValue);
+DQHTEntry* ht_get_custom(HashTable* ht, const char* key);
+DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value);
 
 void* ht_delete_entry(AM_ALLOCATOR_PARAM HashTable* ht, int index);
 void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key);

@@ -3,23 +3,24 @@
 #include <string.h>
 //#include <stdio.h>
 #include <stdlib.h>
+#include "../cache_key.h"
 
 DQHTEntry* dqhtentry_create(AM_ALLOCATOR_PARAM const char* key, void* ptr) {
     return dqhtentry_create_full(AM_ALLOCATOR_ARG key, ptr, NULL, NULL);
 }
 
 DQHTEntry* dqhtentry_create_full(AM_ALLOCATOR_PARAM const char* key, void* ptr, DQHTEntry* prev, DQHTEntry* next) {
-    DQHTEntry* entry = am_malloc(sizeof(*entry));
+    DQHTEntry* entry = (DQHTEntry*) am_malloc(sizeof(*entry));
     if (entry == NULL) {
         return NULL;
     }
-    entry->length = strlen(key);
-    entry->key = am_calloc(entry->length + 1, sizeof(char));
+    entry->length = key_size(key);
+    entry->key = (char*) am_malloc(entry->length);
     if (entry->key == NULL) {
         return NULL;
     }
-    strncpy(entry->key, key, entry->length);
-//    printf("NEW ENTRY [Key: %s]\n", entry->key);
+    memcpy(entry->key, key, entry->length);
+//    printf("NEW ENTRY [Key: %s]\n", key_sprint(entry->key));
     entry->ptr = ptr;
 //    printf("NEW ENTRY [Ptr: %p]\n", entry->ptr);
     entry->prev = prev;

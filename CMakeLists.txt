@@ -36,10 +36,10 @@ target_compile_definitions(
         htfh_rt_search_cache
         PRIVATE
         ALLOCATOR_TYPE=0
+        HASH_FUNC=MEIYAN
         cache_backing_t=DLIRS*
         DQHT_ENABLE_STRICT
         DLIRS_ENABLE_STRICT
-        HASH_FUNC=MEIYAN
-        ENABLE_LOGGING
-        LOG_DATETIME_PREFIX
+#        ENABLE_LOGGING
+#        LOG_DATETIME_PREFIX
 )

@@ -22,10 +22,14 @@ extern "C" {
 #endif
 
 typedef struct Cache {
-    htfh_lock_t rwlock;
+    htfh_rwlock_t rwlock;
     cache_backing_t backing;
     CacheBackingHandlers handlers;
+#if ALLOCATOR_TYPE == 1
     Allocator* alloc;
+#elif ALLOCATOR_TYPE == 2
+    GlibcAllocator* alloc;
+#endif
 } Cache;
 
 Cache* cache_create(size_t heap_size, size_t ht_size, size_t cache_size, CacheBackingHandlers handlers, void* options);
