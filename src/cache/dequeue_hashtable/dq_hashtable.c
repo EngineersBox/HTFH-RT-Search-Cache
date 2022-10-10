@@ -121,7 +121,7 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
 }
 
 void* dqht_get_front(DequeueHashTable* dqht) {
-    return dqht == NULL || DQHT_STRICT_CHECK(dqht) ? NULL : dqht->head->ptr;
+    return dqht == NULL || dqht->head == NULL || DQHT_STRICT_CHECK(dqht) ? NULL : dqht->head->ptr;
 }
 
 int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
@@ -152,7 +152,7 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
 }
 
 void* dqht_get_last(DequeueHashTable* dqht) {
-    return dqht == NULL || DQHT_STRICT_CHECK(dqht) ? NULL : dqht->tail->ptr;
+    return dqht == NULL || dqht->tail == NULL || DQHT_STRICT_CHECK(dqht) ? NULL : dqht->tail->ptr;
 }
 
 int dqht_push_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
