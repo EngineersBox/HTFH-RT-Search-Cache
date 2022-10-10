@@ -40,6 +40,6 @@ target_compile_definitions(
         cache_backing_t=DLIRS*
         DQHT_ENABLE_STRICT
         DLIRS_ENABLE_STRICT
-#        ENABLE_LOGGING
-#        LOG_DATETIME_PREFIX
+        ENABLE_LOGGING
+        LOG_DATETIME_PREFIX
 )
