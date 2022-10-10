@@ -14,11 +14,10 @@ DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* va
         return NULL;
     }
     entry->length = key_size(key);
-    entry->key = (char*) am_malloc(entry->length);
+    entry->key = key_clone(AM_ALLOCATOR_ARG key);
     if (entry->key == NULL) {
         return NULL;
     }
-    memcpy(entry->key, key, entry->length);
     entry->value = value;
     entry->is_LIR = is_LIR;
     entry->in_cache = in_cache;

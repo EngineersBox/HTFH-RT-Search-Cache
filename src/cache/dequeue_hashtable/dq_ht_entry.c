@@ -15,11 +15,10 @@ DQHTEntry* dqhtentry_create_full(AM_ALLOCATOR_PARAM const char* key, void* ptr, 
         return NULL;
     }
     entry->length = key_size(key);
-    entry->key = (char*) am_malloc(entry->length);
+    entry->key = key_clone(AM_ALLOCATOR_ARG key);
     if (entry->key == NULL) {
         return NULL;
     }
-    memcpy(entry->key, key, entry->length);
 //    printf("NEW ENTRY [Key: %s]\n", key_sprint(entry->key));
     entry->ptr = ptr;
 //    printf("NEW ENTRY [Ptr: %p]\n", entry->ptr);

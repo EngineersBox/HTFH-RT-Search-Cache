@@ -80,6 +80,28 @@ static char* key_copy(AM_ALLOCATOR_PARAM char* key) {
     return key_create(key_get_op(key), key_get_term1(key), key_get_term2(key));
 }
 
+static char* key_clone(AM_ALLOCATOR_PARAM const char* clonable) {
+    char op = key_get_op(clonable);
+    const char* term1 = key_get_term1(clonable);
+    const char* term2 = key_get_term2(clonable);
+    size_t t1Size = (strlen(term1) + 1);
+    size_t t2Size = term2 == NULL ? 0 : (strlen(term2) + 1);
+    char* key = (char*) am_malloc(sizeof(char) + (2 * sizeof(size_t)) + ((t1Size + t2Size) * sizeof(char)));
+    size_t offset = 0;
+    key[offset] = op;
+    offset += sizeof(char);
+    memcpy(key + offset, &t1Size, sizeof(size_t));
+    offset += sizeof(size_t);
+    memcpy(key + offset, &t2Size, sizeof(size_t));
+    offset += sizeof(size_t);
+    memcpy(key + offset, term1, t1Size * sizeof(char));
+    if (term2 != NULL) {
+        offset += t1Size * sizeof(char);
+        memcpy(key + offset, term2, t2Size * sizeof(char));
+    }
+    return key;
+}
+
 #ifdef __cplusplus
 };
 #endif
