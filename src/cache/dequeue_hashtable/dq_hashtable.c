@@ -174,39 +174,53 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     }
     printf("TABLE: %s\n", name);
     if (dqht->head != NULL) {
+        char* keyValue = key_sprint(dqht->head->key);
         printf(
             "[Head: [%zu] %s:%p]\n",
             dqht->head->index,
-            key_sprint(dqht->head->key),
+            keyValue,
             dqht->head->ptr
         );
+        free(keyValue);
     } else {
         printf("[Head: (nil)]\n");
     }
     if (dqht->tail != NULL) {
+        char* keyValue = key_sprint(dqht->head->key);
         printf(
             "[Tail: [%zu] %s:%p]\n",
             dqht->tail->index,
-            key_sprint(dqht->tail->key),
+            keyValue,
             dqht->tail->ptr
         );
+        free(keyValue);
     } else {
         printf("[Tail: (nil)]\n");
     }
     printf("{");
     DQHTEntry* entry = dqht->head;
     while (entry != NULL) {
+        char* keyValue = key_sprint(dqht->head->key);
+        char* keyValue1 = entry->next == NULL ? NULL : key_sprint(entry->next->key);
+        char* keyValue2 = entry->prev == NULL ? NULL : key_sprint(entry->prev->key);
         printf(
             " [%zu] %s: %p (N: %s %p, P: %s %p)%s",
             entry->index,
-            key_sprint(entry->key),
+            keyValue,
             entry->ptr,
-            entry->next == NULL ? "" : key_sprint(entry->next->key),
+            keyValue1 != NULL ? keyValue1 : "",
             entry->next == NULL ? NULL : entry->next->ptr,
-            entry->prev == NULL ? "" : key_sprint(entry->prev->key),
+            keyValue2 != NULL ? keyValue2 : "",
             entry->prev == NULL ? NULL : entry->prev->ptr,
             entry->next != NULL ? "," : " "
         );
+        free(keyValue);
+        if (keyValue1 != NULL) {
+            free(keyValue1);
+        }
+        if (keyValue2 != NULL) {
+            free(keyValue2);
+        }
         entry = entry->next;
     }
     printf(" }\n");
