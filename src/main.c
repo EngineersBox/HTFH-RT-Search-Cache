@@ -13,30 +13,64 @@
 #define HEAP_SIZE (16 * 10000)
 
 #define AND_OP '^'
-#define OR_OP_STR "|"
-#define OR_OP OR_OP_STR[0]
+#define OR_OP '|'
+#define SINGLE_OP '0'
+#define IS_AND(op) (op == AND_OP)
+#define IS_OR(op) (op == OR_OP)
+#define IS_SINGLE(op) (op == SINGLE_OP)
 
-#define THREAD_COUNT 1
+int partialCacheMatches = 0;
 
-int key_compare(const char* key1, const char* key2) {
+#define THREAD_COUNT 10
+
+int key_compare(const char* key1, const char* key2, void* key2Value) {
     if (key1 == NULL && key2 == NULL) {
         return 0;
     } else if (key1 == NULL) {
         return -1;
     } else if (key2 == NULL) {
         return 1;
-    } else if (strchr(key2, AND_OP) != NULL || strchr(key2, OR_OP) == NULL) {
-        return strcmp(key1, key2);
     }
-    char* token = strtok(key2, OR_OP_STR);
-    while (token != NULL) {
-        if (strcmp(key1, token) == 0) {
-            return 0;
+    Result* key2Result = (Result*) key2Value;
+    char key1Op = key_get_op(key1);
+    char key2Op = key_get_op(key2);
+    if (IS_AND(key1Op)) {
+        if (IS_AND(key2Op)) {
+            return (strcmp(key_get_term1(key1), key_get_term1(key2)) == 0 && strcmp(key_get_term2(key1), key_get_term2(key2)) == 0)
+                || (strcmp(key_get_term1(key1), key_get_term2(key2)) == 0 && strcmp(key_get_term2(key1), key_get_term1(key2)) == 0) ? 0 : 1;
         }
-        token = strtok(key2, OR_OP_STR);
+        return 1;
+    } else if (IS_OR(key1Op)) {
+        if (IS_AND(key2Op) && partialCacheMatches == 2) {
+            return strcmp(key_get_term1(key1), key_get_term1(key2)) == 0
+                || strcmp(key_get_term1(key1), key_get_term2(key2)) == 0
+                || strcmp(key_get_term2(key1), key_get_term1(key2)) == 0
+                || strcmp(key_get_term2(key1), key_get_term2(key2)) == 0 ? 0 : 1;
+        } else if (IS_OR(key2Op)) {
+            if (partialCacheMatches == 2) {
+                return ((strcmp(key_get_term1(key1), key_get_term1(key2)) == 0 || strcmp(key_get_term2(key1), key_get_term1(key2)) == 0) && key2Result->term1Found)
+                    || ((strcmp(key_get_term1(key1), key_get_term2(key2)) == 0 || strcmp(key_get_term2(key1), key_get_term2(key2)) == 0) && key2Result->term2Found) ? 0 : 1;
+            }
+            return (strcmp(key_get_term1(key1), key_get_term1(key2)) == 0 && strcmp(key_get_term2(key1), key_get_term2(key2)) == 0)
+                || (strcmp(key_get_term1(key1), key_get_term2(key2)) == 0 && strcmp(key_get_term2(key1), key_get_term1(key2)) == 0) ? 0 : 1;
+        } else  if (IS_SINGLE(key2Op) && partialCacheMatches == 2) {
+            return strcmp(key_get_term1(key1), key_get_term1(key2)) == 0 || strcmp(key_get_term2(key1), key_get_term1(key2)) == 0 ? 0 : 1;
+        }
+        return 1;
+    } else if (IS_SINGLE(key1Op)) {
+        if (IS_AND(key2Op) && partialCacheMatches == 2) {
+            return strcmp(key_get_term1(key1), key_get_term1(key2)) == 0 || strcmp(key_get_term1(key1), key_get_term2(key2)) == 0 ? 0 : 1;
+        } else if (IS_OR(key2Op) && partialCacheMatches >= 1) {
+            return (strcmp(key_get_term1(key1), key_get_term1(key2)) == 0 && key2Result->term1Found)
+                || (strcmp(key_get_term1(key1), key_get_term2(key2)) == 0 && key2Result->term2Found) ? 0 : 1;
+        } else if (IS_SINGLE(key2Op)) {
+            return strcmp(key_get_term1(key1), key_get_term1(key2));
+        }
+        return 1;
     }
     return 1;
 }
+
 
 static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable* dqht) {
     if (htfh_rwlock_rdlock_handled(&cache->rwlock) != 0) {
@@ -75,7 +109,6 @@ void createTestData() {
         values[i] = (Result) {
             .term1Found = true,
             .term2Found = true,
-            .offset1 = 0,
             .offset2 = 0,
             .match_count = 10,
             .results = postings
@@ -97,6 +130,7 @@ typedef struct Params {
 void* threadFn(void* arg) {
     Params* params = (Params*) arg;
     Cache* cache = (Cache*) params->cache;
+    LOCALISE_ALLOCATOR_ARG
     int index = params->index;
     DEBUG("======== BEFORE WAITING ========");
     pthread_barrier_wait(&barrier);
@@ -111,9 +145,16 @@ void* threadFn(void* arg) {
             DLIRSEntry* evicted = NULL;
             int requestResult;
             INFO("==== THREAD: %d ====\n", index);
+            if ((match = cache_get(cache, to_store[i % 10], (void**) &evicted)) != NULL) {
+                continue;
+            }
+            if (evicted != NULL) {
+                am_free(((Result*) evicted->value)->results);
+                am_free(evicted->value);
+                dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            }
             if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
                 INFO("[%d:%d] Unable to request cache population for [%s: %p] [Evicted: %p]", i, j, key_sprint(to_store[i % 10]), &values[i], evicted);
-                LOCALISE_ALLOCATOR_ARG
                 am_free(((Result*) evicted->value)->results);
                 am_free(evicted->value);
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
@@ -126,7 +167,6 @@ void* threadFn(void* arg) {
             locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
             locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
             if (evicted != NULL) {
-                LOCALISE_ALLOCATOR_ARG
                 am_free(((Result*) evicted->value)->results);
                 am_free(evicted->value);
                 dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
@@ -140,17 +180,31 @@ void* threadFn(void* arg) {
     locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
         INFO("==== THREAD: %d ====", index);
-        void* match = cache_get(cache, to_store[i % 10]);
+        DLIRSEntry* evicted = NULL;
+        void* match = cache_get(cache, to_store[i % 10], (void**) &evicted);
+        if (evicted != NULL) {
+            am_free(((Result*) evicted->value)->results);
+            am_free(evicted->value);
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+        }
         INFO("Cache contains %s: %s [Value: %p]", key_sprint(to_store[i]), match != NULL ? "true" : "false", match);
     }
     INFO("======== REQUEST 2 ========");
     for (int i = 0; i < ENTRY_COUNT; i++) {
         DLIRSEntry* evicted;
+        DLIRSEntry* match;
         int requestResult;
         INFO("==== THREAD: %d ====", index);
+        if ((match = cache_get(cache, to_store[i % 10], (void**) &evicted)) != NULL) {
+            continue;
+        }
+        if (evicted != NULL) {
+            am_free(((Result*) evicted->value)->results);
+            am_free(evicted->value);
+            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+        }
         if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
             INFO("Unable to request cache population for [%s: %p] [Evicted: %p]", key_sprint(to_store[i % 10]), &values[i], evicted);
-            LOCALISE_ALLOCATOR_ARG
             am_free(((Result*) evicted->value)->results);
             am_free(evicted->value);
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
@@ -163,7 +217,6 @@ void* threadFn(void* arg) {
         locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
         locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
         if (evicted != NULL) {
-            LOCALISE_ALLOCATOR_ARG
             am_free(((Result*) evicted->value)->results);
             am_free(evicted->value);
             dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
@@ -185,7 +238,7 @@ int main(int argc, char* argv[]) {
         &(DLIRSOptions) {
             .hirs_ratio = 0.01f,
             .value_copy_handler = (ValueCopy) result_copy,
-            .comparator = NULL
+            .comparator = key_compare
         }
     );
     if (cache == NULL) {

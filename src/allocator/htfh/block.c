@@ -1,52 +1,52 @@
 #include "block.h"
 
-inline size_t block_size(const BlockHeader* block) {
+size_t block_size(const BlockHeader* block) {
     return block->size & ~(block_header_free_bit | block_header_prev_free_bit);
 }
 
-inline void block_set_size(BlockHeader* block, size_t size) {
+void block_set_size(BlockHeader* block, size_t size) {
     const size_t old_size = block->size;
     block->size = size | (old_size & (block_header_free_bit | block_header_prev_free_bit));
 }
 
-inline int block_is_last(const BlockHeader* block) {
+int block_is_last(const BlockHeader* block) {
     return block_size(block) == 0;
 }
 
-inline int block_is_free(const BlockHeader* block) {
+int block_is_free(const BlockHeader* block) {
     return (int) (block->size & block_header_free_bit);
 }
 
-inline void block_set_free(BlockHeader* block) {
+void block_set_free(BlockHeader* block) {
     block->size |= block_header_free_bit;
 }
 
-inline void block_set_used(BlockHeader* block) {
+void block_set_used(BlockHeader* block) {
     block->size &= ~block_header_free_bit;
 }
 
-inline int block_is_prev_free(const BlockHeader* block) {
+int block_is_prev_free(const BlockHeader* block) {
     return (int) (block->size & block_header_prev_free_bit);
 }
 
-inline void block_set_prev_free(BlockHeader* block) {
+void block_set_prev_free(BlockHeader* block) {
     block->size |= block_header_prev_free_bit;
 }
 
-inline void block_set_prev_used(BlockHeader* block) {
+void block_set_prev_used(BlockHeader* block) {
     block->size &= ~block_header_prev_free_bit;
 }
 
-inline BlockHeader* block_from_ptr(const void* ptr) {
+BlockHeader* block_from_ptr(const void* ptr) {
     return (BlockHeader*)((unsigned char*) ptr - block_start_offset);
 }
 
-inline void* block_to_ptr(const BlockHeader* block) {
+void* block_to_ptr(const BlockHeader* block) {
     return (void*) (((unsigned char*) block) + block_start_offset);
 }
 
 /* Return location of next block after block of given size. */
-inline BlockHeader* offset_to_block(const void* ptr, size_t size) {
+BlockHeader* offset_to_block(const void* ptr, size_t size) {
     return (BlockHeader*) (((ptrdiff_t) ptr) + size);
 }
 

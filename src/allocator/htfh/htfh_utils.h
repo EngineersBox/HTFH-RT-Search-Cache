@@ -44,18 +44,33 @@ extern "C" {
 ** Some compilers masquerade as gcc; patchlevel test filters them out.
 */
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) && defined(__GNUC_PATCHLEVEL__)
-int htfh_ffs(unsigned int word);
-int htfh_fls(unsigned int word);
+__attribute__((always_inline)) inline int htfh_ffs(unsigned int word) {
+    return __builtin_ffs(word) - 1;
+}
+
+__attribute__((always_inline)) inline int htfh_fls(unsigned int word) {
+    const int bit = word ? 32 - __builtin_clz(word) : 0;
+    return bit - 1;
+}
 #else
 /* Fall back to generic implementation. */
-int htfh_fls_generic(unsigned int word);
+__attribute__((always_inline)) inline int htfh_fls_generic(unsigned int word) {
+    int bit = 32;
+    if (!word) bit -= 1;
+    if (!(word & 0xffff0000)) { word <<= 16; bit -= 16; }
+    if (!(word & 0xff000000)) { word <<= 8; bit -= 8; }
+    if (!(word & 0xf0000000)) { word <<= 4; bit -= 4; }
+    if (!(word & 0xc0000000)) { word <<= 2; bit -= 2; }
+    if (!(word & 0x80000000)) { word <<= 1; bit -= 1; }
+    return bit;
+}
 
 /* Implement ffs in terms of fls. */
-inline int htfh_ffs(unsigned int word) {
+__attribute__((always_inline)) inline int htfh_ffs(unsigned int word) {
     return htfh_fls_generic(word & (~word + 1)) - 1;
 }
 
-inline int htfh_fls(unsigned int word) {
+__attribute__((always_inline)) inline int htfh_fls(unsigned int word) {
     return htfh_fls_generic(word) - 1;
 }
 
@@ -63,7 +78,10 @@ inline int htfh_fls(unsigned int word) {
 
 /* Possibly 64-bit version of htfh_fls. */
 #if defined (ARCH_64_BIT)
-int htfh_fls_sizet(size_t size);
+__attribute__((always_inline)) inline int htfh_fls_sizet(size_t size) {
+    int high = (int)(size >> 32);
+    return high ? 32 + htfh_fls(high) : htfh_fls((int)size & 0xffffffff);
+}
 #else
 #define htfh_fls_sizet htfh_fls
 #endif

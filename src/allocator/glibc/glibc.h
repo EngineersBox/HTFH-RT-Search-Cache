@@ -11,6 +11,7 @@ extern "C" {
 #include <stddef.h>
 #include <stdbool.h>
 #include "../thread/lock.h"
+#include "../../allocator/alloc_manager.h"
 
 #define GCA_INFO_SIZE (2 * sizeof(size_t))
 #define GCA_DATA_ALIGN (2 * sizeof(size_t))
@@ -21,8 +22,8 @@ extern "C" {
 typedef struct Header {
     size_t prev_info;
     size_t curr_info;
-    struct Header *prev_free;
-    struct Header *next_free;
+    struct Header* prev_free;
+    struct Header* next_free;
 } Header;
 
 typedef struct GlibcAllocator {

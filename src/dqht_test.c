@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "allocator/error/allocator_errno.h"
 #include "cache/dequeue_hashtable/dq_hashtable.h"
+#include "cache/cache_key.h"
 
 struct TestStruct {
     int value;
@@ -34,16 +35,16 @@ int dqht_test_main(int argc, char* argv[]) {
     }
 
     char* to_store[10] = {
-        "test1",
-        "other",
-        "more",
-        "something",
-        "yeahd",
-        "dgsdfs",
-        "ehjigdss",
-        "oijfguod",
-        "ngujhdw",
-        "doij42od"
+        key_create('0', "test1", NULL),
+        key_create('0', "other", NULL),
+        key_create('0', "more", NULL),
+        key_create('0', "something", NULL),
+        key_create('0', "yeahd", NULL),
+        key_create('0', "dgsdfs", NULL),
+        key_create('0', "ehjigdss", NULL),
+        key_create('0', "oijfguod", NULL),
+        key_create('0', "ngujhdw", NULL),
+        key_create('0', "doij42od", NULL)
     };
     int values[10] = {
         56135,
@@ -58,7 +59,7 @@ int dqht_test_main(int argc, char* argv[]) {
         64526
     };
     for (int i = 0; i < 10; i++) {
-        if (dqht_push_front(AM_ALLOCATOR_ARG table, to_store[i], &values[i], NULL) != 0) {
+        if (dqht_push_front(AM_ALLOCATOR_ARG table, to_store[i], &values[i]) != 0) {
             printf("Could not insert entry: [%s: %d]\n", to_store[i], values[i]);
             return 1;
         }

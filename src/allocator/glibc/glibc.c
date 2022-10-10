@@ -21,7 +21,7 @@
 #define gca_prev(h) (gca_data_to_header(gca_as_bytes(h) - gca_size(prev, h)))
 
 GlibcAllocator* gca_create(size_t heapSize) {
-    GlibcAllocator* alloc = malloc(sizeof(*alloc));
+    GlibcAllocator* alloc = (GlibcAllocator*) malloc(sizeof(*alloc));
     if (alloc == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return NULL;

@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../preprocessor/checks.h"
-
 void* htfh_add_pool(Allocator* alloc, void* mem, size_t bytes) {
     if (htfh_lock_lock_handled(&alloc->mutex) == -1) {
         return NULL;
@@ -59,7 +57,7 @@ Allocator* htfh_create(size_t bytes) {
         set_alloc_errno_msg(HEAP_MISALIGNED, msg);
         return NULL;
     }
-    Allocator* alloc = malloc(sizeof(*alloc));
+    Allocator* alloc = (Allocator*) malloc(sizeof(*alloc));
     if (alloc == NULL) {
         set_alloc_errno(NULL_ALLOCATOR_INSTANCE);
         return NULL;
@@ -71,7 +69,7 @@ Allocator* htfh_create(size_t bytes) {
         return NULL;
     }
     alloc->heap_size = bytes;
-    alloc->controller = alloc->heap = mmap(
+    alloc->heap = mmap(
         NULL,
         bytes,
         PROT_READ | PROT_WRITE,
@@ -79,6 +77,7 @@ Allocator* htfh_create(size_t bytes) {
         -1,
         0
     );
+    alloc->controller = (Controller*) alloc->heap;
     if (alloc->heap == NULL) {
         set_alloc_errno(HEAP_MMAP_FAILED);
         htfh_lock_unlock_handled(&alloc->mutex);

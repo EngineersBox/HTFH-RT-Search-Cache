@@ -3,20 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
 #include "hashing.h"
 #include "../cache_key.h"
 #include "../../logging/logging.h"
-
-int default_comparator(const char* key1, const char* key2, void* _ignored) {
-    return key_cmp(key1, key2);
-}
 
 HashTable* ht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {
     HashTable* ht = (HashTable*) am_malloc(sizeof(*ht));
     ht->size = size;
     ht->count = 0;
-    ht->comparator = comparator == NULL ? default_comparator : comparator;
+    ht->comparator = comparator;
     ht->items = (DQHTEntry**) am_calloc(ht->size, sizeof(DQHTEntry*));
     return ht;
 }
@@ -29,13 +24,13 @@ void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
         if (ht->items[i] == NULL) {
             continue;
         }
-        dqhtentry_destroy(ht->items[i]);
+        dqhtentry_destroy(AM_ALLOCATOR_ARG ht->items[i]);
     }
     am_free(ht->items);
     am_free(ht);
 }
 
-int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entry, void** overriddenValue) {
+DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value) {
     if (ht == NULL
         || ht->items == NULL
         || value == NULL) {
@@ -53,26 +48,20 @@ int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQ
     size_t index = hash % ht->size;
 
     while(ht->items[index] != NULL) {
-        if (ht->items[index]->key != NULL && key_cmp(key, ht->items[index]->key) == 0) {
+        if (ht->items[index]->key != NULL
+            && key_cmp(key, ht->items[index]->key) == 0) {
             ht->items[index]->ptr = value;
-            INFO("[CACHE HASHTABLE] New value: %p, Overridden value: %p", ht->items[index]->ptr, overriddenValue != NULL ? *overriddenValue : NULL);
-            if (entry != NULL) {
-                *entry = ht->items[index];
-            }
-            return 0;
+            return ht->items[index];
         }
         index = (index + 1) % ht->size;
     }
     ht->items[index] = dqhtentry_create(AM_ALLOCATOR_ARG key, value);
     if (ht->items[index] == NULL) {
-        return -1;
+        return NULL;
     }
     ht->items[index]->index = index;
-    if (entry != NULL) {
-        *entry = ht->items[index];
-    }
     ht->count++;
-    return 1;
+    return ht->items[index];
 }
 
 int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {
@@ -80,7 +69,7 @@ int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t in
         if (key_cmp(entry->key, items[index]->key) == 0) {
             return -1;
         }
-        index = index + 1 % size;
+        index = (index + 1) % size;
     }
     items[index] = entry;
     items[index]->index = index;
@@ -140,30 +129,6 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
     for (int i = 0; i < ht->size; i++) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL
-            && key_cmp(key, ht->items[index]->key) == 0) {
-            return ht->items[index];
-        }
-        index = (index + 1) % ht->size;
-    }
-    return NULL;
-}
-
-DQHTEntry* ht_get_custom(HashTable* ht, const char* key) {
-    if (ht == NULL
-        || ht->items == NULL
-        || key == NULL) {
-        return NULL;
-    }
-#if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
-    size_t hash = meiyan_hash(key);
-#else
-    size_t hash = fnv1a_hash(key);
-#endif
-    size_t index = hash % ht->size;
-
-    for (int i = 0; i < ht->size; i++) {
-        if (ht->items[index] != NULL
-            && ht->items[index]->key != NULL
             && ht->comparator(key, ht->items[index]->key, ht->items[index]) == 0) {
             return ht->items[index];
         }
@@ -199,7 +164,7 @@ void* ht_delete(AM_ALLOCATOR_PARAM HashTable* ht, const char* key) {
     for (int i = 0; i < ht->size; i++) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL
-            && key_cmp(key, ht->items[index]->key) == 0) {
+            && ht->comparator(key, ht->items[index]->key, ht->items[index]) == 0) {
             return ht_delete_entry(AM_ALLOCATOR_ARG ht, index);
         }
         index = (index + 1) % ht->size;

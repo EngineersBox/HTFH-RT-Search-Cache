@@ -8,7 +8,7 @@ __thread char alloc_errno_strerr[MAX_ERR_LINE_LENGTH];
 
 #define enum_error(enum_val, err_msg) case enum_val: strcpy(alloc_errno_msg, err_msg); break;
 
-inline void get_alloc_errmsg(AllocatorErrno err) {
+void get_alloc_errmsg(AllocatorErrno err) {
     switch (err) {
         enum_error(NULL_ALLOCATOR_INSTANCE, "Allocator is not initialised")
         enum_error(HEAP_ALREADY_MAPPED, "Managed heap has already been allocated")

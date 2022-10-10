@@ -9,7 +9,7 @@ extern "C" {
 
 #include <stddef.h>
 #include "constants.h"
-#include "utils.h"
+#include "htfh_utils.h"
 #include "../../preprocessor/checks.h"
 
 /*

@@ -50,7 +50,7 @@ typedef pthread_mutex_t __attribute__((__may_alias__)) htfh_lock_t;
 
 // ==== RWLOCK ====
 
-typedef pthread_rwlock_t htfh_rwlock_t;
+typedef pthread_rwlock_t __attribute__((__may_alias__)) htfh_rwlock_t;
 
 #define htfh_rwlock_init(lock, pshared) ({ \
     int result = 0; \

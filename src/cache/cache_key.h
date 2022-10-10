@@ -13,7 +13,9 @@ extern "C" {
 
 #include "../allocator/alloc_manager.h"
 
-__attribute__((always_inline)) static char* key_create(char op, const char* term1, const char* term2) {
+#define SINGLE_OP '0'
+
+static char* key_create(char op, const char* term1, const char* term2) {
     size_t t1Size = (strlen(term1) + 1);
     size_t t2Size = term2 == NULL ? 0 : (strlen(term2) + 1);
     char* key = (char*) malloc(sizeof(char) + (2 * sizeof(size_t)) + ((t1Size + t2Size) * sizeof(char)));
@@ -34,21 +36,18 @@ __attribute__((always_inline)) static char* key_create(char op, const char* term
 
 static size_t key_get_length(const char* keyStruct) {
     size_t length = sizeof(char) + (2 * sizeof(size_t)) + (size_t) (*(keyStruct + sizeof(char)));
-    if (keyStruct[0] == '\0') {
-        return length;
-    }
-    return length + (size_t) (*(keyStruct + sizeof(char) + sizeof(size_t)));
+    return keyStruct[0] == SINGLE_OP ? length : length + (size_t) (*(keyStruct + sizeof(char) + sizeof(size_t)));
 }
 
-__attribute__((always_inline)) static char key_get_op(const char* keyStruct) {
+static char key_get_op(const char* keyStruct) {
     return keyStruct[0];
 }
 
-__attribute__((always_inline)) static const char* key_get_term1(const char* keyStruct) {
+static const char* key_get_term1(const char* keyStruct) {
     return keyStruct + sizeof(char) + (2 * sizeof(size_t));
 }
 
-__attribute__((always_inline)) static const char* key_get_term2(const char* keyStruct) {
+static const char* key_get_term2(const char* keyStruct) {
     size_t t1Size = (size_t) (*(keyStruct + sizeof(char)));
     return keyStruct + sizeof(char) + (2 * sizeof(size_t)) + (t1Size * sizeof(char));
 }
@@ -56,23 +55,20 @@ __attribute__((always_inline)) static const char* key_get_term2(const char* keyS
 static size_t key_cmp(const char* keyStruct1, const char* keyStruct2) {
     char op1 = key_get_op(keyStruct1);
     return op1 == key_get_op(keyStruct2)
-           && strcmp(key_get_term1(keyStruct1), key_get_term1(keyStruct2)) == 0
-           && (op1 == '\0' || strcmp(key_get_term2(keyStruct1), key_get_term2(keyStruct2)) == 0) ? 0 : 1;
+        && strcmp(key_get_term1(keyStruct1), key_get_term1(keyStruct2)) == 0
+        && (op1 == SINGLE_OP || strcmp(key_get_term2(keyStruct1), key_get_term2(keyStruct2)) == 0) ? 0 : 1;
 }
 
-__attribute__((always_inline)) static size_t key_size(const char* keyStruct) {
+static size_t key_size(const char* keyStruct) {
     size_t length = sizeof(char) + (2 * sizeof(size_t)) + (((size_t) *(keyStruct + sizeof(char))) * sizeof(char));
-    if (keyStruct[0] == '\0') {
-        return length;
-    }
-    return length + (((size_t) *(keyStruct + sizeof(char) + sizeof(size_t))) * sizeof(char));
+    return keyStruct[0] == SINGLE_OP ? length : length + (((size_t) *(keyStruct + sizeof(char) + sizeof(size_t))) * sizeof(char));
 }
 
-__attribute__((always_inline)) static char* key_sprint(const char* keyStruct) {
+static char* key_sprint(const char* keyStruct) {
     if (keyStruct == NULL) {
-        return "(nil)";
+        return NULL;
     }
-    if (keyStruct[0] == '\0') {
+    if (keyStruct[0] == SINGLE_OP) {
         return (char*) key_get_term1(keyStruct);
     }
     char* formattedkey = (char*) malloc(sizeof(char) * 100);

@@ -108,51 +108,31 @@ static inline char* logLevelToString(int level) {
 #define __DEFINE_DATETIME_STRUCTS ({});
 #endif
 
-//#define LOG(level, msg, ...) { \
-//    if (typename(level) != T_INT) { \
-//        fprintf(STDERR, "[LOGGER] Expected integer log level"); \
-//        exit(1); \
-//    } \
-//    if (level <= MIN_LOG_LEVEL) { \
-//        DEFINE_DATETIME_STRUCTS;  \
-//        char logEntry[4096]; \
-//        sprintf( \
-//            logEntry, \
-//            DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
-//            msg "\n", \
-//            GET_DATETIME_FORMAT_VALUES \
-//            __func__, FILENAME, __LINE__, \
-//            logLevelToString(level), \
-//            ##__VA_ARGS__ \
-//        ); \
-//        fprintf(level == LL_ERROR ? STDERR : STDOUT, logEntry); \
-//        fflush(level == LL_ERROR ? STDERR : STDOUT); \
-//        if (LOG_FILE_HANDLE != NULL) {\
-//            fprintf( LOG_FILE_HANDLE, logEntry); \
-//            fflush(LOG_FILE_HANDLE); \
-//        }\
-//    } \
-//}
-//#define LOG(level, msg, ...) { \
-//    if (typename(level) != T_INT) { \
-//        fprintf(STDERR, "[LOGGER] Expected integer log level"); \
-//        exit(1); \
-//    } \
-//    if (level <= MIN_LOG_LEVEL) { \
-//        DEFINE_DATETIME_STRUCTS;  \
-//        fprintf( \
-//            level == LL_ERROR ? STDERR : STDOUT, \
-//            DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
-//            msg "\n", \
-//            GET_DATETIME_FORMAT_VALUES \
-//            __func__, FILENAME, __LINE__, \
-//            logLevelToString(level), \
-//            ##__VA_ARGS__ \
-//        ); \
-//        fflush(level == LL_ERROR ? STDERR : STDOUT); \
-//    } \
-//}
-#define LOG(level, msg, ...) printf(msg "\n", ##__VA_ARGS__)
+#define LOG(level, msg, ...) { \
+    if (typename(level) != T_INT) { \
+        fprintf(STDERR, "[LOGGER] Expected integer log level"); \
+        exit(1); \
+    } \
+    if (level <= MIN_LOG_LEVEL) { \
+        DEFINE_DATETIME_STRUCTS;  \
+        char logEntry[4096]; \
+        sprintf( \
+            logEntry, \
+            DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
+            msg "\n", \
+            GET_DATETIME_FORMAT_VALUES \
+            __func__, FILENAME, __LINE__, \
+            logLevelToString(level), \
+            ##__VA_ARGS__ \
+        ); \
+        fprintf(level == LL_ERROR ? STDERR : STDOUT, logEntry); \
+        fflush(level == LL_ERROR ? STDERR : STDOUT); \
+        if (LOG_FILE_HANDLE != NULL) {\
+            fprintf( LOG_FILE_HANDLE, logEntry); \
+            fflush(LOG_FILE_HANDLE); \
+        }\
+    } \
+}
 
 #endif // ENABLE_LOGGING
 

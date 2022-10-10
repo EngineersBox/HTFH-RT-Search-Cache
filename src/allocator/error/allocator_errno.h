@@ -88,7 +88,7 @@ extern void get_alloc_errmsg(AllocatorErrno err);
     } \
     strncpy(trunc_prefix, prefix, str_len); \
     trunc_prefix[str_len] = 0; \
-    get_alloc_errmsg(alloc_errno); \
+    get_alloc_errmsg((AllocatorErrno) alloc_errno); \
     fprintf( \
         stderr, \
         "%s%s%s\n\tat %s(%s:%d)\n\tat %s\n", \

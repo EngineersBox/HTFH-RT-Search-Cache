@@ -41,15 +41,15 @@ typedef struct DLIRS {
 #endif
 
 typedef struct DLIRSOptions {
+    KeyComparator comparator;
     float hirs_ratio;
     ValueCopy value_copy_handler;
-    KeyComparator comparator;
 } DLIRSOptions;
 
 DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSOptions* options);
 int dlirs_destroy(AM_ALLOCATOR_PARAM DLIRS* cache);
 
-bool dlirs_contains(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
+bool dlirs_contains(DLIRS* cache, const char* key);
 bool dlirs_is_full(DLIRS* cache);
 
 void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
@@ -62,11 +62,9 @@ DLIRSEntry* dlirs_evict_resident_hir(AM_ALLOCATOR_PARAM DLIRS* cache);
 void dlirs_hit_hir_in_resident_hirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key);
 void dlirs_limit_stack(AM_ALLOCATOR_PARAM DLIRS* cache);
 
-int dlirs_miss(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
-int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
-void* dlirs_get(DLIRS* cache, const char* key);
 // -1 = failure, 0 = miss, 1 = hit
-int dlirs_query(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** hitEntry, DLIRSEntry** evicted);
+int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value, DLIRSEntry** evicted);
+void* dlirs_get(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** evicted);
 
 #ifdef __cplusplus
 };

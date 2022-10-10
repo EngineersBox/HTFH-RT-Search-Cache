@@ -10,8 +10,12 @@
 #include "../cache_key.h"
 #include "../dlirs/dlirs_entry.h"
 
+int default_comparator(const char* key1, const char* key2, void* _ignored) {
+    return key_cmp(key1, key2);
+}
+
 DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {
-    HashTable* ht = ht_create(AM_ALLOCATOR_ARG size, comparator);
+    HashTable* ht = ht_create(AM_ALLOCATOR_ARG size, comparator == NULL ? default_comparator : comparator);
     if (ht == NULL) {
         return NULL;
     }
@@ -19,7 +23,7 @@ DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comp
     if (dqht == NULL) {
         return NULL;
     }
-    dqht->keyComparator = comparator;
+    dqht->keyComparator = comparator == NULL ? default_comparator : comparator;
     dqht->head = NULL;
     dqht->tail = NULL;
     dqht->ht = ht;
@@ -58,14 +62,6 @@ void* dqht_get(DequeueHashTable* dqht, const char* key) {
     return entry != NULL ? entry->ptr : NULL;
 }
 
-void* dqht_get_custom(DequeueHashTable* dqht, const char* key) {
-    if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
-        return NULL;
-    }
-    DQHTEntry* entry = ht_get_custom(dqht->ht, key);
-    return entry != NULL ? entry->ptr : NULL;
-}
-
 void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     if (dqht == NULL || entry == NULL) {
         return;
@@ -84,16 +80,13 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     }
 }
 
-int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value, void** overriddenValue) {
+int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
     DQHTEntry* entry = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value);
     if (entry == NULL) {
         return -1;
-    } else if (result == 0) {
-        // Updated an existing entry, no need set links
-        return 0;
     }
     if (dqht->tail != NULL) {
         dqht->tail->next = entry;
@@ -118,7 +111,7 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
     for (int i = 0; i < dqht->ht->size; i++) {
         if (dqht->ht->items[index] != NULL
             && dqht->ht->items[index]->key != NULL
-            && key_cmp(key, dqht->ht->items[index]->key) == 0) {
+            && dqht->keyComparator(key, dqht->ht->items[index]->key, dqht->ht->items[index]) == 0) {
             dqht_unlink(dqht, dqht->ht->items[index]);
             return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, index);
         }
@@ -131,17 +124,13 @@ void* dqht_get_front(DequeueHashTable* dqht) {
     return dqht == NULL || DQHT_STRICT_CHECK(dqht) ? NULL : dqht->head->ptr;
 }
 
-int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value, void** overriddenValue) {
+int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
-    DQHTEntry* entry;
-    int result;
-    if ((result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, overriddenValue)) == -1) {
+    DQHTEntry* entry = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value);
+    if (entry == NULL) {
         return -1;
-    } else if (result == 0) {
-        // Updated an existing entry, nothing to do
-        return 0;
     }
     if (dqht->head != NULL) {
         dqht->head->prev = entry;
@@ -163,11 +152,11 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
 }
 
 void* dqht_get_last(DequeueHashTable* dqht) {
-    return dqht != NULL || DQHT_STRICT_CHECK(dqht) ? dqht->tail : NULL;
+    return dqht == NULL || DQHT_STRICT_CHECK(dqht) ? NULL : dqht->tail->ptr;
 }
 
 int dqht_push_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
-    return dqht_insert(AM_ALLOCATOR_ARG dqht, key, value, NULL);
+    return dqht_insert(AM_ALLOCATOR_ARG dqht, key, value);
 }
 
 void* dqht_pop_last(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
@@ -186,7 +175,7 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     printf("TABLE: %s\n", name);
     if (dqht->head != NULL) {
         printf(
-            "[Head: [%zu] %s:%p (N: %s %p, P: %s %p)]\n",
+            "[Head: [%zu] %s:%p]\n",
             dqht->head->index,
             key_sprint(dqht->head->key),
             dqht->head->ptr
@@ -196,7 +185,7 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     }
     if (dqht->tail != NULL) {
         printf(
-            "[Tail: [%zu] %s:%p (N: %s %p, P: %s %p)]\n",
+            "[Tail: [%zu] %s:%p]\n",
             dqht->tail->index,
             key_sprint(dqht->tail->key),
             dqht->tail->ptr
