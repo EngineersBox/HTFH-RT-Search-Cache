@@ -47,7 +47,7 @@ bool lru_is_full(LRUCache* cache) {
     if (cache == NULL || cache->dqht == NULL) {
         return false;
     }
-    return cache->dqht->ht->count == cache->cache_size;
+    return cache->dqht->ht->count >= cache->cache_size;
 }
 
 // -1 = failure, 0 = miss, 1 = hit

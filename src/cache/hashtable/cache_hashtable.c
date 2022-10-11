@@ -47,7 +47,7 @@ DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* va
 #endif
     size_t index = hash % ht->size;
 
-    while(ht->items[index] != NULL) {
+    for (int i = 0; i < ht->size && ht->items[index] != NULL; i++) {
         if (ht->items[index]->key != NULL
             && key_cmp(key, ht->items[index]->key) == 0) {
             ht->items[index]->ptr = value;
@@ -55,6 +55,14 @@ DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* va
         }
         index = (index + 1) % ht->size;
     }
+//    while(ht->items[index] != NULL) {
+//        if (ht->items[index]->key != NULL
+//            && key_cmp(key, ht->items[index]->key) == 0) {
+//            ht->items[index]->ptr = value;
+//            return ht->items[index];
+//        }
+//        index = (index + 1) % ht->size;
+//    }
     ht->items[index] = dqhtentry_create(AM_ALLOCATOR_ARG key, value);
     if (ht->items[index] == NULL) {
         return NULL;
