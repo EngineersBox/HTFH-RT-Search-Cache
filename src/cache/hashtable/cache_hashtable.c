@@ -137,7 +137,7 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
     return NULL;
 }
 
-void* ht_delete_entry(AM_ALLOCATOR_PARAM HashTable* ht, int index) {
+void* ht_delete_entry(AM_ALLOCATOR_PARAM HashTable* ht, size_t index) {
     if (ht == NULL || ht->items == NULL || ht->items[index] == NULL) {
         return NULL;
     }

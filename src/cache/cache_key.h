@@ -53,6 +53,13 @@ static const char* key_get_term2(const char* keyStruct) {
 }
 
 static size_t key_cmp(const char* keyStruct1, const char* keyStruct2) {
+    if (keyStruct1 == NULL && keyStruct2 == NULL) {
+        return 0;
+    } else if (keyStruct1 == NULL) {
+        return -1;
+    } else if (keyStruct2 == NULL) {
+        return 1;
+    }
     char op1 = key_get_op(keyStruct1);
     return op1 == key_get_op(keyStruct2)
         && strcmp(key_get_term1(keyStruct1), key_get_term1(keyStruct2)) == 0

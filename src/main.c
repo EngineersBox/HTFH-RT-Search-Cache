@@ -21,7 +21,7 @@
 
 int partialCacheMatches = 0;
 
-#define THREAD_COUNT 10
+#define THREAD_COUNT 1
 
 int key_compare(const char* key1, const char* key2, void* key2Value) {
     if (key1 == NULL && key2 == NULL) {
@@ -80,9 +80,10 @@ static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable
 //    htfh_rwlock_unlock_handled(&cache->rwlock);
 }
 
-static pthread_barrier_t barrier;
+//static pthread_barrier_t barrier;
 
 #define ENTRY_COUNT 150
+int cacheType = 1;
 
 char* to_store[10];
 PostIt postings[ENTRY_COUNT];
@@ -127,13 +128,23 @@ typedef struct Params {
     Cache* cache;
 } Params;
 
+#define DESTROY_EVICTED_ENTRY if (cacheType == 0) { \
+    am_free(((Result*)((DLIRSEntry*) evicted)->value)->results); \
+    am_free(((DLIRSEntry*) evicted)->value); \
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG (DLIRSEntry*) evicted); \
+} else { \
+    am_free(((Result*) evicted)->results); \
+    am_free(evicted); \
+} \
+evicted = NULL;
+
 void* threadFn(void* arg) {
     Params* params = (Params*) arg;
     Cache* cache = (Cache*) params->cache;
     LOCALISE_ALLOCATOR_ARG
     int index = params->index;
     DEBUG("======== BEFORE WAITING ========");
-    pthread_barrier_wait(&barrier);
+//    pthread_barrier_wait(&barrier);
     DEBUG("======== AFTER WAITING ========");
     INFO("======== REQUEST 1 ========");
     locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
@@ -141,23 +152,20 @@ void* threadFn(void* arg) {
     locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < ENTRY_COUNT; i++) {
         for (int j = 1; j < i + 1; j++) {
-            DLIRSEntry* match = NULL;
             DLIRSEntry* evicted = NULL;
             int requestResult;
             INFO("==== THREAD: %d ====\n", index);
-            if ((match = cache_get(cache, to_store[i % 10], (void**) &evicted)) != NULL) {
+            if (cache_get(cache, to_store[i % 10], (void**) &evicted) != NULL) {
                 continue;
             }
             if (evicted != NULL) {
-                am_free(((Result*) evicted->value)->results);
-                am_free(evicted->value);
-                dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+                DESTROY_EVICTED_ENTRY
             }
             if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
                 INFO("[%d:%d] Unable to request cache population for [%s: %p] [Evicted: %p]", i, j, key_sprint(to_store[i % 10]), &values[i], evicted);
-                am_free(((Result*) evicted->value)->results);
-                am_free(evicted->value);
-                dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+                if (evicted != NULL) {
+                    DESTROY_EVICTED_ENTRY
+                }
                 cache_destroy(cache);
                 pthread_kill(pthread_self(), 1);
                 return NULL;
@@ -167,9 +175,7 @@ void* threadFn(void* arg) {
             locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
             locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
             if (evicted != NULL) {
-                am_free(((Result*) evicted->value)->results);
-                am_free(evicted->value);
-                dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+                DESTROY_EVICTED_ENTRY
             }
             TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
         }
@@ -183,31 +189,26 @@ void* threadFn(void* arg) {
         DLIRSEntry* evicted = NULL;
         void* match = cache_get(cache, to_store[i % 10], (void**) &evicted);
         if (evicted != NULL) {
-            am_free(((Result*) evicted->value)->results);
-            am_free(evicted->value);
-            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            DESTROY_EVICTED_ENTRY
         }
         INFO("Cache contains %s: %s [Value: %p]", key_sprint(to_store[i]), match != NULL ? "true" : "false", match);
     }
     INFO("======== REQUEST 2 ========");
     for (int i = 0; i < ENTRY_COUNT; i++) {
         DLIRSEntry* evicted;
-        DLIRSEntry* match;
         int requestResult;
         INFO("==== THREAD: %d ====", index);
-        if ((match = cache_get(cache, to_store[i % 10], (void**) &evicted)) != NULL) {
+        if (cache_get(cache, to_store[i % 10], (void**) &evicted) != NULL) {
             continue;
         }
         if (evicted != NULL) {
-            am_free(((Result*) evicted->value)->results);
-            am_free(evicted->value);
-            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            DESTROY_EVICTED_ENTRY
         }
         if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
             INFO("Unable to request cache population for [%s: %p] [Evicted: %p]", key_sprint(to_store[i % 10]), &values[i], evicted);
-            am_free(((Result*) evicted->value)->results);
-            am_free(evicted->value);
-            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            if (evicted != NULL) {
+                DESTROY_EVICTED_ENTRY
+            }
             cache_destroy(cache);
             pthread_kill(pthread_self(), 1);
             return NULL;
@@ -217,9 +218,7 @@ void* threadFn(void* arg) {
         locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
         locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
         if (evicted != NULL) {
-            am_free(((Result*) evicted->value)->results);
-            am_free(evicted->value);
-            dlirs_entry_destroy(AM_ALLOCATOR_ARG evicted);
+            DESTROY_EVICTED_ENTRY
         }
         TRACE("Cache is full? %s %d", cache_is_full(cache) ? "true" : "false", i);
     }
@@ -234,7 +233,7 @@ int main(int argc, char* argv[]) {
         HEAP_SIZE,
         10,
         4,
-        DLIRS_CACHE_BACKING_HANDLERS,
+        LRU_CACHE_BACKING_HANDLERS,
         &(DLIRSOptions) {
             .hirs_ratio = 0.01f,
             .value_copy_handler = (ValueCopy) result_copy,
@@ -245,9 +244,9 @@ int main(int argc, char* argv[]) {
         FATAL("Could not create cache with size 10");
     }
 
-    if (pthread_barrier_init(&barrier, NULL, THREAD_COUNT) != 0) {
-        FATAL("Could not create thread barrier");
-    }
+//    if (pthread_barrier_init(&barrier, NULL, THREAD_COUNT) != 0) {
+//        FATAL("Could not create thread barrier");
+//    }
 
     pthread_t threadIds[THREAD_COUNT];
     DEBUG("Created thread attributes");
@@ -270,10 +269,10 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-    INFO("======== AFTER JOIN ========");
-    if (pthread_barrier_destroy(&barrier) != 0) {
-        FATAL("Could not destroy thread barrier");
-    }
+//    INFO("======== AFTER JOIN ========");
+//    if (pthread_barrier_destroy(&barrier) != 0) {
+//        FATAL("Could not destroy thread barrier");
+//    }
 
     INFO("======== CLEANUP ========");
     locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);

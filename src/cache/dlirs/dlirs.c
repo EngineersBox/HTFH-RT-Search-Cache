@@ -130,13 +130,13 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
         dlirs_entry_destroy(AM_ALLOCATOR_ARG residentEntry);
     } else {
         entry->in_cache = true;
-        DLIRSEntry* hirsEntry;
-        if ((hirsEntry = (DLIRSEntry*) dqht_get(cache->resident_hirs, key)) != NULL) {
-            hirsEntry->is_LIR = true;
+        DLIRSEntry* residentEntry;
+        if ((residentEntry = (DLIRSEntry*) dqht_get(cache->resident_hirs, key)) != NULL) {
+            residentEntry->is_LIR = true;
         }
         dlirs_resize(cache, true);
-        if (hirsEntry != NULL) {
-            hirsEntry->in_cache = true;
+        if (residentEntry != NULL) {
+            residentEntry->in_cache = true;
         }
         cache->non_resident--;
     }

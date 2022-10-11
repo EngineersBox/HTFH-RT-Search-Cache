@@ -57,8 +57,8 @@ int lru_request(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void* value
     }
     *evicted = NULL;
     int ret_val = 0;
-    if (cache->dqht->ht->count == cache->cache_size) {
-        if (lru_evict(AM_ALLOCATOR_ARG cache, evicted) != 0) {
+    if (cache->dqht->ht->count >= cache->cache_size) {
+        if ((*evicted = dqht_pop_front(AM_ALLOCATOR_ARG cache->dqht)) == NULL) {
             return -1;
         }
         ret_val = 1;

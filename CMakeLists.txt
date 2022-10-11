@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(htfh_rt_search_cache C)
 
 set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -pthread -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -pthread -g -fno-omit-frame-pointer")
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # ---- DEFINES ---- #
