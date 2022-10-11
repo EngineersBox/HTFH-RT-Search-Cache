@@ -21,7 +21,7 @@
 
 int partialCacheMatches = 0;
 
-#define THREAD_COUNT 2
+#define THREAD_COUNT 10
 
 int key_compare(const char* key1, const char* key2, void* key2Value) {
     if (key1 == NULL && key2 == NULL) {
@@ -147,21 +147,25 @@ void* threadFn(void* arg) {
 //    pthread_barrier_wait(&barrier);
     DEBUG("======== AFTER WAITING ========");
     INFO("======== REQUEST 1 ========");
-    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+//    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+//    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+//    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < ENTRY_COUNT; i++) {
         for (int j = 1; j < i + 1; j++) {
-            DLIRSEntry* evicted = NULL;
+            void* evicted = NULL;
             int requestResult;
             INFO("==== THREAD: %d ====\n", index);
-            if (cache_get(cache, to_store[i % 10], (void**) &evicted) != NULL) {
+            if (cache_get(cache, to_store[i % 10], &evicted) != NULL) {
+                if (evicted != NULL) {
+                    DESTROY_EVICTED_ENTRY
+                    evicted = NULL;
+                }
                 continue;
             }
             if (evicted != NULL) {
                 DESTROY_EVICTED_ENTRY
             }
-            if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
+            if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), &evicted)) == -1) {
                 INFO("[%d:%d] Unable to request cache population for [%s: %p] [Evicted: %p]", i, j, key_sprint(to_store[i % 10]), &values[i], evicted);
                 if (evicted != NULL) {
                     DESTROY_EVICTED_ENTRY
@@ -171,9 +175,9 @@ void* threadFn(void* arg) {
                 return NULL;
             }
             INFO("[%d:%d] Request result: %s with evicted: %p for [%s: %p]", i, j, requestResult == 1 ? "hit" : "miss", evicted, key_sprint(to_store[i % 10]), &values[i]);
-            locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-            locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-            locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+//            locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+//            locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+//            locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
             if (evicted != NULL) {
                 DESTROY_EVICTED_ENTRY
             }
@@ -181,13 +185,13 @@ void* threadFn(void* arg) {
         }
     }
     INFO("======== CONTAINS ========");
-    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+//    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+//    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+//    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     for (int i = 0; i < 10; i++) {
         INFO("==== THREAD: %d ====", index);
-        DLIRSEntry* evicted = NULL;
-        void* match = cache_get(cache, to_store[i % 10], (void**) &evicted);
+        void* evicted = NULL;
+        void* match = cache_get(cache, to_store[i % 10], &evicted);
         if (evicted != NULL) {
             DESTROY_EVICTED_ENTRY
         }
@@ -195,16 +199,20 @@ void* threadFn(void* arg) {
     }
     INFO("======== REQUEST 2 ========");
     for (int i = 0; i < ENTRY_COUNT; i++) {
-        DLIRSEntry* evicted;
+        void* evicted = NULL;
         int requestResult;
         INFO("==== THREAD: %d ====", index);
-        if (cache_get(cache, to_store[i % 10], (void**) &evicted) != NULL) {
+        if (cache_get(cache, to_store[i % 10], &evicted) != NULL) {
+            if (evicted != NULL) {
+                DESTROY_EVICTED_ENTRY
+            }
+            evicted = NULL;
             continue;
         }
         if (evicted != NULL) {
             DESTROY_EVICTED_ENTRY
         }
-        if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), (void**) &evicted)) == -1) {
+        if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), &evicted)) == -1) {
             INFO("Unable to request cache population for [%s: %p] [Evicted: %p]", key_sprint(to_store[i % 10]), &values[i], evicted);
             if (evicted != NULL) {
                 DESTROY_EVICTED_ENTRY
@@ -214,9 +222,9 @@ void* threadFn(void* arg) {
             return NULL;
         }
         INFO("[%d] Request result: %s with evicted: %p for [%s: %p]", i, requestResult == 1 ? "hit" : "miss", evicted, key_sprint(to_store[i]), &values[i]);
-        locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-        locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-        locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+//        locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+//        locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+//        locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
         if (evicted != NULL) {
             DESTROY_EVICTED_ENTRY
         }
@@ -234,9 +242,9 @@ int main(int argc, char* argv[]) {
         10,
         4,
         LRU_CACHE_BACKING_HANDLERS,
-        &(DLIRSOptions) {
-            .hirs_ratio = 0.01f,
-            .value_copy_handler = (ValueCopy) result_copy,
+        &(LRUCacheOptions) {
+//            .hirs_ratio = 0.01f,
+//            .value_copy_handler = (ValueCopy) result_copy,
             .comparator = key_compare
         }
     );
@@ -275,9 +283,9 @@ int main(int argc, char* argv[]) {
 //    }
 
     INFO("======== CLEANUP ========");
-    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
-    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
-    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
+//    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
+//    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
+//    locked_dqht_print_table(cache, "Resident HIRS", cache->backing->resident_hirs);
     if (cache_destroy(cache) != 0) {
         FATAL("Could not destroy cache");
     }
