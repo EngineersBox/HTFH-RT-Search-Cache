@@ -21,7 +21,7 @@ LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 
 int partialCacheMatches = 0;
 
-#define THREAD_COUNT 10
+#define THREAD_COUNT 2
 
 int key_compare(const char* key1, const char* key2, void* key2Value) {
     if (key1 == NULL && key2 == NULL) {
@@ -82,8 +82,8 @@ static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable
 
 static pthread_barrier_t barrier;
 
-#define ENTRY_COUNT 10
-int cacheType = 0;
+#define ENTRY_COUNT 100
+int cacheType = 1;
 
 char* to_store[10];
 PostIt postings[ENTRY_COUNT];
@@ -201,7 +201,7 @@ void* queryProcessor(void* arg) {
             DESTROY_EVICTED_ENTRY
         }
 //        dqht_print_table("GET 2: ", cache->backing->dqht);
-        char* keyValue = key_sprint(to_store[i]);
+        char* keyValue = key_sprint(to_store[i % 10]);
         INFO("Cache contains %s: %s [Value: %p]", keyValue, match != NULL ? "true" : "false", match);
         free(keyValue);
     }
@@ -233,7 +233,7 @@ void* queryProcessor(void* arg) {
             return NULL;
         }
 //        dqht_print_table("REQ 2: ", cache->backing->dqht);
-        char* keyValue = key_sprint(to_store[i]);
+        char* keyValue = key_sprint(to_store[i % 10]);
         INFO("[%d] Request result: %s with evicted: %p for [%s: %p]", i, requestResult == 1 ? "hit" : "miss", evicted, keyValue, &values[i]);
         free(keyValue);
 //        locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
@@ -255,10 +255,10 @@ int main(int argc, char* argv[]) {
         HEAP_SIZE,
         10,
         4,
-        DLIRS_CACHE_BACKING_HANDLERS,
-        &(DLIRSOptions) {
-            .hirs_ratio = 0.01f,
-            .value_copy_handler = (ValueCopy) result_copy,
+        LRU_CACHE_BACKING_HANDLERS,
+        &(LRUCacheOptions) {
+//            .hirs_ratio = 0.01f,
+//            .value_copy_handler = (ValueCopy) result_copy,
             .comparator = key_compare
         }
     );
@@ -278,7 +278,7 @@ int main(int argc, char* argv[]) {
             .index = i,
             .cache = cache
         };
-        if (pthread_create(&threadIds[i], NULL, queryProcessor, (void *) &params[i]) != 0) {
+        if (pthread_create(&threadIds[i], NULL, queryProcessor, (void*) &params[i]) != 0) {
             FATAL("Could not create thread\n");
         }
         DEBUG("Created thread %d", i);

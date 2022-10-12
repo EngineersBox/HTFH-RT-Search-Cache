@@ -23,8 +23,9 @@ extern "C" {
 #define MEIYAN_MULTIPLIER 0xad3e7
 
 static size_t fnv1a_hash(const char* key) {
+    size_t keySize = key_size(key);
     size_t hash = FNV_OFFSET;
-    for (const char* p = key; *p; p++) {
+    for (const char* p = key; (uintptr_t) p - (uintptr_t) key < keySize; p++) {
         hash ^= (size_t)(unsigned char)(*p);
         hash *= FNV_PRIME;
     }

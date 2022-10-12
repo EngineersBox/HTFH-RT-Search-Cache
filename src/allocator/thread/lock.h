@@ -29,6 +29,7 @@ typedef pthread_mutex_t __attribute__((__may_alias__)) htfh_lock_t;
 
 #define htfh_lock_lock(lock) pthread_mutex_lock(lock)
 #define htfh_lock_unlock(lock) pthread_mutex_unlock(lock)
+#define htfh_lock_destroy(lock) pthread_mutex_destroy(lock)
 
 #define htfh_lock_lock_handled(lock) ({ \
     int _lock_result = 0; \
@@ -42,6 +43,15 @@ typedef pthread_mutex_t __attribute__((__may_alias__)) htfh_lock_t;
 #define htfh_lock_unlock_handled(lock) ({ \
     int _unlock_result = 0; \
     if ((_unlock_result = htfh_lock_unlock(lock)) != 0) { \
+        set_alloc_errno_msg(MUTEX_LOCK_UNLOCK, strerror(_unlock_result)); \
+        _unlock_result = -1; \
+    } \
+    _unlock_result; \
+})
+
+#define htfh_lock_destroy_handled(lock) ({ \
+    int _unlock_result = 0; \
+    if ((_unlock_result = htfh_lock_destroy(lock)) != 0) { \
         set_alloc_errno_msg(MUTEX_LOCK_UNLOCK, strerror(_unlock_result)); \
         _unlock_result = -1; \
     } \
