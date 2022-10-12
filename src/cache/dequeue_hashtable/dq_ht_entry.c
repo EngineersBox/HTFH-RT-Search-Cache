@@ -4,6 +4,7 @@
 //#include <stdio.h>
 #include <stdlib.h>
 #include "../cache_key.h"
+#include "logging/logging.h"
 
 DQHTEntry* dqhtentry_create(AM_ALLOCATOR_PARAM const char* key, void* ptr) {
     return dqhtentry_create_full(AM_ALLOCATOR_ARG key, ptr, NULL, NULL);
@@ -19,13 +20,15 @@ DQHTEntry* dqhtentry_create_full(AM_ALLOCATOR_PARAM const char* key, void* ptr, 
     if (entry->key == NULL) {
         return NULL;
     }
-//    printf("NEW ENTRY [Key: %s]\n", key_sprint(entry->key));
+    char* keyValue = key_sprint(entry->key);
+    DEBUG("NEW ENTRY [Key: %s]\n", key_sprint(entry->key));
+    free(keyValue);
     entry->ptr = ptr;
-//    printf("NEW ENTRY [Ptr: %p]\n", entry->ptr);
+    DEBUG("NEW ENTRY [Ptr: %p]\n", entry->ptr);
     entry->prev = prev;
-//    printf("NEW ENTRY [Prev: %p]\n", entry->prev);
+    DEBUG("NEW ENTRY [Prev: %p]\n", entry->prev);
     entry->next = next;
-//    printf("NEW ENTRY [Next: %p]\n", entry->next);
+    DEBUG("NEW ENTRY [Next: %p]\n", entry->next);
     entry->index = 0;
     return entry;
 }
@@ -34,6 +37,9 @@ void dqhtentry_destroy(AM_ALLOCATOR_PARAM DQHTEntry* entry) {
     if (entry == NULL || entry->key == NULL) {
         return;
     }
+    char* keyValue = key_sprint(entry->key);
+    DEBUG("FREEING ENTRY [Key %s] [Ptr %p]", keyValue, entry->ptr);
+    free(keyValue);
     am_free(entry->key);
     entry->key = NULL;
     entry->next = NULL;
