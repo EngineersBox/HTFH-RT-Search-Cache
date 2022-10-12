@@ -36,8 +36,8 @@ enum LogLevel {
 void beforeMain() __attribute__((constructor));
 void afterMain() __attribute__((destructor));
 
-extern _Thread_local char logFileName[1024];
-extern _Thread_local FILE* logFileHandle;
+extern volatile char logFileName[1024];
+extern volatile FILE* logFileHandle;
 
 // Log streams
 #define STDOUT stdout
@@ -103,9 +103,9 @@ static inline char* logLevelToString(int level) {
 #define DATETIME_PREFIX "[%d/%d/%d %d:%d:%d] "
 #define DEFINE_DATETIME_STRUCTS time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime);
 #else
-#define __GET_DATETIME_FORMAT_VALUES
-#define __DATETIME_PREFIX ""
-#define __DEFINE_DATETIME_STRUCTS ({});
+#define GET_DATETIME_FORMAT_VALUES
+#define DATETIME_PREFIX ""
+#define DEFINE_DATETIME_STRUCTS ({});
 #endif
 
 #define LOG(level, msg, ...) { \

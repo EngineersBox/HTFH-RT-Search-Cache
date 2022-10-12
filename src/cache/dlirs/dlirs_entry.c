@@ -53,7 +53,9 @@ void dlirs_entry_destroy(AM_ALLOCATOR_PARAM DLIRSEntry* entry) {
     if (entry == NULL || entry->key == NULL) {
         return;
     }
-    TRACE("DESTROYING DLIRSEntry: %p [%s: %p]", entry, key_sprint(entry->key), entry->value);
+    char* keyValue = key_sprint(entry->key);
+    TRACE("DESTROYING DLIRSEntry: %p [%s: %p]", entry, keyValue, entry->value);
+    free(keyValue);
     am_free(entry->key);
     entry->key = NULL;
     am_free(entry);

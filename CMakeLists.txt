@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(htfh_rt_search_cache C)
 
 set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -pthread -g -fno-omit-frame-pointer")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -pthread -g -fno-omit-frame-pointer")
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # ---- DEFINES ---- #
@@ -37,9 +37,9 @@ target_compile_definitions(
         PRIVATE
         ALLOCATOR_TYPE=0
         HASH_FUNC=MEIYAN
-        cache_backing_t=LRUCache*
+        cache_backing_t=DLIRS*
         DQHT_ENABLE_STRICT
         DLIRS_ENABLE_STRICT
-#        ENABLE_LOGGING
+        ENABLE_LOGGING
 #        LOG_DATETIME_PREFIX
 )

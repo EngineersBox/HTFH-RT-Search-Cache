@@ -186,7 +186,7 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
         printf("[Head: (nil)]\n");
     }
     if (dqht->tail != NULL) {
-        char* keyValue = key_sprint(dqht->head->key);
+        char* keyValue = key_sprint(dqht->tail->key);
         printf(
             "[Tail: [%zu] %s:%p]\n",
             dqht->tail->index,
@@ -200,7 +200,7 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     printf("{");
     DQHTEntry* entry = dqht->head;
     while (entry != NULL) {
-        char* keyValue = key_sprint(dqht->head->key);
+        char* keyValue = key_sprint(entry->key);
         char* keyValue1 = entry->next == NULL ? NULL : key_sprint(entry->next->key);
         char* keyValue2 = entry->prev == NULL ? NULL : key_sprint(entry->prev->key);
         printf(
