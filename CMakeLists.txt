@@ -41,5 +41,5 @@ target_compile_definitions(
         DQHT_ENABLE_STRICT
         DLIRS_ENABLE_STRICT
         ENABLE_LOGGING
-#        LOG_DATETIME_PREFIX
+        LOG_DATETIME_PREFIX
 )

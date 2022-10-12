@@ -153,7 +153,7 @@ void* queryProcessor(void* arg) {
         for (int j = 1; j < i + 1; j++) {
             void* evicted = NULL;
             int requestResult;
-            INFO("==== THREAD: %d ====\n", index);
+            INFO("==== THREAD: %d ====", index);
             if (cache_get(cache, to_store[i % 10], &evicted) != NULL) {
                 if (evicted != NULL) {
                     DESTROY_EVICTED_ENTRY

@@ -12,17 +12,19 @@ extern "C" {
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <stdbool.h>
 
+#include "ansi_colour_codes.h"
 #include "../types/typecheck.h"
 
-enum LogLevel {
+typedef enum LogLevel {
     LL_FATAL = 0,
     LL_ERROR = 1,
     LL_WARN = 2,
     LL_INFO = 3,
     LL_DEBUG = 4,
     LL_TRACE = 5
-};
+} LogLevel;
 
 #ifndef ENABLE_LOGGING
 #define LOG(level, msg, ...)
@@ -47,7 +49,7 @@ extern volatile FILE* logFileHandle;
 #define LOGS_DIR(path) \
     void beforeMain() { \
         if (typename(path) != T_POINTER_TO_CHAR) { \
-            fprintf(STDERR, "[LOGGER] Expected string file path"); \
+            fprintf(STDERR, "[" B_MAGENTA "LOGGER" RESET "]" RED " Expected string file path"); \
             exit(1); \
         } \
         time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime); \
@@ -62,55 +64,59 @@ extern volatile FILE* logFileHandle;
         strcpy(logFileName, filepath); \
         logFileHandle = fopen(filepath, "w+"); \
         if (logFileHandle == NULL) { \
-            fprintf(STDERR, "[LOGGER] Unable to open log file %s: ", filepath); \
+            fprintf(STDERR, "[" B_MAGENTA "LOGGER" RESET "]" RED " Unable to open log file %s: ", filepath); \
             perror(logFileHandle); \
             exit(1); \
         }               \
-        printf("[LOGGER] Opened log file %s\n", filepath); \
+        printf("[" B_MAGENTA "LOGGER" RESET "] Opened log file %s\n", filepath); \
     } \
     void afterMain() { \
         if (logFileHandle == NULL) { \
-            fprintf(STDERR, "[LOGGER] Log file was prematurely closed\n"); \
+            fprintf(STDERR, "[" B_MAGENTA "LOGGER" RESET "]" RED " Log file was prematurely closed\n"); \
             exit(1); \
         } \
         fclose(logFileHandle); \
-        printf("[LOGGER] Closed log file %s\n", logFileName); \
+        printf("[" B_MAGENTA "LOGGER" RESET "] Closed log file %s\n", logFileName); \
     }
 #define LOG_FILE_HANDLE logFileHandle
 #endif // LOG_FILE_HANDLE
 
-static inline char* logLevelToString(int level) {
-    if (level == LL_FATAL) {
-        return "FATAL";
-    } else if (level == LL_ERROR)  {
-        return "ERROR";
-    } else if (level == LL_WARN) {
-        return "WARN ";
-    } else if (level == LL_INFO) {
-        return "INFO ";
-    } else if (level == LL_DEBUG) {
-        return "DEBUG";
-    } else if (level == LL_TRACE) {
-        return "TRACE";
+static inline char* logLevelToString(LogLevel level, bool raw) {
+#define LL_CONVERT_FORMAT(prefix, str, suffix) (raw ? str : prefix str suffix)
+    switch (level) {
+        case LL_FATAL:
+            return LL_CONVERT_FORMAT(B_RED, "FATAL", RESET);
+        case LL_ERROR:
+            return LL_CONVERT_FORMAT(RED, "ERROR", RESET);
+        case LL_WARN:
+            return LL_CONVERT_FORMAT(YELLOW, "WARN ", RESET);
+        case LL_DEBUG:
+            return LL_CONVERT_FORMAT(MAGENTA, "DEBUG", RESET);
+        case LL_TRACE:
+            return LL_CONVERT_FORMAT(CYAN, "TRACE", RESET);
+        default:
+            return LL_CONVERT_FORMAT(GREEN, "INFO ", RESET);
     }
-    return "INFO ";
+#undef LL_CONVERT_FORMAT
 }
 
 #define FILENAME (strrchr("/" __FILE__, '/') + 1)
 
 #ifdef LOG_DATETIME_PREFIX
 #define GET_DATETIME_FORMAT_VALUES timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
-#define DATETIME_PREFIX "[%d/%d/%d %d:%d:%d] "
+#define DATETIME_PREFIX "[" MAGENTA "%d/%d/%d %d:%d:%d" RESET "] "
+#define RAW_DATETIME_PREFIX "[%d/%d/%d %d:%d:%d] "
 #define DEFINE_DATETIME_STRUCTS time_t rawtime; time(&rawtime); struct tm* timeinfo = localtime(&rawtime);
 #else
 #define GET_DATETIME_FORMAT_VALUES
 #define DATETIME_PREFIX ""
+#define RAW_DATETIME_PREFIX ""
 #define DEFINE_DATETIME_STRUCTS ({});
 #endif
 
 #define LOG(level, msg, ...) { \
     if (typename(level) != T_INT) { \
-        fprintf(STDERR, "[LOGGER] Expected integer log level"); \
+        fprintf(STDERR, "[" B_MAGENTA "LOGGER" RESET "]" B_RED " Expected integer log level"); \
         exit(1); \
     } \
     if (level <= MIN_LOG_LEVEL) { \
@@ -118,17 +124,29 @@ static inline char* logLevelToString(int level) {
         char logEntry[4096]; \
         sprintf( \
             logEntry, \
-            DATETIME_PREFIX "%s(%s:%d) [%s] :: " \
+            DATETIME_PREFIX "[" YELLOW "%zu" RESET "] " H_BLUE "%s" RESET "(%s:" MAGENTA "%d" RESET ") [%s] :: " \
             msg "\n", \
             GET_DATETIME_FORMAT_VALUES \
+            pthread_self(), \
             __func__, FILENAME, __LINE__, \
-            logLevelToString(level), \
+            logLevelToString(level, false), \
             ##__VA_ARGS__ \
         ); \
         fprintf(level == LL_ERROR ? STDERR : STDOUT, logEntry); \
-        fflush(level == LL_ERROR ? STDERR : STDOUT); \
+        fflush(level == LL_ERROR ? STDERR : STDOUT);  \
         if (LOG_FILE_HANDLE != NULL) {\
-            fprintf( LOG_FILE_HANDLE, logEntry); \
+            char fileEntry[4096]; \
+            sprintf( \
+                fileEntry, \
+                RAW_DATETIME_PREFIX "[%zu] %s(%s:%d) [%s] :: " \
+                msg "\n", \
+                GET_DATETIME_FORMAT_VALUES \
+                pthread_self(), \
+                __func__, FILENAME, __LINE__, \
+                logLevelToString(level, true), \
+                ##__VA_ARGS__ \
+            ); \
+            fprintf(LOG_FILE_HANDLE, fileEntry); \
             fflush(LOG_FILE_HANDLE); \
         }\
     } \
