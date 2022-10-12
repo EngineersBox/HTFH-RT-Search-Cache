@@ -4,7 +4,7 @@
 #include "logging/logging.h"
 #include "result.h"
 #include "cache/cache_key.h"
-LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
+LOGS_DIR("/Users/jackkilrain/Desktop/Projects/C:C++/HTFH-RT-Search-Cache/logs");
 
 #include "cache/cache.h"
 #include "cache/cache_backing.h"
@@ -80,10 +80,10 @@ static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable
 //    htfh_rwlock_unlock_handled(&cache->rwlock);
 }
 
-static pthread_barrier_t barrier;
+//static pthread_barrier_t barrier;
 
 #define ENTRY_COUNT 100
-int cacheType = 1;
+int cacheType = 0;
 
 char* to_store[10];
 PostIt postings[ENTRY_COUNT];
@@ -142,9 +142,9 @@ void* queryProcessor(void* arg) {
     Cache* cache = (Cache*) params->cache;
     LOCALISE_ALLOCATOR_ARG
     int index = params->index;
-    DEBUG("======== BEFORE WAITING ========");
-    pthread_barrier_wait(&barrier);
-    DEBUG("======== AFTER WAITING ========");
+//    DEBUG("======== BEFORE WAITING ========");
+//    pthread_barrier_wait(&barrier);
+//    DEBUG("======== AFTER WAITING ========");
     INFO("======== REQUEST 1 ========");
 //    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
 //    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
@@ -255,10 +255,10 @@ int main(int argc, char* argv[]) {
         HEAP_SIZE,
         10,
         4,
-        LRU_CACHE_BACKING_HANDLERS,
-        &(LRUCacheOptions) {
-//            .hirs_ratio = 0.01f,
-//            .value_copy_handler = (ValueCopy) result_copy,
+        DLIRS_CACHE_BACKING_HANDLERS,
+        &(DLIRSOptions) {
+            .hirs_ratio = 0.01f,
+            .value_copy_handler = (ValueCopy) result_copy,
             .comparator = key_compare
         }
     );
@@ -266,9 +266,9 @@ int main(int argc, char* argv[]) {
         FATAL("Could not create cache with size 10");
     }
 
-    if (pthread_barrier_init(&barrier, NULL, THREAD_COUNT) != 0) {
-        FATAL("Could not create thread barrier");
-    }
+//    if (pthread_barrier_init(&barrier, NULL, THREAD_COUNT) != 0) {
+//        FATAL("Could not create thread barrier");
+//    }
 
     pthread_t threadIds[THREAD_COUNT];
     DEBUG("Created thread attributes");
@@ -292,9 +292,9 @@ int main(int argc, char* argv[]) {
         }
     }
     INFO("======== AFTER JOIN ========");
-    if (pthread_barrier_destroy(&barrier) != 0) {
-        FATAL("Could not destroy thread barrier");
-    }
+//    if (pthread_barrier_destroy(&barrier) != 0) {
+//        FATAL("Could not destroy thread barrier");
+//    }
 
     INFO("======== CLEANUP ========");
 //    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
