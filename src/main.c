@@ -256,9 +256,9 @@ int main(int argc, char* argv[]) {
         10,
         4,
         LRU_CACHE_BACKING_HANDLERS,
-        &(LRUCacheOptions) {
-//            .hirs_ratio = 0.01f,
-//            .value_copy_handler = (ValueCopy) result_copy,
+        &(DLIRSOptions) {
+            .hirs_ratio = 0.01f,
+            .value_copy_handler = (ValueCopy) result_copy,
             .comparator = key_compare
         }
     );

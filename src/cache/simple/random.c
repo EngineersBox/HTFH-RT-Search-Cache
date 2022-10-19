@@ -50,7 +50,7 @@ int rc_request(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* val
         *evicted = rc_evict_random(AM_ALLOCATOR_ARG cache);
         ret_val = 1;
     }
-    return ht_insert(AM_ALLOCATOR_ARG cache->ht, key, value) != NULL ? ret_val : -1;
+    return ht_insert(AM_ALLOCATOR_ARG cache->ht, key, value, NULL) != -1 ? ret_val : -1;
 }
 
 void* rc_get(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void** _ignored) {

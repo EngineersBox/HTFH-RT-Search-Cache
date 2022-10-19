@@ -30,14 +30,14 @@ void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
     am_free(ht);
 }
 
-DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value) {
+int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entryAtIndex) {
     if (ht == NULL
         || ht->items == NULL
         || value == NULL) {
-        return NULL;
+        return -1;
     } else if (ht->count >= (ht->size / 2)) {
         if (ht_resize(AM_ALLOCATOR_ARG ht) != 0) {
-            return NULL;
+            return -1;
         }
     }
 #if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
@@ -51,17 +51,23 @@ DQHTEntry* ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* va
         if (ht->items[index]->key != NULL
             && key_cmp(key, ht->items[index]->key) == 0) {
             ht->items[index]->ptr = value;
-            return ht->items[index];
+            if (entryAtIndex != NULL) {
+                *entryAtIndex = ht->items[index];
+            }
+            return 1;
         }
         index = (index + 1) % ht->size;
     }
     ht->items[index] = dqhtentry_create(AM_ALLOCATOR_ARG key, value);
     if (ht->items[index] == NULL) {
-        return NULL;
+        return -1;
     }
     ht->items[index]->index = index;
     ht->count++;
-    return ht->items[index];
+    if (entryAtIndex != NULL) {
+        *entryAtIndex = ht->items[index];
+    };
+    return 0;
 }
 
 int ht_resize_insert(DQHTEntry** items, size_t size, DQHTEntry* entry, size_t index) {

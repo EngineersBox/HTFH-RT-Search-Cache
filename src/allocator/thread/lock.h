@@ -9,6 +9,25 @@ extern "C" {
 
 #include <pthread.h>
 #include <sys/errno.h>
+#include "../../logging/logging.h"
+
+#ifdef LOCK_DEBUG
+#define MUTEX_DEBUG_FAIL TRACE("MUTEX LOCK FAIL");
+#define MUTEX_DEBUG_LOCK TRACE("MUTEX HELD");
+#define MUTEX_DEBUG_UNLOCK TRACE("MUTEX RELEASED");
+#define RWLOCK_DEBUG_FAIL TRACE("RW LOCK FAIL");
+#define RWLOCK_DEBUG_RDLOCK_LOCK TRACE("READ LOCK HELD");
+#define RWLOCK_DEBUG_WRLOCK_LOCK TRACE("WRITE LOCK HELD");
+#define RWLOCK_DEBUG_LOCK_UNLOCK TRACE("RW LOCK RELEASED");
+#else
+#define MUTEX_DEBUG_FAIL
+#define MUTEX_DEBUG_LOCK
+#define MUTEX_DEBUG_UNLOCK
+#define RWLOCK_DEBUG_FAIL
+#define RWLOCK_DEBUG_RDLOCK_LOCK
+#define RWLOCK_DEBUG_WRLOCK_LOCK
+#define RWLOCK_DEBUG_LOCK_UNLOCK
+#endif
 
 // ==== MUTEX ====
 
@@ -36,6 +55,9 @@ typedef pthread_mutex_t __attribute__((__may_alias__)) htfh_lock_t;
     if (htfh_lock_lock(lock) == EINVAL) { \
         set_alloc_errno_msg(MUTEX_LOCK_LOCK, strerror(EINVAL)); \
         _lock_result = -1; \
+        MUTEX_DEBUG_FAIL \
+    } else { \
+        MUTEX_DEBUG_LOCK \
     } \
     _lock_result; \
 })
@@ -45,6 +67,9 @@ typedef pthread_mutex_t __attribute__((__may_alias__)) htfh_lock_t;
     if ((_unlock_result = htfh_lock_unlock(lock)) != 0) { \
         set_alloc_errno_msg(MUTEX_LOCK_UNLOCK, strerror(_unlock_result)); \
         _unlock_result = -1; \
+        MUTEX_DEBUG_FAIL \
+    } else { \
+        MUTEX_DEBUG_UNLOCK \
     } \
     _unlock_result; \
 })
@@ -85,7 +110,10 @@ typedef pthread_rwlock_t __attribute__((__may_alias__)) htfh_rwlock_t;
     if (htfh_rwlock_rdlock(lock) != 0) { \
         set_alloc_errno_msg(RWLOCK_WRLOCK_LOCK, strerror(_lock_result)); \
         _lock_result = -1; \
-    } \
+        RWLOCK_DEBUG_FAIL; \
+    } else { \
+        RWLOCK_DEBUG_RDLOCK_LOCK \
+    }\
     _lock_result; \
 })
 
@@ -94,7 +122,10 @@ typedef pthread_rwlock_t __attribute__((__may_alias__)) htfh_rwlock_t;
     if (htfh_rwlock_wrlock(lock) != 0) { \
         set_alloc_errno_msg(RWLOCK_RDLOCK_LOCK, strerror(_lock_result)); \
         _lock_result = -1; \
-    } \
+        RWLOCK_DEBUG_FAIL \
+    } else { \
+        RWLOCK_DEBUG_WRLOCK_LOCK \
+    }\
     _lock_result; \
 })
 
@@ -103,6 +134,9 @@ typedef pthread_rwlock_t __attribute__((__may_alias__)) htfh_rwlock_t;
     if ((_unlock_result = htfh_rwlock_unlock(lock)) != 0) { \
         set_alloc_errno_msg(RWLOCK_LOCK_UNLOCK, strerror(_unlock_result)); \
         _unlock_result = -1; \
+        RWLOCK_DEBUG_FAIL \
+    } else { \
+        RWLOCK_DEBUG_LOCK_UNLOCK \
     } \
     _unlock_result; \
 })

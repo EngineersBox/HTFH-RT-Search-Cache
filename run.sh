@@ -5,7 +5,7 @@ set -e
 MAX_LOGS=20
 
 echo "==== CMAKE INIT ===="
-cmake .
+cmake -DCMAKE_BUILD_TYPE=release .
 
 echo "==== BUILD CACHE ===="
 make
