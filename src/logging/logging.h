@@ -13,6 +13,8 @@ extern "C" {
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
+#include <pthread.h>
+#include <inttypes.h>
 
 #include "ansi_colour_codes.h"
 #include "../types/typecheck.h"
@@ -127,7 +129,7 @@ static inline char* logLevelToString(LogLevel level, bool raw) {
             DATETIME_PREFIX "[" YELLOW "%zu" RESET "] " H_BLUE "%s" RESET "(%s:" MAGENTA "%d" RESET ") [%s] :: " \
             msg "\n", \
             GET_DATETIME_FORMAT_VALUES \
-            pthread_self(), \
+            (uintptr_t) pthread_self(), \
             __func__, FILENAME, __LINE__, \
             logLevelToString(level, false), \
             ##__VA_ARGS__ \
@@ -141,7 +143,7 @@ static inline char* logLevelToString(LogLevel level, bool raw) {
                 RAW_DATETIME_PREFIX "[%zu] %s(%s:%d) [%s] :: " \
                 msg "\n", \
                 GET_DATETIME_FORMAT_VALUES \
-                pthread_self(), \
+                (uintptr_t) pthread_self(), \
                 __func__, FILENAME, __LINE__, \
                 logLevelToString(level, true), \
                 ##__VA_ARGS__ \

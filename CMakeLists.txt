@@ -20,37 +20,37 @@ set(CMAKE_C_FLAGS_RELEASE
 
 # Debug
 set(CMAKE_C_FLAGS_DEBUG
-        "-O0 -pthread -g -fno-omit-frame-pointer"
+        "-O0 -Wall -pthread -g -fno-omit-frame-pointer"
         CACHE STRING "Flags used by the C compile during release builds."
         FORCE)
 
 # ThreadSanitizer
 set(CMAKE_C_FLAGS_TSAN
-        "-fsanitize=thread -g -pthread -O1 -g -fno-omit-frame-pointer"
+        "-fsanitize=thread-Wall  -g -pthread -O1 -g -fno-omit-frame-pointer"
         CACHE STRING "Flags used by the C compiler during ThreadSanitizer builds."
         FORCE)
 
 # AddressSanitize
 set(CMAKE_C_FLAGS_ASAN
-        "-fsanitize=address -fno-optimize-sibling-calls -fsanitize-address-use-after-scope -fno-omit-frame-pointer -g -O1 -pthread"
+        "-fsanitize=address-Wall  -fno-optimize-sibling-calls -fsanitize-address-use-after-scope -fno-omit-frame-pointer -g -O1 -pthread"
         CACHE STRING "Flags used by the C compiler during AddressSanitizer builds."
         FORCE)
 
 # LeakSanitizer
 set(CMAKE_C_FLAGS_LSAN
-        "-fsanitize=leak -fno-omit-frame-pointer -g -O1 -pthread"
+        "-fsanitize=leak-Wall  -fno-omit-frame-pointer -g -O1 -pthread"
         CACHE STRING "Flags used by the C compiler during LeakSanitizer builds."
         FORCE)
 
 # MemorySanitizer
 set(CMAKE_C_FLAGS_MSAN
-        "-fsanitize=memory -fno-optimize-sibling-calls -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer -g -O2 -pthread"
+        "-fsanitize=memory-Wall  -fno-optimize-sibling-calls -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer -g -O2 -pthread"
         CACHE STRING "Flags used by the C compiler during MemorySanitizer builds."
         FORCE)
 
 # UndefinedBehaviour
 set(CMAKE_C_FLAGS_UBSAN
-        "-fsanitize=undefined -pthread -g -fno-omit-frame-pointer"
+        "-fsanitize=undefined-Wall  -pthread -g -fno-omit-frame-pointer"
         CACHE STRING "Flags used by the C compiler during UndefinedBehaviourSanitizer builds."
         FORCE)
 

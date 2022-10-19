@@ -148,8 +148,12 @@ void* dqht_pop_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht) {
     if (dqht == NULL || dqht->head == NULL || DQHT_STRICT_CHECK(dqht)) {
         return NULL;
     }
+    TRACE("[BEFORE SET] Current head: %p %zu", dqht->head, dqht->head->index);
     DQHTEntry* front = dqht->head;
+    TRACE("[AFTER SET] Current head: %p %zu", dqht->head, dqht->head->index);
+    TRACE("[BEFORE UNLINK] Front: %p %zu", front, front->index);
     dqht_unlink(dqht, front);
+    TRACE("[AFTER UNLINK] Front: %p %zu", front, front->index);
     return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, front->index);
 }
 

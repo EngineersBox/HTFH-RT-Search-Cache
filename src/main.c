@@ -83,7 +83,7 @@ static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable
 static pthread_barrier_t barrier;
 
 #define ENTRY_COUNT 100
-int cacheType = 1;
+int cacheType = 0;
 
 char* to_store[10];
 PostIt postings[ENTRY_COUNT];
@@ -255,7 +255,7 @@ int main(int argc, char* argv[]) {
         HEAP_SIZE,
         10,
         4,
-        LRU_CACHE_BACKING_HANDLERS,
+        DLIRS_CACHE_BACKING_HANDLERS,
         &(DLIRSOptions) {
             .hirs_ratio = 0.01f,
             .value_copy_handler = (ValueCopy) result_copy,
