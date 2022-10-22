@@ -9,6 +9,11 @@
 #include "../../result.h"
 #include "../cache_key.h"
 
+void entry_destroy_handler(AM_ALLOCATOR_PARAM void* entry, void* _ignored) {
+    result_destroy(AM_ALLOCATOR_ARG (Result*) ((DLIRSEntry*) entry)->value);
+    dlirs_entry_destroy(AM_ALLOCATOR_ARG (DLIRSEntry*) entry);
+}
+
 DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSOptions* options) {
     DLIRS* cache = (DLIRS*) am_malloc(sizeof(*cache));
     if (cache == NULL) {
@@ -26,7 +31,7 @@ DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSO
     cache->demoted = 0;
     cache->non_resident = 0;
 #define init_dqht(target) ({ \
-    (target) = dqht_create(AM_ALLOCATOR_ARG ht_size, options->comparator); \
+    (target) = dqht_create(AM_ALLOCATOR_ARG ht_size, options->comparator, (EntryValueDestroyHandler) entry_destroy_handler); \
     if ((target) == NULL) { \
         return NULL; \
     } \
@@ -72,7 +77,7 @@ void* dlirs_get(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEntry** e
     } else if ((entry = (DLIRSEntry*) dqht_get(cache->resident_hirs, key)) != NULL) {
         dlirs_hit_hir_in_resident_hirs(AM_ALLOCATOR_ARG cache, key);
     }
-    return entry;
+    return miss == 1 ? NULL : entry;
 }
 
 void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
@@ -125,12 +130,12 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
         result_destroy(AM_ALLOCATOR_ARG (Result*) residentEntry->value);
         dlirs_entry_destroy(AM_ALLOCATOR_ARG residentEntry);
     } else {
-        entry->in_cache = true;
         DLIRSEntry* residentEntry;
         if ((residentEntry = (DLIRSEntry*) dqht_get(cache->resident_hirs, key)) != NULL) {
             residentEntry->is_LIR = true;
         }
         dlirs_resize(cache, true);
+        entry->in_cache = true;
         if (residentEntry != NULL) {
             residentEntry->in_cache = true;
         }
@@ -160,7 +165,13 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
     DLIRSEntry* entry;
     DLIRSEntry* entry1;
     DLIRSEntry* entry2;
+    int count = 0;
     while (cache->lirs->ht->count > 0) {
+        DEBUG("Pruning %d > 0", cache->lirs->ht->count);
+        dqht_print_table("Pruning", cache->lirs);
+        if (count == cache->lirs->ht->count) {
+            FATAL("BAD PRUNE");
+        }
         entry = (DLIRSEntry*) dqht_get_front(cache->lirs);
         if (entry->is_LIR) {
             break;
@@ -299,6 +310,7 @@ void dlirs_limit_stack(AM_ALLOCATOR_PARAM DLIRS* cache) {
         return;
     }
     while ((cache->hirs_count + cache->lirs_count + cache->non_resident) > (2 * cache->cache_size)) {
+        DEBUG("Limiting stack %zu > %zu", (cache->hirs_count + cache->lirs_count + cache->non_resident), (2 * cache->cache_size));
         DLIRSEntry* lru = (DLIRSEntry*) dqht_pop_front(AM_ALLOCATOR_ARG cache->non_resident_hirs);
         if (!lru->in_cache) {
             cache->non_resident--;
@@ -332,8 +344,10 @@ int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value,
     }
     while ((cache->hirs_count + cache->lirs_count) >= cache->cache_size) {
         while (cache->lirs_count > cache->lirs_limit) {
+            DEBUG("Evicting LIR %zu > %f", cache->lirs_count, cache->lirs_limit);
             dlirs_evict_lir(AM_ALLOCATOR_ARG cache);
         }
+        DEBUG("Evicting resident HIR %zu >= %zu", (cache->hirs_count + cache->lirs_count), cache->cache_size);
         *evicted = dlirs_evict_resident_hir(AM_ALLOCATOR_ARG cache);
     }
     DLIRSEntry* entry = dlirs_entry_create(AM_ALLOCATOR_ARG key, value);

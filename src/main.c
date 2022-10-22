@@ -165,6 +165,7 @@ void* queryProcessor(void* arg) {
             if (evicted != NULL) {
                 DESTROY_EVICTED_ENTRY
             }
+            evicted = NULL;
             if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), &evicted)) == -1) {
                 char* keyValue = key_sprint(to_store[i % 10]);
                 INFO("[%d:%d] Unable to request cache population for [%s: %p] [Evicted: %p]", i, j, keyValue, &values[i], evicted);
@@ -172,9 +173,8 @@ void* queryProcessor(void* arg) {
                 if (evicted != NULL) {
                     DESTROY_EVICTED_ENTRY
                 }
-                cache_destroy(cache);
                 pthread_kill(pthread_self(), 1);
-                return NULL;
+                exit(1);
             }
 //            dqht_print_table("REQ 1: ", cache->backing->dqht);
             char* keyValue = key_sprint(to_store[i % 10]);
@@ -220,6 +220,7 @@ void* queryProcessor(void* arg) {
         if (evicted != NULL) {
             DESTROY_EVICTED_ENTRY
         }
+        evicted = NULL;
 //        dqht_print_table("GET 3: ", cache->backing->dqht);
         if ((requestResult = cache_request(cache, to_store[i % 10], result_copy(AM_ALLOCATOR_ARG &values[i]), &evicted)) == -1) {
             char* keyValue = key_sprint(to_store[i % 10]);
@@ -228,9 +229,8 @@ void* queryProcessor(void* arg) {
             if (evicted != NULL) {
                 DESTROY_EVICTED_ENTRY
             }
-            cache_destroy(cache);
             pthread_kill(pthread_self(), 1);
-            return NULL;
+            exit(1);
         }
 //        dqht_print_table("REQ 2: ", cache->backing->dqht);
         char* keyValue = key_sprint(to_store[i % 10]);
@@ -246,6 +246,10 @@ void* queryProcessor(void* arg) {
     }
     INFO("<><><><> END OF TEST <><><><>");
     pthread_exit(0);
+}
+
+int default_key_compare(const char* key1, const char* key2, void* _ignored) {
+    return key_cmp(key1, key2);
 }
 
 int main(int argc, char* argv[]) {

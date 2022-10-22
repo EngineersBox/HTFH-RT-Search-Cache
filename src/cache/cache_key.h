@@ -48,8 +48,26 @@ static const char* key_get_term1(const char* keyStruct) {
 }
 
 static const char* key_get_term2(const char* keyStruct) {
+    if (keyStruct[0] == SINGLE_OP) {
+        return NULL;
+    }
     size_t t1Size = (size_t) (*(keyStruct + sizeof(char)));
     return keyStruct + sizeof(char) + (2 * sizeof(size_t)) + (t1Size * sizeof(char));
+}
+
+static char* key_sprint(const char* keyStruct) {
+    if (keyStruct == NULL) {
+        return NULL;
+    }
+    if (keyStruct[0] == SINGLE_OP) {
+        char* term1 = (char*) key_get_term1(keyStruct);
+        char* formattedkey = (char*) malloc(sizeof(char) * (strlen(term1) + 1));
+        strcpy(formattedkey, term1);
+        return formattedkey;
+    }
+    char* formattedkey = (char*) malloc(sizeof(char) * 100);
+    sprintf(formattedkey, "%s%c%s", key_get_term1(keyStruct), key_get_op(keyStruct), key_get_term2(keyStruct));
+    return formattedkey;
 }
 
 static size_t key_cmp(const char* keyStruct1, const char* keyStruct2) {
@@ -60,6 +78,7 @@ static size_t key_cmp(const char* keyStruct1, const char* keyStruct2) {
     } else if (keyStruct2 == NULL) {
         return 1;
     }
+    printf("KEY 1: [%s], KEY 2: [%s]\n", key_sprint(keyStruct1), key_sprint(keyStruct2));
     char op1 = key_get_op(keyStruct1);
     return op1 == key_get_op(keyStruct2)
         && strcmp(key_get_term1(keyStruct1), key_get_term1(keyStruct2)) == 0
@@ -69,18 +88,6 @@ static size_t key_cmp(const char* keyStruct1, const char* keyStruct2) {
 static size_t key_size(const char* keyStruct) {
     size_t length = sizeof(char) + (2 * sizeof(size_t)) + (((size_t) *(keyStruct + sizeof(char))) * sizeof(char));
     return keyStruct[0] == SINGLE_OP ? length : length + (((size_t) *(keyStruct + sizeof(char) + sizeof(size_t))) * sizeof(char));
-}
-
-static char* key_sprint(const char* keyStruct) {
-    if (keyStruct == NULL) {
-        return NULL;
-    }
-    if (keyStruct[0] == SINGLE_OP) {
-        return (char*) key_get_term1(keyStruct);
-    }
-    char* formattedkey = (char*) malloc(sizeof(char) * 100);
-    sprintf(formattedkey, "%s%c%s", key_get_term1(keyStruct), key_get_op(keyStruct), key_get_term2(keyStruct));
-    return formattedkey;
 }
 
 static char* key_copy(AM_ALLOCATOR_PARAM char* key) {

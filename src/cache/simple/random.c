@@ -1,6 +1,7 @@
 #include "./random.h"
 
 #include <string.h>
+#include "../../result.h"
 
 RandomCache* rc_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, RandomCacheOptions* options) {
     RandomCache* cache = (RandomCache*) malloc(sizeof(*cache));
@@ -50,7 +51,12 @@ int rc_request(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void* val
         *evicted = rc_evict_random(AM_ALLOCATOR_ARG cache);
         ret_val = 1;
     }
-    return ht_insert(AM_ALLOCATOR_ARG cache->ht, key, value, NULL) != -1 ? ret_val : -1;
+    Result* overridden = NULL;
+    int result = ht_insert(AM_ALLOCATOR_ARG cache->ht, key, value, NULL, (void**) &overridden);
+    if (overridden != NULL) {
+        result_destroy(AM_ALLOCATOR_ARG overridden);
+    }
+    return result != -1 ? ret_val : -1;
 }
 
 void* rc_get(AM_ALLOCATOR_PARAM RandomCache* cache, const char* key, void** _ignored) {

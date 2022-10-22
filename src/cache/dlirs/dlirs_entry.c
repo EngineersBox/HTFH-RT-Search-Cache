@@ -59,5 +59,4 @@ void dlirs_entry_destroy(AM_ALLOCATOR_PARAM DLIRSEntry* entry) {
     am_free(entry->key);
     entry->key = NULL;
     am_free(entry);
-    entry = NULL;
 }

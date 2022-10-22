@@ -14,15 +14,15 @@ extern "C" {
 #include "dq_ht_entry.h"
 #include "../../allocator/alloc_manager.h"
 
+typedef void (*EntryValueDestroyHandler)(AM_ALLOCATOR_PARAM void* entry, void* ctx);
+
 typedef struct DequeueHashTable {
     KeyComparator keyComparator;
+    EntryValueDestroyHandler entryDestroyHandler;
     DQHTEntry* head;
     DQHTEntry* tail;
-
     HashTable* ht;
 } DequeueHashTable;
-
-typedef void (*EntryValueDestroyHandler)(AM_ALLOCATOR_PARAM void* entry, void* ctx);
 
 #ifdef DQHT_ENABLE_STRICT
 #define DQHT_STRICT_CHECK(dqht) ((dqht)->ht == NULL)
@@ -30,7 +30,7 @@ typedef void (*EntryValueDestroyHandler)(AM_ALLOCATOR_PARAM void* entry, void* c
 #define DQHT_STRICT_CHECK(dqht) false
 #endif
 
-DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator);
+DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator, EntryValueDestroyHandler handler);
 void dqht_destroy_handled(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, EntryValueDestroyHandler handler, void* callbackState);
 void dqht_destroy(AM_ALLOCATOR_PARAM DequeueHashTable* dqht);
 

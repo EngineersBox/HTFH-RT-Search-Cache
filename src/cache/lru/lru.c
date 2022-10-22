@@ -3,24 +3,24 @@
 #include <string.h>
 #include "../../preprocessor/lambda.h"
 
+void destroy_entry(AM_ALLOCATOR_PARAM void* entry, void* _ignored) {
+    if (entry == NULL) {
+        return;
+    }
+    am_free(entry);
+}
+
 LRUCache* lru_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, LRUCacheOptions* options) {
     LRUCache* cache = (LRUCache*) am_malloc(sizeof(*cache));
     if (cache == NULL) {
         return NULL;
     }
-    cache->dqht = dqht_create(AM_ALLOCATOR_ARG ht_size, options == NULL ? NULL : options->comparator);
+    cache->dqht = dqht_create(AM_ALLOCATOR_ARG ht_size, options == NULL ? NULL : options->comparator, (EntryValueDestroyHandler) destroy_entry);
     if (cache->dqht == NULL) {
         return NULL;
     }
     cache->cache_size = cache_size;
     return cache;
-}
-
-void destroy_dqht(AM_ALLOCATOR_PARAM void* entry, void* _ignored) {
-    if (entry == NULL) {
-        return;
-    }
-    am_free(entry);
 }
 
 void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache) {
@@ -30,7 +30,7 @@ void lru_destroy(AM_ALLOCATOR_PARAM LRUCache* cache) {
     dqht_destroy_handled(
         AM_ALLOCATOR_ARG
         cache->dqht,
-        (EntryValueDestroyHandler) destroy_dqht,
+        (EntryValueDestroyHandler) destroy_entry,
         NULL
     );
     am_free(cache);

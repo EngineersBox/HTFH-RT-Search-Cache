@@ -16,6 +16,13 @@ struct TestStruct {
 
 #define HEAP_SIZE (16 * 10000)
 
+void destroy_entry_handler(AM_ALLOCATOR_PARAM void* entry, void* _ignored) {
+    if (entry == NULL) {
+        return;
+    }
+    am_free(entry);
+}
+
 int dqht_test_main(int argc, char* argv[]) {
 #if ALLOCATOR_TYPE > 0
 #if ALLOCATOR_TYPE == 1
@@ -28,7 +35,7 @@ int dqht_test_main(int argc, char* argv[]) {
         return 1;
     }
 #endif
-    DequeueHashTable * table = dqht_create(AM_ALLOCATOR_ARG 10, NULL);
+    DequeueHashTable* table = dqht_create(AM_ALLOCATOR_ARG 10, NULL, (EntryValueDestroyHandler) destroy_entry_handler);
     if (table == NULL) {
         printf("Could not create table with size 10\n");
         return 1;
@@ -60,7 +67,7 @@ int dqht_test_main(int argc, char* argv[]) {
     };
     for (int i = 0; i < 10; i++) {
         if (dqht_push_front(AM_ALLOCATOR_ARG table, to_store[i], &values[i]) != 0) {
-            printf("Could not insert entry: [%s: %d]\n", to_store[i], values[i]);
+            printf("Could not insert entry: [%s: %d]\n", key_sprint(to_store[i]), values[i]);
             return 1;
         }
         if (table->head == NULL && table->tail == NULL) {
@@ -88,15 +95,15 @@ int dqht_test_main(int argc, char* argv[]) {
         printf("=> Inserted entry %d\n", i);
     }
     if (table->ht->count != 10) {
-        printf("Count was not 10: %d\n", table->ht->count);
+        printf("Count was not 10: %zu\n", table->ht->count);
         return 1;
     }
-    printf("Table: "); dqht_print_table("Table:", table);
+    dqht_print_table("BEFORE GET:", table);
     printf("== Inserted entries ==\n");
     for (int i = 0; i < 10; i++) {
         int* value;
         if ((value = dqht_get(table, to_store[i])) == NULL) {
-            printf("Could not get entry: [%s]\n", to_store[i]);
+            printf("Could not get entry: [%s]\n", key_sprint(to_store[i]));
             return 1;
         } else if (*value != values[i]) {
             printf("Value %d did not match expected: %d\n", *value, values[i]);
@@ -104,21 +111,21 @@ int dqht_test_main(int argc, char* argv[]) {
         }
         printf("=> Retrieved entry %d: %d\n", i, *value);
     }
-    printf("Table: "); dqht_print_table("Table:", table);
+    dqht_print_table("BEFORE DELETE", table);
     printf("== Retrieved entries ==\n");
     for (int i = 0; i < 10; i++) {
         if (dqht_pop_last(AM_ALLOCATOR_ARG table)  == NULL) {
-            printf("Could not delete entry: [%s]\n", to_store[i]);
+            printf("Could not delete entry: [%s]\n", key_sprint(to_store[i]));
             return 1;
         }
         printf("=> Deleted entry %d\n", i);
     }
     if (table->ht->count != 0) {
-        printf("Count was not 0: %d\n", table->ht->count);
+        printf("Count was not 0: %zu\n", table->ht->count);
         return 1;
     }
     printf("== Deleted entries ==\n");
-    printf("Table: "); dqht_print_table("Table:", table);
+     dqht_print_table("FINAL", table);
     dqht_destroy(AM_ALLOCATOR_ARG table);
 
 #if ALLOCATOR_TYPE == 1

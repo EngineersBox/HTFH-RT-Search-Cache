@@ -30,7 +30,7 @@ void ht_destroy(AM_ALLOCATOR_PARAM HashTable* ht) {
     am_free(ht);
 }
 
-int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entryAtIndex) {
+int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQHTEntry** entryAtIndex, void** overridden) {
     if (ht == NULL
         || ht->items == NULL
         || value == NULL) {
@@ -50,6 +50,9 @@ int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQ
     for (int i = 0; i < ht->size && ht->items[index] != NULL; i++) {
         if (ht->items[index]->key != NULL
             && key_cmp(key, ht->items[index]->key) == 0) {
+            if (overridden != NULL) {
+                *overridden = ht->items[index]->ptr;
+            }
             ht->items[index]->ptr = value;
             if (entryAtIndex != NULL) {
                 *entryAtIndex = ht->items[index];
@@ -131,7 +134,6 @@ DQHTEntry* ht_get(HashTable* ht, const char* key) {
     size_t hash = fnv1a_hash(key);
 #endif
     size_t index = hash % ht->size;
-
     for (int i = 0; i < ht->size; i++) {
         if (ht->items[index] != NULL
             && ht->items[index]->key != NULL

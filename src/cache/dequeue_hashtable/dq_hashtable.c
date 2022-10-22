@@ -9,12 +9,13 @@
 #include "../hashtable/hashing.h"
 #include "../cache_key.h"
 #include "../dlirs/dlirs_entry.h"
+#include "../../result.h"
 
 int default_comparator(const char* key1, const char* key2, void* _ignored) {
     return key_cmp(key1, key2);
 }
 
-DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator) {
+DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comparator, EntryValueDestroyHandler handler) {
     HashTable* ht = ht_create(AM_ALLOCATOR_ARG size, comparator == NULL ? default_comparator : comparator);
     if (ht == NULL) {
         return NULL;
@@ -24,6 +25,7 @@ DequeueHashTable* dqht_create(AM_ALLOCATOR_PARAM size_t size, KeyComparator comp
         return NULL;
     }
     dqht->keyComparator = comparator == NULL ? default_comparator : comparator;
+    dqht->entryDestroyHandler = handler;
     dqht->head = NULL;
     dqht->tail = NULL;
     dqht->ht = ht;
@@ -68,6 +70,7 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     }
     DQHTEntry* prev_entry = entry->prev;
     DQHTEntry* next_entry = entry->next;
+    dqht_print_table("BEFORE UNLINK", dqht);
     if (prev_entry != NULL) {
         prev_entry->next = next_entry;
     } else {
@@ -78,6 +81,7 @@ void dqht_unlink(DequeueHashTable* dqht, DQHTEntry* entry) {
     } else {
         dqht->tail = prev_entry;
     }
+    dqht_print_table("AFTER UNLINK", dqht);
 }
 
 int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void* value) {
@@ -85,12 +89,17 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
         return -1;
     }
     DQHTEntry* entry = NULL;
-    int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry);
+    void* overridden = NULL;
+    int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, &overridden);
+    if (overridden != NULL) {
+        dqht->entryDestroyHandler(AM_ALLOCATOR_ARG overridden, NULL);
+    }
     if (result == -1) {
         return -1;
     } else if (result == 1) {
         dqht_unlink(dqht, entry);
     }
+    dqht_print_table("INSERT BEFORE", dqht);
     if (dqht->tail != NULL) {
         dqht->tail->next = entry;
         entry->prev = dqht->tail;
@@ -98,6 +107,7 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
         dqht->head = entry;
     }
     dqht->tail = entry;
+    dqht_print_table("INSERT AFTER", dqht);
     return 0;
 }
 
@@ -132,12 +142,17 @@ int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, 
         return -1;
     }
     DQHTEntry* entry = NULL;
-    int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry);
+    void* overridden = NULL;
+    int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, (void**) &overridden);
+    if (overridden != NULL) {
+        dqht->entryDestroyHandler(AM_ALLOCATOR_ARG overridden, NULL);
+    }
     if (result == -1) {
         return -1;
     } else if (result == 1) {
         dqht_unlink(dqht, entry);
     }
+    dqht_print_table("PUSH BEFORE", dqht);
     if (dqht->head != NULL) {
         dqht->head->prev = entry;
         entry->next = dqht->head;
@@ -145,6 +160,7 @@ int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, 
         dqht->tail = entry;
     }
     dqht->head = entry;
+    dqht_print_table("PUSH AFTER", dqht);
     return 0;
 }
 
@@ -188,15 +204,14 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
         char* keyValue1 = dqht->head->next == NULL ? NULL : key_sprint(dqht->head->next->key);
         char* keyValue2 = dqht->head->prev == NULL ? NULL : key_sprint(dqht->head->prev->key);
         printf(
-            "[Head: [%zu] %s: %p (N: %s %p, P: %s %p)%s]\n",
+            "[Head: [%zu] %s: %p (N: %s %p, P: %s %p)]\n",
             dqht->head->index,
             keyValue,
             dqht->head->ptr,
             keyValue1 != NULL ? keyValue1 : "",
             dqht->head->next == NULL ? NULL : dqht->head->next->ptr,
             keyValue2 != NULL ? keyValue2 : "",
-            dqht->head->prev == NULL ? NULL : dqht->head->prev->ptr,
-            dqht->head->next != NULL ? "," : " "
+            dqht->head->prev == NULL ? NULL : dqht->head->prev->ptr
         );
         free(keyValue);
         if (keyValue1 != NULL) {
@@ -213,15 +228,14 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
         char* keyValue1 = dqht->tail->next == NULL ? NULL : key_sprint(dqht->tail->next->key);
         char* keyValue2 = dqht->tail->prev == NULL ? NULL : key_sprint(dqht->tail->prev->key);
         printf(
-            "[Tail: [%zu] %s: %p (N: %s %p, P: %s %p)%s]\n",
+            "[Tail: [%zu] %s: %p (N: %s %p, P: %s %p)]\n",
             dqht->tail->index,
             keyValue,
             dqht->tail->ptr,
             keyValue1 != NULL ? keyValue1 : "",
             dqht->tail->next == NULL ? NULL : dqht->tail->next->ptr,
             keyValue2 != NULL ? keyValue2 : "",
-            dqht->tail->prev == NULL ? NULL : dqht->tail->prev->ptr,
-            dqht->tail->next != NULL ? "," : " "
+            dqht->tail->prev == NULL ? NULL : dqht->tail->prev->ptr
         );
         free(keyValue);
         if (keyValue1 != NULL) {
@@ -233,31 +247,31 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     } else {
         printf("[Tail: (nil)]\n");
     }
-    printf("{");
-//    DQHTEntry* entry = dqht->head;
-//    while (entry != NULL) {
-//        char* keyValue = key_sprint(entry->key);
-//        char* keyValue1 = entry->next == NULL ? NULL : key_sprint(entry->next->key);
-//        char* keyValue2 = entry->prev == NULL ? NULL : key_sprint(entry->prev->key);
-//        printf(
-//            " [%zu] %s: %p (N: %s %p, P: %s %p)%s",
-//            entry->index,
-//            keyValue,
-//            entry->ptr,
-//            keyValue1 != NULL ? keyValue1 : "",
-//            entry->next == NULL ? NULL : entry->next->ptr,
-//            keyValue2 != NULL ? keyValue2 : "",
-//            entry->prev == NULL ? NULL : entry->prev->ptr,
-//            entry->next != NULL ? "," : " "
-//        );
-//        free(keyValue);
-//        if (keyValue1 != NULL) {
-//            free(keyValue1);
-//        }
-//        if (keyValue2 != NULL) {
-//            free(keyValue2);
-//        }
-//        entry = entry->next;
-//    }
+    printf("{\n");
+    DQHTEntry* entry = dqht->head;
+    while (entry != NULL) {
+        char* keyValue = key_sprint(entry->key);
+        char* keyValue1 = entry->next == NULL ? NULL : key_sprint(entry->next->key);
+        char* keyValue2 = entry->prev == NULL ? NULL : key_sprint(entry->prev->key);
+        printf(
+            "\t[%zu] %s: %p (N: %s %p, P: %s %p)%s\n",
+            entry->index,
+            keyValue,
+            entry->ptr,
+            keyValue1 != NULL ? keyValue1 : "",
+            entry->next == NULL ? NULL : entry->next->ptr,
+            keyValue2 != NULL ? keyValue2 : "",
+            entry->prev == NULL ? NULL : entry->prev->ptr,
+            entry->next != NULL ? "," : " "
+        );
+        free(keyValue);
+        if (keyValue1 != NULL) {
+            free(keyValue1);
+        }
+        if (keyValue2 != NULL) {
+            free(keyValue2);
+        }
+        entry = entry->next;
+    }
     printf(" }\n");
 }

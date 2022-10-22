@@ -26,31 +26,31 @@ set(CMAKE_C_FLAGS_DEBUG
 
 # ThreadSanitizer
 set(CMAKE_C_FLAGS_TSAN
-        "-fsanitize=thread-Wall  -g -pthread -O1 -g -fno-omit-frame-pointer"
+        "-fsanitize=thread -Wall  -g -pthread -O1 -g -fno-omit-frame-pointer"
         CACHE STRING "Flags used by the C compiler during ThreadSanitizer builds."
         FORCE)
 
 # AddressSanitize
 set(CMAKE_C_FLAGS_ASAN
-        "-fsanitize=address-Wall  -fno-optimize-sibling-calls -fsanitize-address-use-after-scope -fno-omit-frame-pointer -g -O1 -pthread"
+        "-fsanitize=address -Wall  -fno-optimize-sibling-calls -fsanitize-address-use-after-scope -fno-omit-frame-pointer -g -O1 -pthread"
         CACHE STRING "Flags used by the C compiler during AddressSanitizer builds."
         FORCE)
 
 # LeakSanitizer
 set(CMAKE_C_FLAGS_LSAN
-        "-fsanitize=leak-Wall  -fno-omit-frame-pointer -g -O1 -pthread"
+        "-fsanitize=leak -Wall  -fno-omit-frame-pointer -g -O1 -pthread"
         CACHE STRING "Flags used by the C compiler during LeakSanitizer builds."
         FORCE)
 
 # MemorySanitizer
 set(CMAKE_C_FLAGS_MSAN
-        "-fsanitize=memory-Wall  -fno-optimize-sibling-calls -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer -g -O2 -pthread"
+        "-fsanitize=memory -Wall  -fno-optimize-sibling-calls -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer -g -O2 -pthread"
         CACHE STRING "Flags used by the C compiler during MemorySanitizer builds."
         FORCE)
 
 # UndefinedBehaviour
 set(CMAKE_C_FLAGS_UBSAN
-        "-fsanitize=undefined-Wall  -pthread -g -fno-omit-frame-pointer"
+        "-O3 -fsanitize=undefined -Wall  -pthread -g -fno-omit-frame-pointer"
         CACHE STRING "Flags used by the C compiler during UndefinedBehaviourSanitizer builds."
         FORCE)
 
@@ -88,7 +88,7 @@ target_compile_definitions(
         ${PROJECT_TARGET}
         PRIVATE
         ALLOCATOR_TYPE=0
-        HASH_FUNC=MEIYAN
+#        HASH_FUNC=MEIYAN
         cache_backing_t=DLIRS*
         DQHT_ENABLE_STRICT
         DLIRS_ENABLE_STRICT

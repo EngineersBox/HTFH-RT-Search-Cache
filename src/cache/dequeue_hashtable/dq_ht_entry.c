@@ -35,5 +35,6 @@ void dqhtentry_destroy(AM_ALLOCATOR_PARAM DQHTEntry* entry) {
     entry->key = NULL;
     entry->next = NULL;
     entry->prev = NULL;
+    entry->index = 0;
     am_free(entry);
 }
