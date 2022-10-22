@@ -86,8 +86,10 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
     }
     DQHTEntry* entry = NULL;
     int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry);
-    if (result != 0) {
-        return result == -1 ? -1 : 0;
+    if (result == -1) {
+        return -1;
+    } else if (result == 1) {
+        dqht_unlink(dqht, entry);
     }
     if (dqht->tail != NULL) {
         dqht->tail->next = entry;
@@ -131,8 +133,10 @@ int dqht_push_front(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, 
     }
     DQHTEntry* entry = NULL;
     int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry);
-    if (result != 0) {
-        return result == -1 ? -1 : 0;
+    if (result == -1) {
+        return -1;
+    } else if (result == 1) {
+        dqht_unlink(dqht, entry);
     }
     if (dqht->head != NULL) {
         dqht->head->prev = entry;

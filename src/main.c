@@ -21,7 +21,7 @@ LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 
 int partialCacheMatches = 0;
 
-#define THREAD_COUNT 2
+#define THREAD_COUNT 10
 
 int key_compare(const char* key1, const char* key2, void* key2Value) {
     if (key1 == NULL && key2 == NULL) {
@@ -80,7 +80,7 @@ static void locked_dqht_print_table(Cache* cache, char* prefix, DequeueHashTable
 //    htfh_rwlock_unlock_handled(&cache->rwlock);
 }
 
-static pthread_barrier_t barrier;
+//static pthread_barrier_t barrier;
 
 #define ENTRY_COUNT 100
 int cacheType = 0;
@@ -142,9 +142,9 @@ void* queryProcessor(void* arg) {
     Cache* cache = (Cache*) params->cache;
     LOCALISE_ALLOCATOR_ARG
     int index = params->index;
-    DEBUG("======== BEFORE WAITING ========");
-    pthread_barrier_wait(&barrier);
-    DEBUG("======== AFTER WAITING ========");
+//    DEBUG("======== BEFORE WAITING ========");
+//    pthread_barrier_wait(&barrier);
+//    DEBUG("======== AFTER WAITING ========");
     INFO("======== REQUEST 1 ========");
 //    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);
 //    locked_dqht_print_table(cache, "LIRS", cache->backing->lirs);
@@ -266,9 +266,9 @@ int main(int argc, char* argv[]) {
         FATAL("Could not create cache with size 10");
     }
 
-    if (pthread_barrier_init(&barrier, NULL, THREAD_COUNT) != 0) {
-        FATAL("Could not create thread barrier");
-    }
+//    if (pthread_barrier_init(&barrier, NULL, THREAD_COUNT) != 0) {
+//        FATAL("Could not create thread barrier");
+//    }
 
     pthread_t threadIds[THREAD_COUNT];
     DEBUG("Created thread attributes");
@@ -292,9 +292,9 @@ int main(int argc, char* argv[]) {
         }
     }
     INFO("======== AFTER JOIN ========");
-    if (pthread_barrier_destroy(&barrier) != 0) {
-        FATAL("Could not destroy thread barrier");
-    }
+//    if (pthread_barrier_destroy(&barrier) != 0) {
+//        FATAL("Could not destroy thread barrier");
+//    }
 
     INFO("======== CLEANUP ========");
 //    locked_dqht_print_table(cache, "Non-Resident HIRS", cache->backing->non_resident_hirs);

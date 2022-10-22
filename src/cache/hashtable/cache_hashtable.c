@@ -66,7 +66,7 @@ int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQ
     ht->count++;
     if (entryAtIndex != NULL) {
         *entryAtIndex = ht->items[index];
-    };
+    }
     return 0;
 }
 

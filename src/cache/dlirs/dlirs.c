@@ -137,7 +137,7 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
         cache->non_resident--;
     }
     TRACE("Before eject lir loop");
-    while (cache->lirs_count >= (size_t) cache->lirs_limit) {
+    while (cache->lirs_count > (size_t) cache->lirs_limit) {
         TRACE("Ejecting LIR: [Count: %zu] [Limit: %zu]", cache->lirs_count, (size_t) cache->lirs_limit);
         dlirs_evict_lir(AM_ALLOCATOR_ARG cache);
     }

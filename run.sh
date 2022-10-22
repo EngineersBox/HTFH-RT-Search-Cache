@@ -5,7 +5,7 @@ set -e
 MAX_LOGS=20
 
 echo "==== CMAKE INIT ===="
-cmake -DCMAKE_BUILD_TYPE=release .
+cmake -DCMAKE_BUILD_TYPE=debug .
 
 echo "==== BUILD CACHE ===="
 make
@@ -16,6 +16,7 @@ python3 prune_logs.py
 echo "==== RUN CACHE ===="
 #./htfh_rt_search_cache
 #lldb ./htfh_rt_search_cache
+gdb ./htfh_rt_search_cache
 #cvalgrind --tool=drd -s ./htfh_rt_search_cache
 #cvalgrind --tool=helgrind --delta-stacktrace=yes --ignore-thread-creation=yes --free-is-write=yes -s ./htfh_rt_search_cache
-cvalgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./htfh_rt_search_cache
+#cvalgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./htfh_rt_search_cache
