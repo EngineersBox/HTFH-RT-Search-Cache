@@ -4,7 +4,7 @@
 #include "logging/logging.h"
 #include "result.h"
 #include "cache/cache_key.h"
-LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
+LOGS_DIR("/Users/jackkilrain/Desktop/Projects/C:C++/HTFH-RT-Search-Cache/logs");
 
 #include "cache/cache.h"
 #include "cache/cache_backing.h"

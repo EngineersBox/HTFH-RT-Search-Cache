@@ -273,5 +273,5 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
         }
         entry = entry->next;
     }
-    printf(" }\n");
+    printf("}\n");
 }
