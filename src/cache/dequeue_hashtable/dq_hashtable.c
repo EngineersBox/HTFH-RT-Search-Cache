@@ -198,80 +198,80 @@ void dqht_print_table(char* name, DequeueHashTable* dqht) {
     if (dqht == NULL || DQHT_STRICT_CHECK(dqht)) {
         return;
     }
-    printf("TABLE: %s\n", name);
-    if (dqht->head != NULL) {
-        char* keyValue = key_sprint(dqht->head->key);
-        char* keyValue1 = dqht->head->next == NULL ? NULL : key_sprint(dqht->head->next->key);
-        char* keyValue2 = dqht->head->prev == NULL ? NULL : key_sprint(dqht->head->prev->key);
-        printf(
-            "[Head: [%zu] %s: %p (N: %s %p, P: %s %p)]\n",
-            dqht->head->index,
-            keyValue,
-            dqht->head->ptr,
-            keyValue1 != NULL ? keyValue1 : "",
-            dqht->head->next == NULL ? NULL : dqht->head->next->ptr,
-            keyValue2 != NULL ? keyValue2 : "",
-            dqht->head->prev == NULL ? NULL : dqht->head->prev->ptr
-        );
-        free(keyValue);
-        if (keyValue1 != NULL) {
-            free(keyValue1);
-        }
-        if (keyValue2 != NULL) {
-            free(keyValue2);
-        }
-    } else {
-        printf("[Head: (nil)]\n");
-    }
-    if (dqht->tail != NULL) {
-        char* keyValue = key_sprint(dqht->tail->key);
-        char* keyValue1 = dqht->tail->next == NULL ? NULL : key_sprint(dqht->tail->next->key);
-        char* keyValue2 = dqht->tail->prev == NULL ? NULL : key_sprint(dqht->tail->prev->key);
-        printf(
-            "[Tail: [%zu] %s: %p (N: %s %p, P: %s %p)]\n",
-            dqht->tail->index,
-            keyValue,
-            dqht->tail->ptr,
-            keyValue1 != NULL ? keyValue1 : "",
-            dqht->tail->next == NULL ? NULL : dqht->tail->next->ptr,
-            keyValue2 != NULL ? keyValue2 : "",
-            dqht->tail->prev == NULL ? NULL : dqht->tail->prev->ptr
-        );
-        free(keyValue);
-        if (keyValue1 != NULL) {
-            free(keyValue1);
-        }
-        if (keyValue2 != NULL) {
-            free(keyValue2);
-        }
-    } else {
-        printf("[Tail: (nil)]\n");
-    }
-    printf("{\n");
-    DQHTEntry* entry = dqht->head;
-    while (entry != NULL) {
-        char* keyValue = key_sprint(entry->key);
-        char* keyValue1 = entry->next == NULL ? NULL : key_sprint(entry->next->key);
-        char* keyValue2 = entry->prev == NULL ? NULL : key_sprint(entry->prev->key);
-        printf(
-            "\t[%zu] %s: %p (N: %s %p, P: %s %p)%s\n",
-            entry->index,
-            keyValue,
-            entry->ptr,
-            keyValue1 != NULL ? keyValue1 : "",
-            entry->next == NULL ? NULL : entry->next->ptr,
-            keyValue2 != NULL ? keyValue2 : "",
-            entry->prev == NULL ? NULL : entry->prev->ptr,
-            entry->next != NULL ? "," : " "
-        );
-        free(keyValue);
-        if (keyValue1 != NULL) {
-            free(keyValue1);
-        }
-        if (keyValue2 != NULL) {
-            free(keyValue2);
-        }
-        entry = entry->next;
-    }
-    printf("}\n");
+//    printf("TABLE: %s\n", name);
+//    if (dqht->head != NULL) {
+//        char* keyValue = key_sprint(dqht->head->key);
+//        char* keyValue1 = dqht->head->next == NULL ? NULL : key_sprint(dqht->head->next->key);
+//        char* keyValue2 = dqht->head->prev == NULL ? NULL : key_sprint(dqht->head->prev->key);
+//        printf(
+//            "[Head: [%zu] %s: %p (N: %s %p, P: %s %p)]\n",
+//            dqht->head->index,
+//            keyValue,
+//            dqht->head->ptr,
+//            keyValue1 != NULL ? keyValue1 : "",
+//            dqht->head->next == NULL ? NULL : dqht->head->next->ptr,
+//            keyValue2 != NULL ? keyValue2 : "",
+//            dqht->head->prev == NULL ? NULL : dqht->head->prev->ptr
+//        );
+//        free(keyValue);
+//        if (keyValue1 != NULL) {
+//            free(keyValue1);
+//        }
+//        if (keyValue2 != NULL) {
+//            free(keyValue2);
+//        }
+//    } else {
+//        printf("[Head: (nil)]\n");
+//    }
+//    if (dqht->tail != NULL) {
+//        char* keyValue = key_sprint(dqht->tail->key);
+//        char* keyValue1 = dqht->tail->next == NULL ? NULL : key_sprint(dqht->tail->next->key);
+//        char* keyValue2 = dqht->tail->prev == NULL ? NULL : key_sprint(dqht->tail->prev->key);
+//        printf(
+//            "[Tail: [%zu] %s: %p (N: %s %p, P: %s %p)]\n",
+//            dqht->tail->index,
+//            keyValue,
+//            dqht->tail->ptr,
+//            keyValue1 != NULL ? keyValue1 : "",
+//            dqht->tail->next == NULL ? NULL : dqht->tail->next->ptr,
+//            keyValue2 != NULL ? keyValue2 : "",
+//            dqht->tail->prev == NULL ? NULL : dqht->tail->prev->ptr
+//        );
+//        free(keyValue);
+//        if (keyValue1 != NULL) {
+//            free(keyValue1);
+//        }
+//        if (keyValue2 != NULL) {
+//            free(keyValue2);
+//        }
+//    } else {
+//        printf("[Tail: (nil)]\n");
+//    }
+//    printf("{\n");
+//    DQHTEntry* entry = dqht->head;
+//    while (entry != NULL) {
+//        char* keyValue = key_sprint(entry->key);
+//        char* keyValue1 = entry->next == NULL ? NULL : key_sprint(entry->next->key);
+//        char* keyValue2 = entry->prev == NULL ? NULL : key_sprint(entry->prev->key);
+//        printf(
+//            "\t[%zu] %s: %p (N: %s %p, P: %s %p)%s\n",
+//            entry->index,
+//            keyValue,
+//            entry->ptr,
+//            keyValue1 != NULL ? keyValue1 : "",
+//            entry->next == NULL ? NULL : entry->next->ptr,
+//            keyValue2 != NULL ? keyValue2 : "",
+//            entry->prev == NULL ? NULL : entry->prev->ptr,
+//            entry->next != NULL ? "," : " "
+//        );
+//        free(keyValue);
+//        if (keyValue1 != NULL) {
+//            free(keyValue1);
+//        }
+//        if (keyValue2 != NULL) {
+//            free(keyValue2);
+//        }
+//        entry = entry->next;
+//    }
+//    printf("}\n");
 }

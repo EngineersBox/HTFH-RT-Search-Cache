@@ -5,7 +5,7 @@ set -e
 MAX_LOGS=20
 
 echo "==== CMAKE INIT ===="
-cmake -DCMAKE_BUILD_TYPE=ubsan .
+cmake -DCMAKE_BUILD_TYPE=debug .
 
 echo "==== BUILD CACHE ===="
 make
