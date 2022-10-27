@@ -92,7 +92,7 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
     void* overridden = NULL;
     int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, &overridden);
     if (overridden != NULL) {
-        dqht->entryDestroyHandler(AM_ALLOCATOR_ARG overridden, NULL);
+        dqht->entryDestroyHandler(AM_ALLOCATOR_ARG overridden, value);
     }
     if (result == -1) {
         return -1;

@@ -14,6 +14,7 @@ extern "C" {
 #include "../../allocator/alloc_manager.h"
 
 typedef struct DLIRSEntry {
+    // TODO: Reference count for removal and insertion
     bool is_LIR;
     bool is_demoted;
     bool in_cache;

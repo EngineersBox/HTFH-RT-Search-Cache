@@ -263,7 +263,7 @@ int main(int argc, char* argv[]) {
         &(DLIRSOptions) {
             .hirs_ratio = 0.01f,
             .value_copy_handler = (ValueCopy) result_copy,
-            .comparator = key_compare
+            .comparator = default_key_compare
         }
     );
     if (cache == NULL) {

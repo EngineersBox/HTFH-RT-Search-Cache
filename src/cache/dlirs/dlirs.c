@@ -3,14 +3,17 @@
 #include <stddef.h>
 #include <sys/mman.h>
 #include <stdlib.h>
+#include <math.h>
 
-#include "../../math_utils.h"
 #include "../../logging/logging.h"
 #include "../../result.h"
 #include "../cache_key.h"
 
-void entry_destroy_handler(AM_ALLOCATOR_PARAM void* entry, void* _ignored) {
-    result_destroy(AM_ALLOCATOR_ARG (Result*) ((DLIRSEntry*) entry)->value);
+void entry_destroy_handler(AM_ALLOCATOR_PARAM void* entry, void* currentValue) {
+    DLIRSEntry* dlirsEntry = (DLIRSEntry*) entry;
+    if ((intptr_t) currentValue != (intptr_t) dlirsEntry->value) {
+        result_destroy(AM_ALLOCATOR_ARG (Result*) dlirsEntry->value);
+    }
     dlirs_entry_destroy(AM_ALLOCATOR_ARG (DLIRSEntry*) entry);
 }
 
@@ -23,7 +26,7 @@ DLIRS* dlirs_create(AM_ALLOCATOR_PARAM size_t ht_size, size_t cache_size, DLIRSO
     cache->value_copy_handler = options->value_copy_handler;
 
     cache->hirs_ratio = options != NULL ? options->hirs_ratio : 0.01f; // 0.01f;
-    cache->hirs_limit = math_max(1.0f, (int)((cache_size * cache->hirs_ratio) + 0.5f));
+    cache->hirs_limit = (float) fmax(1.0f, rint(((double) cache_size * cache->hirs_ratio) + 0.5));
     cache->lirs_limit = (float) cache_size - cache->hirs_limit;
 
     cache->hirs_count = 0;
@@ -89,13 +92,13 @@ void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
         return;
     }
     DLIRSEntry* value = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->lirs, key);
-    if (value == NULL) {
+//    if (value == NULL) {
+//        return;
+//    }
+    if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, value->key, value) != 0) {
         return;
     }
-    if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, value) != 0) {
-        return;
-    }
-    if (key_cmp(lru_lir->key, value->key) == 0) {
+    if (key_cmp(lru_lir->key, key) == 0) {
         dlirs_prune(AM_ALLOCATOR_ARG cache);
     }
 }
@@ -142,7 +145,7 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
         cache->non_resident--;
     }
     TRACE("Before eject lir loop");
-    while (cache->lirs_count > (size_t) cache->lirs_limit) {
+    while (cache->lirs_count >= (size_t) cache->lirs_limit) {
         TRACE("Ejecting LIR: [Count: %zu] [Limit: %zu]", cache->lirs_count, (size_t) cache->lirs_limit);
         dlirs_evict_lir(AM_ALLOCATOR_ARG cache);
     }
@@ -177,8 +180,8 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
             break;
         }
         bool inCache = entry->in_cache;
-        entry2 = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->non_resident_hirs, entry->key);
         entry1 = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->lirs, entry->key);
+        entry2 = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->non_resident_hirs, entry->key);
         if (!inCache) {
             cache->non_resident--;
         }
@@ -194,27 +197,19 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
 }
 
 void dlirs_resize(DLIRS* cache, bool hit_nonresident_hir) {
-    if (cache == NULL || DLIRS_STRICT_CHECK(cache)) {
-        return;
-    } else if (hit_nonresident_hir) {
-        cache->hirs_limit = math_min(
-            cache->cache_size - 1,
-            cache->hirs_limit +  math_max(
-                1,
-                (int)((((float) cache->demoted) / ((float) cache->non_resident)) + 0.5)
-            )
+    if (hit_nonresident_hir) {
+        cache->hirs_limit = (float) fmin(
+            (double) cache->cache_size - 1,
+            cache->hirs_limit + fmax(1, rint(((double) cache->demoted / (double) cache->non_resident) + 0.5))
         );
         cache->lirs_limit = (float) cache->cache_size - cache->hirs_limit;
-        return;
+    } else {
+        cache->lirs_limit = (float) fmin(
+            (double) cache->cache_size - 1,
+            cache->lirs_limit + fmax(1, rint(((double) cache->non_resident / (double) cache->demoted) + 0.5))
+        );
+        cache->hirs_limit = (float) cache->cache_size - cache->lirs_limit;
     }
-    cache->lirs_limit = math_min(
-        cache->cache_size - 1,
-        cache->lirs_limit + math_max(
-            1,
-            (int)((((float) cache->non_resident) / ((float) cache->demoted)) + 0.5)
-        )
-    );
-    cache->hirs_limit = (float) cache->cache_size - cache->lirs_limit;
 }
 
 void dlirs_evict_lir(AM_ALLOCATOR_PARAM DLIRS* cache) {
@@ -281,6 +276,7 @@ void dlirs_hit_hir_in_resident_hirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char*
     if (dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, key, entry) != 0
         || dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, dlirs_entry_copy(AM_ALLOCATOR_ARG entry, cache->value_copy_handler)) != 0
         || dqht_insert(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, dlirs_entry_copy(AM_ALLOCATOR_ARG entry, cache->value_copy_handler)) != 0) {
+        FATAL("Bad reinsert of resident HIR entry");
         return;
     }
     dqht_print_table("HIT HIR IN RES HIRS BEFORE LIMIT", cache->non_resident_hirs);
