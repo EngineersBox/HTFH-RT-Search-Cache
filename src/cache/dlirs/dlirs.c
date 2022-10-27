@@ -110,6 +110,7 @@ void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
     if (value == NULL) {
         return;
     } else if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, value->key, value) != 0) {
+        FATAL("Bad hit LIR re-insert");
         return;
     } else if (key_cmp(lru_lir->key, key) == 0) {
         dlirs_prune(AM_ALLOCATOR_ARG cache);
@@ -158,7 +159,9 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
         *evicted = dlirs_evict_resident_hir(AM_ALLOCATOR_ARG cache);
     }
     TRACE("After eject hir loop");
-    dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry);
+    if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry) != 0) {
+        FATAL("Bad HIR in LIRS reinsert");
+    }
     cache->lirs_count++;
     return !in_cache;
 }
@@ -170,13 +173,9 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
     DLIRSEntry* entry;
     DLIRSEntry* entry1;
     DLIRSEntry* entry2;
-    int count = 0;
     while (cache->lirs->ht->count > 0) {
         DEBUG("Pruning %d > 0", cache->lirs->ht->count);
         dqht_print_table("Pruning", cache->lirs);
-        if (count == cache->lirs->ht->count) {
-            FATAL("BAD PRUNE");
-        }
         entry = (DLIRSEntry*) dqht_get_front(cache->lirs);
         if (entry->is_LIR) {
             break;
@@ -225,6 +224,7 @@ void dlirs_evict_lir(AM_ALLOCATOR_PARAM DLIRS* cache) {
     lru->is_demoted = true;
     cache->demoted++;
     if (dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, lru->key, lru) != 0) {
+        FATAL("Bad LIRS re-insert");
         return;
     }
     cache->hirs_count++;
@@ -263,11 +263,13 @@ void dlirs_hit_hir_in_resident_hirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char*
         entry->is_demoted = false;
         cache->demoted--;
     }
+    DLIRSEntry* lirs_entry = dlirs_entry_reference_copy(AM_ALLOCATOR_ARG entry);
+    DLIRSEntry* non_resident_entry = dlirs_entry_reference_copy(AM_ALLOCATOR_ARG entry);
+    DEBUG("TABLES %p %p %p", cache->resident_hirs, cache->lirs, cache->non_resident_hirs);
     if (dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, key, entry) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, dlirs_entry_reference_copy(AM_ALLOCATOR_ARG entry)) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, dlirs_entry_reference_copy(AM_ALLOCATOR_ARG entry)) != 0) {
+        || dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, lirs_entry) != 0
+        || dqht_insert(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, non_resident_entry) != 0) {
         FATAL("Bad reinsert of resident HIR entry");
-        return;
     }
     dqht_print_table("HIT HIR IN RES HIRS BEFORE LIMIT", cache->non_resident_hirs);
     dlirs_limit_stack(AM_ALLOCATOR_ARG cache);
@@ -303,6 +305,7 @@ int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value,
         }
         entry->is_LIR = true;
         if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry) != 0) {
+            FATAL("Bad request LIRS insert");
             return -1;
         }
         cache->lirs_count++;
@@ -317,11 +320,14 @@ int dlirs_request(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, void* value,
         DEBUG("Evicting resident HIR %zu >= %zu", (cache->hirs_count + cache->lirs_count), cache->cache_size);
         *evicted = dlirs_evict_resident_hir(AM_ALLOCATOR_ARG cache);
     }
-    DLIRSEntry* entry = dlirs_entry_create(AM_ALLOCATOR_ARG key, value, (ValueDestroy) result_destroy);
-    if (entry == NULL
-        || dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, entry) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, dlirs_entry_reference_copy(AM_ALLOCATOR_ARG entry)) != 0
-        || dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, key, dlirs_entry_reference_copy(AM_ALLOCATOR_ARG entry)) != 0) {
+    DLIRSEntry* lirs_entry = dlirs_entry_create(AM_ALLOCATOR_ARG key, value, (ValueDestroy) result_destroy);
+    DLIRSEntry* non_resident_entry = dlirs_entry_reference_copy(AM_ALLOCATOR_ARG lirs_entry);
+    DLIRSEntry* resident_entry = dlirs_entry_reference_copy(AM_ALLOCATOR_ARG lirs_entry);
+    if (lirs_entry == NULL
+        || dqht_insert(AM_ALLOCATOR_ARG cache->lirs, key, lirs_entry) != 0
+        || dqht_insert(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, non_resident_entry) != 0
+        || dqht_insert(AM_ALLOCATOR_ARG cache->resident_hirs, key, resident_entry) != 0) {
+        FATAL("Bad request full saturation insert");
         return -1;
     }
     cache->hirs_count++;

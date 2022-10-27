@@ -88,6 +88,7 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
         return -1;
     }
+    DEBUG("INSERT INTO %p", dqht);
     DQHTEntry* entry = NULL;
     void* overridden = NULL;
     int result = ht_insert(AM_ALLOCATOR_ARG dqht->ht, key, value, &entry, &overridden);
@@ -95,11 +96,13 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
         dqht->entryDestroyHandler(AM_ALLOCATOR_ARG overridden, value);
     }
     if (result == -1) {
+        ERROR("INSERT FAILED");
         return -1;
     } else if (result == 1) {
         dqht_unlink(dqht, entry);
     }
-    dqht_print_table("INSERT BEFORE", dqht);
+    DEBUG("INSERT BEFORE");
+    dqht_print_table("", dqht);
     if (dqht->tail != NULL) {
         dqht->tail->next = entry;
         entry->prev = dqht->tail;
@@ -107,7 +110,8 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
         dqht->head = entry;
     }
     dqht->tail = entry;
-    dqht_print_table("INSERT AFTER", dqht);
+    DEBUG("INSERT AFTER");
+    dqht_print_table("", dqht);
     return 0;
 }
 

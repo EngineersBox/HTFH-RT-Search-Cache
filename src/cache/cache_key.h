@@ -78,7 +78,11 @@ static size_t key_cmp(const char* keyStruct1, const char* keyStruct2) {
     } else if (keyStruct2 == NULL) {
         return 1;
     }
-    printf("KEY 1: [%s], KEY 2: [%s]\n", key_sprint(keyStruct1), key_sprint(keyStruct2));
+    char* key1String = key_sprint(keyStruct1);
+    char* key2String = key_sprint(keyStruct2);
+    printf("KEY 1: [%s], KEY 2: [%s]\n", key1String, key2String);
+    free(key1String);
+    free(key2String);
     char op1 = key_get_op(keyStruct1);
     return op1 == key_get_op(keyStruct2)
         && strcmp(key_get_term1(keyStruct1), key_get_term1(keyStruct2)) == 0
