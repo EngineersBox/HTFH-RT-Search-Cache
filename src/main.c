@@ -21,7 +21,7 @@ LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 
 int partialCacheMatches = 0;
 
-#define THREAD_COUNT 10
+#define THREAD_COUNT 1
 
 int key_compare(const char* key1, const char* key2, void* key2Value) {
     if (key1 == NULL && key2 == NULL) {
