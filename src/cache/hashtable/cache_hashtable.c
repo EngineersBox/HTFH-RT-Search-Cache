@@ -34,7 +34,7 @@ int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQ
     if (ht == NULL
         || ht->items == NULL
         || value == NULL) {
-        ERROR("CHECKS FAILED");
+        ERROR("[HT] Insert - pre check failed");
         return -1;
     } else if (ht->count >= (ht->size / 2)) {
         if (ht_resize(AM_ALLOCATOR_ARG ht) != 0) {
@@ -64,7 +64,7 @@ int ht_insert(AM_ALLOCATOR_PARAM HashTable* ht, const char* key, void* value, DQ
     }
     ht->items[index] = dqhtentry_create(AM_ALLOCATOR_ARG key, value);
     if (ht->items[index] == NULL) {
-        ERROR("CREATE FAILED");
+        ERROR("[HT] Insert - create failed");
         return -1;
     }
     ht->items[index]->index = index;
@@ -152,6 +152,7 @@ void* ht_delete_entry(AM_ALLOCATOR_PARAM HashTable* ht, size_t index) {
         return NULL;
     }
     void* value = ht->items[index]->ptr;
+    ht->items[index]->ptr = NULL;
     dqhtentry_destroy(AM_ALLOCATOR_ARG ht->items[index]);
     ht->count--;
     ht->items[index] = NULL;

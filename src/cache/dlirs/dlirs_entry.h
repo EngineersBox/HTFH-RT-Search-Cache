@@ -31,7 +31,7 @@ typedef void* (*ValueCopy)(AM_ALLOCATOR_PARAM void* old_value);
 
 DLIRSEntry* dlirs_entry_create_full(AM_ALLOCATOR_PARAM const char* key, void* value, bool is_LIR, bool in_cache, ValueDestroy value_destroy_handler);
 DLIRSEntry* dlirs_entry_create(AM_ALLOCATOR_PARAM const char* key, void* value, ValueDestroy value_destroy_handler);
-DLIRSEntry* dlirs_entry_reference_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other);
+DLIRSEntry* dlirs_entry_reference_copy(DLIRSEntry* other);
 DLIRSEntry* dlirs_entry_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other, ValueCopy value_copy_handler, ValueDestroy value_destroy_handler);
 void dlirs_entry_destroy(AM_ALLOCATOR_PARAM DLIRSEntry* entry);
 

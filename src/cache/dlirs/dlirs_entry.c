@@ -35,7 +35,7 @@ void* default_copy_handler(AM_ALLOCATOR_PARAM void* old_value) {
     return old_value;
 }
 
-DLIRSEntry* dlirs_entry_reference_copy(AM_ALLOCATOR_PARAM DLIRSEntry* other) {
+DLIRSEntry* dlirs_entry_reference_copy(DLIRSEntry* other) {
     if (other == NULL || other->key == NULL) {
         return NULL;
     }

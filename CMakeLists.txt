@@ -8,7 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 # ---- BUILDS ---- #
 
 # Build Types
-set(CMAKE_BUILD_TYPE Debug
+set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}
         CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel tsan asan lsan msan ubsan"
         FORCE)
 
