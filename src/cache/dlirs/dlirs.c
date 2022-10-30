@@ -106,8 +106,8 @@ void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
     if (lru_lir == NULL) {
         return;
     }
-    DLIRSEntry* value = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->lirs, key);
-    if (value == NULL) {
+    DLIRSEntry* value = NULL;
+    if (dqht_remove(AM_ALLOCATOR_ARG cache->lirs, key, (void**) &value) != 0) {
         FATAL("[DLIRS] Hit LIR - Unexpected null entry");
     } else if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, value->key, value) != 0) {
         FATAL("Bad hit LIR re-insert");
@@ -121,21 +121,22 @@ int dlirs_hir_in_lirs(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key, DLIRSEnt
     if (cache == NULL || key == NULL || DLIRS_STRICT_CHECK(cache)) {
         return -1;
     }
-    DLIRSEntry* entry = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->lirs, key);
-    if (entry == NULL) {
-        return 1;
+    DLIRSEntry* entry = NULL;
+    int result;
+    if ((result = dqht_remove(AM_ALLOCATOR_ARG cache->lirs, key, (void**) &entry)) != 0) {
+        return result;
     }
     bool in_cache = entry->in_cache;
     entry->is_LIR = true;
     DLIRSEntry* hirsEntry;
-    if ((hirsEntry = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->non_resident_hirs, key)) == NULL) {
+    if (dqht_remove(AM_ALLOCATOR_ARG cache->non_resident_hirs, key, (void**) &hirsEntry) == -1) {
         dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);
         return -1;
     }
     dlirs_entry_destroy(AM_ALLOCATOR_ARG hirsEntry);
     if (in_cache) {
         DLIRSEntry* residentEntry;
-        if ((residentEntry = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->resident_hirs, key)) == NULL) {
+        if (dqht_remove(AM_ALLOCATOR_ARG cache->resident_hirs, key, (void**) &residentEntry) == -1) {
             dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);
             return -1;
         }
@@ -171,7 +172,6 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
     }
     DLIRSEntry* entry;
     DLIRSEntry* entry1;
-    DLIRSEntry* entry2;
     while (cache->lirs->ht->count > 0) {
         DEBUG("Pruning %zu > 0", cache->lirs->ht->count);
         dqht_print_table("[LIRS] Pruning", cache->lirs);
@@ -180,14 +180,15 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
             break;
         }
         bool inCache = entry->in_cache;
-        if ((entry1 = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->lirs, entry->key)) == NULL) {
+        if (dqht_remove(AM_ALLOCATOR_ARG cache->lirs, entry->key, (void**) &entry1) != 0) {
             FATAL("Unable to remove pruned LIRS entry");
         }
         dlirs_entry_destroy(AM_ALLOCATOR_ARG entry1);
-        if ((entry2 = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->non_resident_hirs, entry->key)) == NULL) {
+        entry1 = NULL;
+        if ( dqht_remove(AM_ALLOCATOR_ARG cache->non_resident_hirs, entry->key, (void*) &entry1) == -1) {
             FATAL("Unable to remove pruned HIRS entry");
         }
-        dlirs_entry_destroy(AM_ALLOCATOR_ARG entry2);
+        dlirs_entry_destroy(AM_ALLOCATOR_ARG entry1);
         if (!inCache) {
             cache->non_resident--;
         }
@@ -291,7 +292,7 @@ void dlirs_limit_stack(AM_ALLOCATOR_PARAM DLIRS* cache) {
             cache->non_resident--;
         }
         DLIRSEntry* entry;
-        if ((entry = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->lirs, lru->key)) == NULL) {
+        if (dqht_remove(AM_ALLOCATOR_ARG cache->lirs, lru->key, (void**) &entry) != 0) {
             FATAL("[DLIRS] Limit stack - removed null LIRS entry");
         }
         dlirs_entry_destroy(AM_ALLOCATOR_ARG entry);

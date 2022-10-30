@@ -70,8 +70,8 @@ void* lru_get(AM_ALLOCATOR_PARAM LRUCache* cache, const char* key, void** _ignor
     if (cache == NULL || cache->dqht == NULL || key == NULL) {
         return NULL;
     }
-    void* entry = dqht_remove(AM_ALLOCATOR_ARG cache->dqht, key);
-    if (entry == NULL) {
+    void* entry = NULL;
+    if (dqht_remove(AM_ALLOCATOR_ARG cache->dqht, key, &entry) != 0) {
         return NULL;
     }
     return dqht_insert(AM_ALLOCATOR_ARG cache->dqht, key, entry) == 0 ? entry : NULL;

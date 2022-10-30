@@ -116,9 +116,9 @@ int dqht_insert(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void
     return 0;
 }
 
-void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
+int dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key, void** removed) {
     if (dqht == NULL || key == NULL || DQHT_STRICT_CHECK(dqht)) {
-        return NULL;
+        return -1;
     }
 #if defined(HASH_FUNC) && HASH_FUNC == MEIYAN
     size_t hash = meiyan_hash(key);
@@ -131,11 +131,17 @@ void* dqht_remove(AM_ALLOCATOR_PARAM DequeueHashTable* dqht, const char* key) {
             && dqht->ht->items[index]->key != NULL
             && dqht->keyComparator(key, dqht->ht->items[index]->key, dqht->ht->items[index]) == 0) {
             dqht_unlink(dqht, dqht->ht->items[index]);
-            return ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, index);
+            void* deleted = ht_delete_entry(AM_ALLOCATOR_ARG dqht->ht, index);
+            if (removed != NULL) {
+                *removed = deleted;
+            } else {
+                dqht->entryDestroyHandler(AM_ALLOCATOR_ARG deleted, NULL);
+            }
+            return 0;
         }
         index = (index + 1) % dqht->ht->size;
     }
-    return NULL;
+    return 1;
 }
 
 void* dqht_get_front(DequeueHashTable* dqht) {
