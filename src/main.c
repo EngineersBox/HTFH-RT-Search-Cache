@@ -4,7 +4,7 @@
 #include "logging/logging.h"
 #include "result.h"
 #include "cache/cache_key.h"
-LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
+LOGS_DIR("/Users/jackkilrain/Desktop/Projects/C:C++/HTFH-RT-Search-Cache/logs");
 
 #include "cache/cache.h"
 #include "cache/cache_backing.h"
@@ -21,7 +21,7 @@ LOGS_DIR("/mnt/e/HTFH-RT-Search-Cache/logs");
 
 int partialCacheMatches = 0;
 
-#define THREAD_COUNT 1
+#define THREAD_COUNT 2
 
 int key_compare(const char* key1, const char* key2, void* key2Value) {
     if (key1 == NULL && key2 == NULL) {

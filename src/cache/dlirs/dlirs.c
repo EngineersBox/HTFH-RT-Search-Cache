@@ -109,7 +109,6 @@ void dlirs_hit_lir(AM_ALLOCATOR_PARAM DLIRS* cache, const char* key) {
     DLIRSEntry* value = (DLIRSEntry*) dqht_remove(AM_ALLOCATOR_ARG cache->lirs, key);
     if (value == NULL) {
         FATAL("[DLIRS] Hit LIR - Unexpected null entry");
-        return;
     } else if (dqht_insert(AM_ALLOCATOR_ARG cache->lirs, value->key, value) != 0) {
         FATAL("Bad hit LIR re-insert");
     } else if (key_cmp(lru_lir->key, key) == 0) {
@@ -174,7 +173,7 @@ void dlirs_prune(AM_ALLOCATOR_PARAM DLIRS* cache) {
     DLIRSEntry* entry1;
     DLIRSEntry* entry2;
     while (cache->lirs->ht->count > 0) {
-        DEBUG("Pruning %d > 0", cache->lirs->ht->count);
+        DEBUG("Pruning %zu > 0", cache->lirs->ht->count);
         dqht_print_table("[LIRS] Pruning", cache->lirs);
         entry = (DLIRSEntry*) dqht_get_front(cache->lirs);
         if (entry->is_LIR) {
