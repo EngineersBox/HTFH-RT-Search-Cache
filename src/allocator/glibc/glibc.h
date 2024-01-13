@@ -1,3 +1,23 @@
+/* GLIBC Allocator: Originally implemented by Andrew Sun (https://gist.github.com/apsun)
+ * Link: https://gist.github.com/apsun/caa3c5552dce7b13b898b70569b1f239
+ * Modified by EngineersBox for use in HTFH
+ * ====
+ * myalloc - a simplified reimplementation of glibc's malloc
+ *
+ * This allocator aims to follow in the spirit of the glibc implementation,
+ * but with simplicity as the main design goal, instead of efficiency or
+ * scalability. It uses a single free list instead of grouping blocks
+ * into buckets, and is not at all thread safe.
+ *
+ * Some assumptions made:
+ * - 2's complement, little endian, 8 bits per byte
+ * - All pointers are 4 bytes on 32-bit systems, 8 bytes on 64-bit systems
+ * - sizeof(size_t) == sizeof(void *)
+ * - Pointers can be converted to/from size_t without loss of information
+ * - Maximum alignment requirement <= 2 * sizeof(size_t)
+ *
+ * Have fun, myaa~
+ */
 #pragma once
 
 #ifndef _H_C_FIXED_HEAP_ALLOCATOR_ALLOCATOR_
